@@ -14,7 +14,7 @@ This is a minor-major release
 - new cache infrastructure
 - better, simplier caching
 - new API to initiate a site
-
+- new visitor API
 
 
 
