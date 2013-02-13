@@ -3,9 +3,6 @@
 // direct access protection
 if(!defined('KIRBY')) die('Direct access is not allowed');
 
-// dependencies
-require_once(dirname(__DIR__) . DS . 'cache.php');
-
 /**
  * Structure Cache
  * Caches the files and directories within content folders

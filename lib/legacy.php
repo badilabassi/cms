@@ -26,3 +26,4 @@ class Image extends KirbyImage {}
 class Video extends KirbyFile {}
 
 class Variable extends KirbyVariable {}
+class Tpl extends KirbyTemplate {}

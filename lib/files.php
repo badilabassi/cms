@@ -84,7 +84,6 @@ class KirbyFiles extends KirbyCollection {
       raise('KirbyFiles must be constructed with a KirbyPage object or an array of KirbyFiles');
     }
 
-
     $contentFileExtension = c::get('content.file.extension', 'txt');
 
     // detect all meta files
@@ -92,11 +91,8 @@ class KirbyFiles extends KirbyCollection {
 
       if($file->type() != 'content') continue;
 
-      // remove the .txt or .md or whatever file extension from content file
-      $needle = preg_replace('!\.' . $contentFileExtension . '$!i', '', $file->filename());
-
       // try to find a matching file
-      $result = $this->get($needle);
+      $result = $this->get($file->name());
 
       // convert the content file to a meta file
       if($result) $file->type('meta');

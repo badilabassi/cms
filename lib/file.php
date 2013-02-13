@@ -62,6 +62,12 @@ class KirbyFile {
 
   // the previous file
   protected $prev = null;
+
+  // cache for all attached meta info objects
+  protected $metas = null;
+
+  // cache for the attached meta info object
+  protected $meta = null;
   
   /**
    * Constructor
@@ -343,6 +349,102 @@ class KirbyFile {
    */
   public function hash() {
     return md5($this->root);
+  }
+
+  // Meta information
+
+  /**
+   * Returns all available meta files for this file
+   * 
+   * @return object KirbyFiles
+   */
+  public function metas() {
+
+    if(!is_null($this->metas)) return $this->metas;
+
+    $metas = clone $this->page()->metas();
+    $preg  = '!^' . preg_quote($this->filename()) . '!i';
+
+    foreach($metas->toArray() as $key => $meta) {
+      if(!preg_match($preg, $meta->name())) $metas->remove($key);
+    }
+
+    return $this->metas = $metas;
+
+  }
+
+  /**
+   * Returns the meta info object
+   * which will be used to fetch custom variables for the file
+   * 
+   * @return object KirbyContent
+   */
+  public function meta($lang = null) {
+
+    // multi-language handling
+    if(c::get('lang.support')) {
+
+      // initiate the cache if not done yet
+      if(is_null($this->meta) || !is_array($this->meta)) $this->meta = array();
+
+      // get the current applicable language code
+      $lang = (is_null($lang)) ? c::get('lang.current') : $lang;
+
+      // in cache? 
+      if(isset($this->meta[$lang])) return $this->meta[$lang];
+
+      // find the matching content file, store and return it
+      return $this->meta[$lang] = $this->metas()->filterBy('languageCode', $lang)->first();
+
+    }
+
+    // single language handling
+    if(!is_null($this->meta)) return $this->meta;
+    return $this->meta = $this->metas()->first();
+
+  }
+
+  /**
+   * Checks if a meta file is availabel for this file
+   * 
+   * @return boolean
+   */
+  public function hasMeta($lang = null) {
+    return ($this->meta($lang)) ? true : false;
+  }
+
+  /**
+   * Returns the default meta info object 
+   * for multi-language support
+   * 
+   * @return object KirbyContent
+   */
+  public function defaultMeta() {
+    return $this->meta(c::get('lang.default'));
+  }
+
+  // magic getters
+
+  /**
+   * Enables getter function calls for custom fields
+   * i.e. $file->title()
+   * 
+   * @param string $key this is auto-filled by PHP with the called method name
+   * @return mixed
+   */
+  public function __call($key, $arguments = null) {    
+    return ($this->meta()) ? $this->meta()->$key() : null;
+  }
+
+  /**
+   * Enables pseudo attributes for custom fields
+   * i.e. $file->title
+   * 
+   * @param string $key this is auto-filled by PHP with the called attribute name
+   * @return mixed
+   */
+  public function __get($key) {
+    return ($this->meta()) ? $this->meta()->$key() : null;
   }
 
   /**

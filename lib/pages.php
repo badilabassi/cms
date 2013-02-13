@@ -3,9 +3,6 @@
 // direct access protection
 if(!defined('KIRBY')) die('Direct access is not allowed');
 
-// Dependencies
-require_once('collection.php');
-
 /**
  * Pages
  * 

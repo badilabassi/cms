@@ -3,6 +3,9 @@
 // direct access protection
 if(!defined('KIRBY')) die('Direct access is not allowed');
 
+// dependencies
+require_once(__DIR__ . DS . '..' . DS . 'collection.php');
+
 /**
  * Path
  *

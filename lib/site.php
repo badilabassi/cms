@@ -3,19 +3,6 @@
 // direct access protection
 if(!defined('KIRBY')) die('Direct access is not allowed');
 
-// dependencies
-require_once('object.php');
-require_once('page.php');
-require_once('uri.php');
-require_once('helpers.php');
-require_once('template.php');
-require_once('loader.php');
-require_once('cache' . DS . 'html.php');
-require_once('language.php');
-require_once('languages.php');
-require_once('visitor.php');
-require_once('legacy.php');
-
 /** 
  * Singleton handler for the site object
  * Always use this to initiate the site!
@@ -27,8 +14,11 @@ require_once('legacy.php');
  * @return object KirbySite
  */
 function site($params = array()) {
-  static $site;
-  if(!$site || !empty($params)) $site = new KirbySite($params);
+  $site = g::get('site');
+  if(!$site || !empty($params)) {
+    $site = new KirbySite($params);
+    g::set('site', $site);
+  }
   return $site;
 }
 
@@ -83,8 +73,8 @@ class KirbySite extends KirbyPage {
   // cache for all available languages
   protected $languages = null;
 
-  // cache for the visitor object
-  protected $visitor = null;
+  // cache for plugins
+  protected $plugins = null;
 
   /**
    * Constructor
@@ -93,8 +83,17 @@ class KirbySite extends KirbyPage {
    */
   public function __construct(array $params = array()) {
 
+    g::set('site', $this);
+
     // load the site specific config files
     $this->load()->config($params);
+
+    // initiate the page object with the given root    
+    parent::__construct(c::get('root.content'));
+
+    $this->plugins()->add('router', new KirbyRouter($this));
+    $this->plugins()->add('request', new KirbyRequest());
+    $this->plugins()->add('visitor', new KirbyVisitor());
 
     if(c::get('debug')) {
       // switch on all errors
@@ -111,12 +110,10 @@ class KirbySite extends KirbyPage {
 
     // load additional stuff
     $this->load()->parsers();
-    $this->load()->plugins();
+    //$this->load()->plugins();
     $this->load()->language();
-    
-    // initiate the page object with the given root    
-    parent::__construct(c::get('root.content'));
 
+    
     // get the main url for the site
     $this->url();
 
@@ -125,9 +122,6 @@ class KirbySite extends KirbyPage {
 
     // show the troubleshoot modal if required
     $this->troubleshoot();
-
-    // router 
-    $this->router();
 
   }
 
@@ -149,7 +143,7 @@ class KirbySite extends KirbyPage {
     
     if(!c::get('troubleshoot')) return false;
 
-    require_once(c::get('root.modals') . DS . 'troubleshoot.php');
+    require(c::get('root.modals') . DS . 'troubleshoot.php');
     exit();
   
   }
@@ -165,8 +159,10 @@ class KirbySite extends KirbyPage {
     if(!is_null($this->uri)) return $this->uri;
 
     return $this->uri = new KirbyUri(array(
-      'subfolder' => $this->subfolder(),
-      'url'       => c::get('currentURL', null)
+      // attach the language code to the subfolder if multi-lang support is activated
+      'subfolder' => (!c::get('lang.support')) ? $this->subfolder() : $this->subfolder() . '/' . $this->language()->code(),
+      // set a current URL if available in options
+      'url' => c::get('currentURL', null)
     ));
 
   }
@@ -251,7 +247,7 @@ class KirbySite extends KirbyPage {
    */
   public function modified() {
     if(!is_null($this->modified)) return $this->modified;
-    return $this->modified = (c::get('cache.autoupdate')) ? dir::modified($this->root()) : 0;                  
+    return $this->modified = (c::get('cache.autoupdate') && c::get('cache')) ? dir::modified($this->root()) : 0;                  
   }
 
   /**
@@ -306,24 +302,24 @@ class KirbySite extends KirbyPage {
 
     // get the current uri path
     $uri = (string)$this->uri()->path();
-    
+
     // if the path is empty, use the homepage uid
     if(empty($uri)) $uri = c::get('home', 'home');
 
     // try to find an active page by the given uri
     $activePage = $this->children()->find($uri);
 
-    if($activePage) {
-      $pageUri = (c::get('lang.support')) ? $activePage->translatedURI() : $activePage->uri();
+    if($activePage && $activePage->uri() == $uri) {
+      $u = (c::get('lang.support')) ? $activePage->translatedURI() : $activePage->uri();
+      $p = $activePage;
+    } else if($route = $this->router()->resolve()) {
+      $p = $route->page();
     } else {
-      $pageUri = c::get('error', 'error');
+      $p = null;
     }
-    
-    if(!$activePage || $pageUri != $uri) {
-      $activePage = $this->errorPage();
-    }
-               
-    return $this->activePage = $activePage;
+
+    // error fallback    
+    return $this->activePage = (!$p) ? $this->children()->find(c::get('error', 'error')) : $p;
 
   }
 
@@ -370,27 +366,6 @@ class KirbySite extends KirbyPage {
   }
   
   /**
-   * Checks if this page has a specific plugin
-   * Pass the name of the plugin to check for
-   * 
-   * @param string $plugin The name of the plugin
-   * @return boolean
-   */
-  public function hasPlugin($plugin) {
-    return (file_exists(c::get('root.plugins') . DS . $plugin . '.php') || file_exists(c::get('root.plugins') . DS . $plugin . DS . $plugin . '.php')) ? true : false;      
-  }
-
-  /**
-   * Returns the visitor object 
-   * 
-   * @return object KirbyVisitor
-   */
-  public function visitor() {
-    if(!is_null($this->visitor)) return $this->visitor;
-    return $this->visitor = new KirbyVisitor();
-  }
-
-  /**
    * Returns all available languages for this site
    * 
    * @return object KirbyLanguages
@@ -420,28 +395,39 @@ class KirbySite extends KirbyPage {
    * 
    * @return string
    */
-  public function html() {
+  public function toHtml($echo = false) {
+
+    require_once(LIB . DS . 'cache' . DS . 'html.php');
 
     $page  = $this->activePage();
     $cache = new KirbyHTMLCache($this, $page);
 
     if($data = $cache->get()) {
-      return $this->html = $data;
+      $this->html = $data;
     } else {
 
       if(!is_null($this->html)) return $this->html;
 
-      tpl::set('site',  $this);
-      tpl::set('pages', $this->children());
-      tpl::set('page',  $page);
+      KirbyTemplate::set('site',  $this);
+      KirbyTemplate::set('pages', $this->children());
+      KirbyTemplate::set('page',  $page);
 
-      $this->html = tpl::load($page->template(), false, true);
+      $this->html = KirbyTemplate::load($page->template(), false, true);
 
       $cache->set($this->html);
-      return $this->html;
 
     }
 
+    if($echo) echo($this->html);
+    return $this->html;
+
+  }
+
+  /**
+   * Renders the page as HTML and echos the result
+   */
+  public function show() {
+    echo $this->toHtml();
   }
 
   /**
@@ -451,6 +437,63 @@ class KirbySite extends KirbyPage {
    */
   public function depth() {
     return 0;
+  }
+
+  /**
+   * Handles URL rewriting in particular situations 
+   * like forcing https or removing/adding index.php 
+   */  
+  public function rewrite() {
+
+    $page = $this->activePage();
+
+    // check for ssl
+    if(c::get('ssl')) {
+      // if there's no https in the url
+      if(!server::get('https')) go(str_replace('http://', 'https://', $page->url()));
+    }
+
+    // check for index.php in rewritten urls and rewrite them
+    if(c::get('rewrite') && preg_match('!index.php!i', $this->uri()->original())) {      
+      go($page->url());    
+    }
+  
+  }
+
+  // Plugins
+
+  public function plugins() {
+    if(!is_null($this->plugins)) return $this->plugins;
+    return $this->plugins = new KirbyPlugins();
+  }
+
+  /**
+   * Returns the visitor object 
+   * 
+   * @return object KirbyVisitor
+   */
+  public function visitor() {
+    return $this->plugins()->visitor();
+  }
+
+  /**
+   * The router makes it possible to route any url pattern
+   * to a specific page
+   * 
+   * @return object KirbyRouter
+   */
+  public function router() {
+    return $this->plugins()->router();
+  }
+
+  /**
+   * The request object contains useful information and data
+   * of the current request
+   *   
+   * @return object KirbyRequest
+   */
+  public function request() {
+    return $this->plugins()->request();
   }
 
   // magic stuff
@@ -465,6 +508,7 @@ class KirbySite extends KirbyPage {
   public function __toString() {
     return '<a href="' . $this->url() . '">' . $this->url() . '</a>';
   }
+
 
   // protected methods
 
@@ -481,27 +525,6 @@ class KirbySite extends KirbyPage {
     if(c::get('lang.locale')) setlocale(LC_ALL, c::get('lang.locale'));
 
   } 
-
-  /**
-   * Handles URL rewriting in particular situations 
-   * like forcing https or removing/adding index.php 
-   */  
-  protected function router() {
-
-    $page = $this->activePage();
-
-    // check for ssl
-    if(c::get('ssl')) {
-      // if there's no https in the url
-      if(!server::get('https')) go(str_replace('http://', 'https://', $page->url()));
-    }
-
-    // check for index.php in rewritten urls and rewrite them
-    if(c::get('rewrite') && preg_match('!index.php!i', $this->uri()->original())) {      
-      go($page->url());    
-    }
-  
-  }
 
   /**
    * Internal system health checks

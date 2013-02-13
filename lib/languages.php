@@ -3,10 +3,6 @@
 // direct access protection
 if(!defined('KIRBY')) die('Direct access is not allowed');
 
-// dependencies
-require_once('collection.php');
-require_once('language.php');
-
 /**
  * Languages
  * 

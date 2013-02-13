@@ -4,9 +4,9 @@
 if(!defined('KIRBY')) die('Direct access is not allowed');
 
 // dependencies
-require('uri/params.php');
-require('uri/path.php');
-require('uri/query.php');
+require(LIB . DS . 'uri' . DS . 'params.php');
+require(LIB . DS . 'uri' . DS . 'path.php');
+require(LIB . DS . 'uri' . DS . 'query.php');
 
 /**
  * URI
@@ -69,7 +69,7 @@ class KirbyUri {
       $options = $url;
       $url     = a::get($options, 'url', null);
     }
-    
+
     $this->set($url, $options);
 
   }
@@ -183,7 +183,7 @@ class KirbyUri {
 
     // get the extension from the last part of the path    
     $this->extension = f::extension(a::last($path));
-    
+
     // handle the extension on the last element    
     if($this->extension) {
       // remove the last part of the path
@@ -195,8 +195,8 @@ class KirbyUri {
 
     } else {
       $this->extension = f::extension($this->file);
-    }
-    
+    }    
+
     // create a new params and path array    
     $this->params = new KirbyUriParams($params);
     $this->path   = new KirbyUriPath($path);

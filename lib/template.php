@@ -12,7 +12,7 @@ if(!defined('KIRBY')) die('Direct access is not allowed');
  * 
  * @package Kirby CMS
  */
-class tpl {
+class KirbyTemplate {
 
   // all global variables which will be passed to the templates
   static public $vars = array();

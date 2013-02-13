@@ -3,11 +3,6 @@
 // direct access protection
 if(!defined('KIRBY')) die('Direct access is not allowed');
 
-// dependencies
-require_once('file.php');
-require_once('variable.php');
-require_once('cache' . DS . 'data.php');
-
 /**
  * Content
  * 
@@ -73,6 +68,23 @@ class KirbyContent extends KirbyFile {
   }
 
   /**
+   * Returns the name of the file without extension   
+   * and without language code
+   *
+   * @return string
+   */
+  public function name() {
+  
+    if(!is_null($this->name)) return $this->name;
+
+    $name = f::name($this->filename());
+    $name = preg_replace('!.(' . implode('|',c::get('lang.available')) . ')$!i', '', $name);
+
+    return $this->name = $name;
+  
+  }
+
+  /**
    * Returns an array with all field names from the text file
    * 
    * @return array 
@@ -98,33 +110,21 @@ class KirbyContent extends KirbyFile {
 
     if(!is_null($this->data)) return $this->data;
 
-    $cache = new KirbyDataCache($this);
-
-    if($data = $cache->get()) {
+    $sections = preg_split('![\r\n]+[-]{4,}!i', $this->raw());
+    $data     = array();
     
-      $this->data = $data;
+    foreach($sections AS $s) {
+
+      $parts = explode(':', $s);  
+      $key   = str::lower(preg_replace('![^a-z0-9]+!i', '_', trim($parts[0])));
+
+      if(empty($key)) continue;
+      
+      $value = trim(implode(':', array_slice($parts, 1)));
+
+      // store the key and value in the data array
+      $this->data[$key] = new KirbyVariable($key, $value, $this);
     
-    } else {
-
-      $sections = preg_split('![\r\n]+[-]{4,}!i', $this->raw());
-      $data     = array();
-      
-      foreach($sections AS $s) {
-
-        $parts = explode(':', $s);  
-        $key   = str::lower(preg_replace('![^a-z0-9]+!i', '_', trim($parts[0])));
-
-        if(empty($key)) continue;
-        
-        $value = trim(implode(':', array_slice($parts, 1)));
-
-        // store the key and value in the data array
-        $this->data[$key] = new KirbyVariable($key, $value, $this);
-      
-      }
-
-      $cache->set();
-
     }
 
     return $this->data;
@@ -140,8 +140,8 @@ class KirbyContent extends KirbyFile {
    */
   public function languageCode() {
     if(!is_null($this->languageCode)) return $this->languageCode;
-    $code = f::extension($this->name());
-    return $this->languageCode = (empty($code)) ? c::get('lang.default') : $code;
+    $code = f::extension(f::extension($this->filename()));
+    return $this->languageCode = (empty($code) || !in_array($code, c::get('lang.available'))) ? c::get('lang.default') : $code;
   }
 
   /**

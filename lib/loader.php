@@ -19,17 +19,8 @@ class KirbyLoader {
    * 
    * @param array $config Additional config variables to merge into the loaded configuration
    */
-  public function config($config = array()) {
-
-    // get all default config options
-    $defaults = c::get();
+  public function config($late = array()) {
     
-    // merge them with the passed options
-    $config = array_merge($defaults, $config);
-
-    // store them 
-    c::set($config);
-
     // the root of all custom config files
     $root = c::get('root.config');
     
@@ -37,10 +28,11 @@ class KirbyLoader {
     $this->file($root . DS . 'config.php');
     $this->file($root . DS . 'config.' . server::get('server_name') . '.php');
 
+    // get all config options that have been stored so far
     $defaults = c::get();
 
-    // merge them with the passed options again
-    $config = array_merge($defaults, $config);
+    // merge them with the passed late options again
+    $config = array_merge($defaults, $late);
 
     // store them again
     c::set($config);
@@ -81,15 +73,15 @@ class KirbyLoader {
     
     $root = c::get('root.parsers');
 
-    require_once($root . DS . 'yaml.php');
-    require_once($root . DS . 'kirbytext.php');
-    require_once($root . DS . 'smartypants.php');
-    require_once($root . DS . 'shortcuts.php');
+    include($root . DS . 'yaml.php');
+    include($root . DS . 'kirbytext.php');
+    include($root . DS . 'smartypants.php');
+    include($root . DS . 'shortcuts.php');
 
     if(c::get('markdown.extra')) {
-      require_once($root . DS . 'markdown.extra.php');
+      include($root . DS . 'markdown.extra.php');
     } else {
-      require_once($root . DS . 'markdown.php');    
+      include($root . DS . 'markdown.php');    
     }
     
   }
@@ -111,7 +103,7 @@ class KirbyLoader {
    */
   public function file($file) {
     if(!file_exists($file)) return false;
-    require_once($file);    
+    require($file);    
   }
 
 }

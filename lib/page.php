@@ -3,12 +3,6 @@
 // direct access protection
 if(!defined('KIRBY')) die('Direct access is not allowed');
 
-// Dependencies
-require_once('pages.php');
-require_once('files.php');
-require_once('content.php');
-require_once('dir.php');
-
 /**
  * Page
  *

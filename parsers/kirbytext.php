@@ -3,10 +3,6 @@
 // direct access protection
 if(!defined('KIRBY')) die('Direct access is not allowed');
 
-// dependencies
-require_once(c::get('root.lib') . DS . 'html.php');
-require_once(c::get('root.lib') . DS . 'embed.php');
-
 /**
  * Kirbytext
  *

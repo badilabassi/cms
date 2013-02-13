@@ -1,14 +1,12 @@
 <?php
 
-error_reporting(E_ALL | E_STRICT);
-ini_set('display_errors', 1);
-
 set_exception_handler(function($exception) {
   echo $exception->getMessage();
 });
 
 define('ROOT', $root);
 
+require(__DIR__ . DIRECTORY_SEPARATOR . 'lib' . DIRECTORY_SEPARATOR . 'timer.php');
 require(__DIR__ . DIRECTORY_SEPARATOR . 'bootstrap.php');
 
 $site = site(array(
@@ -26,4 +24,7 @@ $site = site(array(
   'root.languages' => $rootSite . DS . 'languages',
 ));
 
-echo $site->html();
+$site->rewrite();
+$site->show();
+
+echo timer::get();

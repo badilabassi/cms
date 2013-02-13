@@ -7,15 +7,26 @@
  * files to initiate a new Kirby site
  */
 
-if(!defined('ROOT'))  define('ROOT', dirname(__DIR__));
-if(!defined('KIRBY')) define('KIRBY', true);
 if(!defined('DS'))    define('DS', DIRECTORY_SEPARATOR);
+if(!defined('ROOT'))  define('ROOT', dirname(__DIR__));
+if(!defined('LIB'))   define('LIB', ROOT . DS . 'kirby' . DS . 'lib');
+if(!defined('KIRBY')) define('KIRBY', true);
 
 // load the kirby toolkit
-require(__DIR__ . DS . 'lib' . DS . 'kirby.php');
+include(LIB . DS . 'kirby.php');
+
+function autoload($class) {
+  $file = LIB . DS . strtolower(str_replace('Kirby', '', $class)) . '.php';
+  if(file_exists($file)) include $file;
+}
+
+spl_autoload_register('autoload');
 
 // load all default config values
-require(__DIR__ . DS . 'defaults.php');
+include(__DIR__ . DS . 'defaults.php');
+
+// load all helper functions
+include(LIB . DS . 'helpers.php');
 
 // load the main site class
-require(__DIR__ . DS . 'lib' . DS . 'site.php');
+include(LIB . DS . 'site.php');

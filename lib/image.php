@@ -3,10 +3,6 @@
 // direct access protection
 if(!defined('KIRBY')) die('Direct access is not allowed');
 
-// dependencies
-require_once('file.php');
-require_once('dimensions.php');
-
 /**
  * Image
  * 
@@ -22,6 +18,9 @@ class KirbyImage extends KirbyFile {
 
   // cache for a child KirbyDimensions object
   protected $dimensions = null;
+
+  // cache for the attached thumb – if available
+  protected $thumb = null;
 
   /**
    * Constructor
@@ -135,6 +134,15 @@ class KirbyImage extends KirbyFile {
     $this->dimensions();
 
     return $this->mime;
+
+  }
+
+  /**
+   * Returns the attached thumb file object
+   */
+  public function thumb() {
+
+
 
   }
 

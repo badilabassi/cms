@@ -4,7 +4,9 @@
 if(!defined('KIRBY')) die('Direct access is not allowed');
 
 // dependencies
-require_once('html.php');
+require_once(LIB . DS . 'html' . DS . 'html.php');
+require_once(LIB . DS . 'html' . DS . 'form.php');
+require_once(LIB . DS . 'html' . DS . 'embed.php');
 
 /**
  * Main URL builder
@@ -115,7 +117,7 @@ function notFound() {
  * @return string
  */ 
 function snippet($snippet, $data=array(), $return=false) {
-  return tpl::loadFile(c::get('root.snippets') . DS . $snippet . '.php', $data, $return);
+  return KirbyTemplate::loadFile(c::get('root.snippets') . DS . $snippet . '.php', $data, $return);
 }
 
 /**

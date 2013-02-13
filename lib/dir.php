@@ -3,9 +3,6 @@
 // direct access protection
 if(!defined('KIRBY')) die('Direct access is not allowed');
 
-// dependencies
-require_once('cache' . DS . 'structure.php');
-
 /**
  * Dir
  *
@@ -120,6 +117,9 @@ class KirbyDir {
    * and divides items into dirs and files 
    */
   private function scan() {
+
+    // dependencies
+    require_once(LIB . DS . 'cache' . DS . 'structure.php');
 
     $this->files    = array();
     $this->children = array();

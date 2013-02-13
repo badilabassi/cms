@@ -403,23 +403,22 @@ class a {
     
     // natural sorting    
     if($method === 'natural') {
-
       natsort($helper);
       if($direction === SORT_DESC) $helper = array_reverse($helper);
-
-      $result = array();
-    
-      foreach($helper as $key => $val) {
-        $result[$key] = $array[$key];
-      }                
-      
-      return $result;
-  
+    } else if($direction === SORT_DESC) {
+      arsort($helper, $method);
     } else {
-      array_multisort($helper, $direction, $method, $array);
-      return $array;
+      asort($helper, $method);
     }
-  
+
+    $result = array();
+    
+    foreach($helper as $key => $val) {
+      $result[$key] = $array[$key];
+    }
+    
+    return $result;
+    
   }
 
 }

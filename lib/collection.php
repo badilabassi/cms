@@ -3,9 +3,6 @@
 // direct access protection
 if(!defined('KIRBY')) die('Direct access is not allowed');
 
-// dependencies
-require_once('pagination.php');
-
 /**
  * Collection 
  * 
@@ -500,7 +497,7 @@ class KirbyCollection implements Iterator {
             $collection->remove($key);
           }
 
-          $item->parent($collection);
+          //$item->parent($collection);
 
         }
         break;    
@@ -521,7 +518,7 @@ class KirbyCollection implements Iterator {
             $collection->remove($key);
           }
 
-          $item->parent($collection);
+          //$item->parent($collection);
 
         }
                             
@@ -537,7 +534,7 @@ class KirbyCollection implements Iterator {
             $collection->remove($key);
           }
 
-          $item->parent($collection);
+          //$item->parent($collection);
         
         }
 

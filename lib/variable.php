@@ -88,6 +88,118 @@ class KirbyVariable {
   }
 
   /**
+   * Splits the value by the given delimiter
+   * 
+   * @param string $separator The delimiter to split by
+   * @return array
+   */
+  public function split($separator = ',') {
+    return str::split($this->value, $separator);
+  }
+
+  /**
+   * Converts the value to a string
+   * 
+   * @return string
+   */
+  public function toString() {
+    return (string)$this->value;
+  }
+
+  /**
+   * Converts the value to secure HTML
+   * 
+   * @return string
+   */
+  public function toHtml() {
+    return html($this->value);
+  }
+
+  /**
+   * Converts the value to multiline HTML
+   * 
+   * @return string
+   */
+  public function toMultiline() {
+    return multiline($this->value);
+  }
+
+  /**
+   * Converts the value to kirbytext
+   * 
+   * @return string
+   */
+  public function toKirbytext() {
+    return kirbytext($this);
+  }
+
+  /**
+   * Converts the value to a unix timestamp if possible
+   * 
+   * @return string
+   */
+  public function toTimestamp() {
+    return strtotime($this->value);
+  }
+
+  /**
+   * Converts the value to a formatted date
+   *
+   * @param string $format
+   * @return string
+   */
+  public function toDate($format = 'Y-m-d H:i:s') {
+    return date($format, $this->toTimestamp());
+  }
+
+  /**
+   * Parses the value with the yaml parser to convert it to an array
+   *
+   * @return array
+   */
+  public function toArray() {
+    return yaml($this->value);
+  }
+
+  /**
+   * Applies the url() helper function to the value
+   *
+   * @return string
+   */
+  public function toUrl() {
+    return url($this->value);
+  }
+
+  /**
+   * Returns a page with the same uri as the value
+   *
+   * @return object
+   */
+  public function toPage() {
+    return site()->children()->find($this->value);
+  }
+
+  /**
+   * Uses the yaml parser to convert the value to an array first
+   * and returns the entire thing as json afterwards
+   *
+   * @return string
+   */
+  public function toJson() {
+    return json_encode($this->toArray());
+  }
+
+  /**
+   * Uses the yaml parser to convert the value to an array first
+   * and converts it to a KirbyCollection object
+   *
+   * @return object
+   */
+  public function toCollection() {
+    return new KirbyCollection($this->toArray());
+  }
+
+  /**
    * Converts the entire object to a string
    * Simply used to echo the variable
    * 

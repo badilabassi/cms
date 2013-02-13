@@ -26,7 +26,7 @@ class KirbyVisitor {
    */
   public function ip() {
     if(!is_null($this->ip)) return $this->ip;
-    return $this->ip = server::get('REMOTE_ADDR');
+    return $this->ip = site()->request()->ip();
   }
 
   /**
@@ -96,7 +96,7 @@ class KirbyVisitor {
    * @return string
    */
   public function referrer() {
-    return server::get('HTTP_REFERER');
+    return site()->request()->referer();
   }
 
   /**
@@ -105,7 +105,7 @@ class KirbyVisitor {
    * @return string
    */
   public function referer() {
-    return $this->referrer();
+    return site()->request()->referer();
   }
 
   /**
