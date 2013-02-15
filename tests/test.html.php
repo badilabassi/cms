@@ -1,9 +1,9 @@
 <?php
 
 require_once('bootstrap.php');
-require_once(c::get('root.lib') . DS . 'html' . DS . 'html.php');
-require_once(c::get('root.lib') . DS . 'html' . DS . 'embed.php');
-require_once(c::get('root.lib') . DS . 'html' . DS . 'form.php');
+require_once(TEST_KIRBY_LIB . DS . 'html' . DS . 'html.php');
+require_once(TEST_KIRBY_LIB . DS . 'html' . DS . 'embed.php');
+require_once(TEST_KIRBY_LIB . DS . 'html' . DS . 'form.php');
 
 class TestOfHTML extends UnitTestCase {
 
