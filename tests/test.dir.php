@@ -18,7 +18,7 @@ class TestOfDir extends UnitTestCase {
     $this->assertTrue($dir->isWritable() == is_writable($root));
 
     // the main test dir is located in @root/kirby/tests/content
-    $this->assertTrue($dir->uri() == 'kirby/tests/content');
+    $this->assertTrue($dir->uri() == basename(TEST_KIRBY_CORE) . DS . 'tests' . DS . 'content');
 
     // echoing the test dir should result in the root 
     $this->assertTrue((string)$dir == $root);
@@ -44,7 +44,7 @@ class TestOfDir extends UnitTestCase {
     $this->assertTrue($dir->num() == '01');
 
      // the tests dir is located in @root/kirby/tests/content/01-tests
-    $this->assertTrue($dir->uri() == 'kirby/tests/content/01-tests');
+    $this->assertTrue($dir->uri() == basename(TEST_KIRBY_CORE) . DS . 'tests' . DS . 'content' . DS . '01-tests');
 
   }
 
