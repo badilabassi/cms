@@ -475,8 +475,10 @@ class KirbyCollection implements Iterator {
     $operator = '=='; 
     $value    = a::get($args, 1);
     $split    = a::get($args, 2);
-    
-    if($value === '!=' || $value === '==' || $value === '*=') {
+  
+    $operators = array('!=', '==', '*=', '>', '<', '>=', '<=');
+
+    if(in_array($value, $operators)) {
       $operator = $value;
       $value    = a::get($args, 2);
       $split    = a::get($args, 3);
@@ -497,8 +499,6 @@ class KirbyCollection implements Iterator {
             $collection->remove($key);
           }
 
-          //$item->parent($collection);
-
         }
         break;    
       
@@ -518,9 +518,49 @@ class KirbyCollection implements Iterator {
             $collection->remove($key);
           }
 
-          //$item->parent($collection);
-
         }
+
+        break;
+
+      // greater than
+      case '>':
+
+        foreach($collection->toArray() as $key => $item) {
+          if($item->$field() > $value) continue;
+          $collection->remove($key);
+        }
+
+        break;
+
+      // less than
+      case '<':
+
+        foreach($collection->toArray() as $key => $item) {
+          if($item->$field() < $value) continue;
+          $collection->remove($key);
+        }
+
+        break;
+
+      // greater than and equal to
+      case '>=':
+
+        foreach($collection->toArray() as $key => $item) {
+          if($item->$field() >= $value) continue;
+          $collection->remove($key);
+        }
+
+        break;
+
+      // less than and equal to
+      case '<=':
+
+        foreach($collection->toArray() as $key => $item) {
+          if($item->$field() <= $value) continue;
+          $collection->remove($key);
+        }
+
+        break;
                             
       // take all matching elements          
       default:
@@ -533,8 +573,6 @@ class KirbyCollection implements Iterator {
           } else if($item->$field() != $value) {
             $collection->remove($key);
           }
-
-          //$item->parent($collection);
         
         }
 

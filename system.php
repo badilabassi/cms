@@ -5,8 +5,8 @@ set_exception_handler(function($exception) {
 });
 
 define('ROOT', $root);
+define('LIB', $rootKirby . DIRECTORY_SEPARATOR . 'lib');
 
-require(__DIR__ . DIRECTORY_SEPARATOR . 'lib' . DIRECTORY_SEPARATOR . 'timer.php');
 require(__DIR__ . DIRECTORY_SEPARATOR . 'bootstrap.php');
 
 $site = site(array(
@@ -24,7 +24,6 @@ $site = site(array(
   'root.languages' => $rootSite . DS . 'languages',
 ));
 
+
 $site->rewrite();
 $site->show();
-
-echo timer::get();

@@ -28,5 +28,8 @@ include(__DIR__ . DS . 'defaults.php');
 // load all helper functions
 include(LIB . DS . 'helpers.php');
 
+// load all legacy code adapters
+include(LIB . DS . 'legacy.php');
+
 // load the main site class
 include(LIB . DS . 'site.php');

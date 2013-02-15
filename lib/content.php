@@ -183,4 +183,15 @@ class KirbyContent extends KirbyFile {
 
   }
 
+  /**
+   * Legacy code to implement content->variables;
+   */
+  public function __get($key) {
+    if($key == 'variables') {
+      return $this->data();
+    } else {
+      return $this->$key();
+    }
+  }
+
 }

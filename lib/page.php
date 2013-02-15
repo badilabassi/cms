@@ -477,10 +477,16 @@ class KirbyPage {
       $lang = (is_null($lang)) ? c::get('lang.current') : $lang;
 
       // in cache? 
-      if(isset($this->content[$lang])) return $this->content[$lang];
+      if(isset($this->content[(string)$lang])) return $this->content[$lang];
 
       // find the matching content file, store and return it
-      return $this->content[$lang] = $this->contents()->filterBy('languageCode', $lang)->first();
+      $content = $this->contents()->filterBy('languageCode', $lang)->first();
+
+      // fall back to the default language
+      if(!$content) $content = $this->defaultContent();
+    
+      // store and return the content
+      return $this->content[$lang] = $content;
 
     }
 
@@ -864,17 +870,18 @@ class KirbyPage {
    * @return boolean
    */
   public function isOpen() {
+
     if(!is_null($this->isOpen)) return $this->isOpen;
     
     if($this->isActive()) return true;
 
+    $u = array_values(site()->uri()->path()->toArray());
     $p = str::split($this->uri(), '/');
-    $u = site()->uri()->path()->toArray();
-  
+
     for($x=0; $x<count($p); $x++) {
       if(a::get($p, $x) != a::get($u, $x)) return $this->isOpen = false;
     }
-    
+
     return $this->isOpen = true;
   
   }
@@ -889,7 +896,15 @@ class KirbyPage {
    * @return mixed
    */
   public function __call($key, $arguments = null) {    
-    return ($this->content()) ? $this->content()->$key() : null;
+    
+    $content = ($this->content()) ? $this->content()->$key() : null;
+  
+    if($content && $key == 'date') {
+      $content = (!empty($arguments)) ? $content->toDate(a::first($arguments)) : $content->toTimestamp();
+    }
+
+    return $content;
+
   }
 
   /**
@@ -900,7 +915,35 @@ class KirbyPage {
    * @return mixed
    */
   public function __get($key) {
-    return ($this->content()) ? $this->content()->$key() : null;
+
+    $methods = array(
+      'root',
+      'dir',
+      'uri',
+      'uid',
+      'title',
+      'hash',
+      'template',
+      'intendedTemplate',      
+      'content',
+    );
+
+    // legacy code to enable getters like $page->uid
+    if(in_array($key, $methods)) {
+      return $this->$key();      
+    } else {
+
+      $content = ($this->content()) ? $this->content()->$key() : null;
+      
+      // legacy to get the timestamp with $page->date;
+      if($content && $key == 'date') {
+        $content = $content->toTimestamp();
+      }
+      
+      return $content;
+    
+    }
+
   }
 
   /**

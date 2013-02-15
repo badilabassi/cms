@@ -332,6 +332,7 @@ class KirbyPages extends KirbyCollection {
     if($field == 'dirname') $method = 'natural';
         
     $pages = a::sort($this->_, $field, $direction, $method);
+    
     return new KirbyPages($pages);
 
   }

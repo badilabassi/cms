@@ -17,8 +17,9 @@ class KirbyLanguage {
    * 
    * @param string $code The 2-char language code
    */
-  public function __construct($code) {
-    $this->code = $code;
+  public function __construct($code, $isActive = false) {
+    $this->code     = $code;
+    $this->isActive = $isActive;
   }
 
   /**
@@ -98,7 +99,7 @@ class KirbyLanguage {
    * @return boolean
    */
   public function isActive() {
-    return (c::get('lang.current', c::get('lang.default')) == $this->code) ? true : false;
+    return $this->isActive;
   }
 
   /**

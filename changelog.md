@@ -14,8 +14,11 @@ This is a minor-major release
 - new cache infrastructure
 - better, simplier caching
 - new API to initiate a site
+- new languages API
 - new visitor API
-
+- new request API
+- new router API
+- new operators for filterBy methods (<, >, <=, >=)
 
 
 

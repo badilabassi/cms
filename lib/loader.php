@@ -73,15 +73,15 @@ class KirbyLoader {
     
     $root = c::get('root.parsers');
 
-    include($root . DS . 'yaml.php');
-    include($root . DS . 'kirbytext.php');
-    include($root . DS . 'smartypants.php');
-    include($root . DS . 'shortcuts.php');
+    require_once($root . DS . 'yaml.php');
+    require_once($root . DS . 'kirbytext.php');
+    require_once($root . DS . 'smartypants.php');
+    require_once($root . DS . 'shortcuts.php');
 
     if(c::get('markdown.extra')) {
-      include($root . DS . 'markdown.extra.php');
+      require_once($root . DS . 'markdown.extra.php');
     } else {
-      include($root . DS . 'markdown.php');    
+      require_once($root . DS . 'markdown.php');    
     }
     
   }

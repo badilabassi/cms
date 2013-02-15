@@ -110,7 +110,7 @@ class KirbySite extends KirbyPage {
 
     // load additional stuff
     $this->load()->parsers();
-    //$this->load()->plugins();
+    $this->load()->plugins();
     $this->load()->language();
 
     
@@ -309,8 +309,7 @@ class KirbySite extends KirbyPage {
     // try to find an active page by the given uri
     $activePage = $this->children()->find($uri);
 
-    if($activePage && $activePage->uri() == $uri) {
-      $u = (c::get('lang.support')) ? $activePage->translatedURI() : $activePage->uri();
+    if($activePage && $activePage->uri() == $uri) {      
       $p = $activePage;
     } else if($route = $this->router()->resolve()) {
       $p = $route->page();
@@ -383,9 +382,21 @@ class KirbySite extends KirbyPage {
    * @return object KirbyLanguage
    */
   public function language($code = null) {
-    if(is_null($code)) $code = c::get('lang.default');
-    if(isset($this->language[$code])) return $this->language[$code];
-    return $this->language[$code] = $this->languages()->find($code);
+
+    if(is_null($code)) {
+
+      if(isset($this->language['current'])) {
+        return $this->language['current'];      
+      } else {
+        return $this->language['current'] = $this->languages()->findActive();  
+      }
+      
+    } else if(isset($this->language[$code])) {
+      return $this->language[$code];
+    } else {
+      return $this->language[$code] = $this->languages()->find($code);
+    }
+
   }
 
   // rendering
@@ -524,6 +535,9 @@ class KirbySite extends KirbyPage {
     // set default locale settings for php functions
     if(c::get('lang.locale')) setlocale(LC_ALL, c::get('lang.locale'));
 
+    // store the current language code in the config
+    if(c::get('lang.support')) c::set('lang.current', $this->language()->code());
+
   } 
 
   /**
@@ -543,6 +557,14 @@ class KirbySite extends KirbyPage {
     // check for existing mbstring functions
     if(!function_exists('mb_strtolower')) raise('mb_string functions are required in order to run Kirby properly');
     
+  }
+
+  public function __get($key) {
+
+    if(method_exists($this, $key)) return $this->$key();
+
+    return ($this->content()) ? $this->content()->$key() : null;
+
   }
 
 }

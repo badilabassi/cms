@@ -19,8 +19,19 @@ class KirbyLanguages extends KirbyCollection {
 
     if(empty($codes)) $codes = c::get('lang.available', array());
 
+    // get the uri including the language code
+    $uri    = new KirbyURI(null, array('subfolder' => site()->subfolder()));
+    $active = $uri->path()->first();
+
+    // if there's no code available in the url, use the default language
+    if(empty($active)) $active = c::get('lang.default');
+
+    // store the current language code in the config 
+    c::set('lang.current', $active);
+
+    // attach all languages
     foreach($codes as $lang) {
-      $this->set($lang, new KirbyLanguage($lang));
+      $this->set($lang, new KirbyLanguage($lang, $lang == $active));
     }
 
   }  

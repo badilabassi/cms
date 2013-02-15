@@ -169,6 +169,7 @@ class KirbyUri {
     // start a new params array
     $params = array();
     $path   = array();
+    $pindex = 1;
 
     // parse params
     foreach($parts AS $p) {
@@ -177,7 +178,8 @@ class KirbyUri {
         if(count($parts) < 2) continue;
         $params[$parts[0]] = urldecode($parts[1]);
       } else {
-        $path[] = urldecode($p);
+        $path[$pindex] = urldecode($p);
+        $pindex++;
       }
     }
 

@@ -123,32 +123,19 @@ class KirbyDir {
 
     $this->files    = array();
     $this->children = array();
-
-    $cache = new KirbyStructureCache($this);
-
-    if($data = $cache->get()) {
-      
-      $this->files    = $data['files'];
-      $this->children = $data['children'];
     
-    } else {
+    $ignore = array('.svn', '.git', '.htaccess', '.', '..', '.DS_Store');
+    $ignore = array_merge($ignore, (array)c::get('content.file.ignore', array()));
+    $all    = array_diff(scandir($this->root), $ignore);
 
-      $ignore = array('.svn', '.git', '.htaccess', '.', '..', '.DS_Store');
-      $ignore = array_merge($ignore, (array)c::get('content.file.ignore', array()));
-      $all    = array_diff(scandir($this->root), $ignore);
+    foreach($all as $file) {
+      $item = $this->root . DS . $file;
 
-      foreach($all as $file) {
-        $item = $this->root . DS . $file;
-
-        if(is_dir($item)) {
-          $this->children[$file] = $item;      
-        } else {
-          $this->files[$file] = $item;            
-        }
-
+      if(is_dir($item)) {
+        $this->children[$file] = $item;      
+      } else {
+        $this->files[$file] = $item;            
       }
-
-      $cache->set();
 
     }
 
