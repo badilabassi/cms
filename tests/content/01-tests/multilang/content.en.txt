@@ -1,0 +1,5 @@
+Title: My english content file
+----
+Text: This is an english text
+----
+Super: A field which only exists in English

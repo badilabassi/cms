@@ -65,7 +65,7 @@ class KirbyVisitor {
   public function acceptedLanguageCode() {
     $detected = str::split($this->acceptedLanguage(), '-');
     $detected = str::lower(str::trim(a::first($detected)));
-    return $detected;    
+    return (empty($detected) || !in_array($detected, c::get('lang.available'))) ? c::get('lang.default') : $detected;    
   }
 
   /**

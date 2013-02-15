@@ -139,8 +139,8 @@ class KirbyContent extends KirbyFile {
    * @return string
    */
   public function languageCode() {
-    if(!is_null($this->languageCode)) return $this->languageCode;
-    $code = f::extension(f::extension($this->filename()));
+    if(!is_null($this->languageCode)) return $this->languageCode;    
+    $code = str::match($this->filename(), '!\.([a-z]{2})\.' . $this->extension() . '$!i', 1);
     return $this->languageCode = (empty($code) || !in_array($code, c::get('lang.available'))) ? c::get('lang.default') : $code;
   }
 

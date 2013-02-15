@@ -24,7 +24,7 @@ class KirbyLanguages extends KirbyCollection {
     $active = $uri->path()->first();
 
     // if there's no code available in the url, use the default language
-    if(empty($active)) $active = c::get('lang.default');
+    if(empty($active) || !in_array($active, c::get('lang.available'))) $active = c::get('lang.default');
 
     // store the current language code in the config 
     c::set('lang.current', $active);
@@ -67,6 +67,7 @@ class KirbyLanguages extends KirbyCollection {
     foreach($this->_ as $lang) {
       if($lang->isPreferred()) return $lang;
     }
+    return $this->findDefault();
   }
 
   /**

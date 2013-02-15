@@ -1,0 +1,3 @@
+Title: My content file
+----
+Text: This is a content text file

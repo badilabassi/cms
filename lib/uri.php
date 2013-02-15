@@ -116,7 +116,7 @@ class KirbyUri {
     
     $defaults = array(
       'scheme' => (isset($_SERVER['HTTPS'])) ? 'https' : 'http',
-      'host'   => $_SERVER['HTTP_HOST'],
+      'host'   => server::get('http_host'),
       'path'   => '',
       'port'   => '',
       'query'  => false,
@@ -124,7 +124,7 @@ class KirbyUri {
     
     // build the full url if not given
     if(!$url) {
-      $url = $defaults['scheme'] . '://' . $defaults['host'] . $_SERVER['REQUEST_URI'];
+      $url = $defaults['scheme'] . '://' . $defaults['host'] . server::get('request_uri');
     }
 
     $this->original = $url;                    
@@ -392,7 +392,7 @@ class KirbyUri {
     $parts[] = $this->baseurl();
     $parts[] = $this->toString($includeQuery);
 
-    return implode('/', $parts);
+    return rtrim(implode('/', $parts), '/');
   
   }
   

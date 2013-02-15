@@ -99,7 +99,7 @@ class KirbyRequest {
    */
   public function method() {
     if(!is_null($this->method)) return $this->method;
-    return $this->method = strtoupper($_SERVER['REQUEST_METHOD']);
+    return $this->method = strtoupper(server::get('request_method'));
   }
 
   /**
@@ -149,7 +149,7 @@ class KirbyRequest {
    * @param mixed
    */
   public function ip() {
-    return !empty($_SERVER['REMOTE_ADDR']) ? $_SERVER['REMOTE_ADDR'] : false;
+    return !empty($_SERVER['REMOTE_ADDR']) ? $_SERVER['REMOTE_ADDR'] : '127.0.0.1';
   }
   
   /**

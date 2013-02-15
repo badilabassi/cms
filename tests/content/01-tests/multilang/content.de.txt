@@ -1,0 +1,3 @@
+Title: My german content file
+----
+Text: This is a german text
