@@ -9,7 +9,7 @@
 
 if(!defined('DS'))    define('DS', DIRECTORY_SEPARATOR);
 if(!defined('ROOT'))  define('ROOT', dirname(__DIR__));
-if(!defined('LIB'))   define('LIB', ROOT . DS . 'kirby' . DS . 'lib');
+if(!defined('LIB'))   define('LIB', __DIR__ . DS . 'lib');
 if(!defined('KIRBY')) define('KIRBY', true);
 
 // load the kirby toolkit
