@@ -1,7 +1,6 @@
 <?php
 
 require_once('bootstrap.php');
-require_once(c::get('root.lib') . DS . 'site.php');
 
 class TestOfSite extends UnitTestCase {
 

@@ -1,7 +1,7 @@
 <?php
 
 require_once('bootstrap.php');
-require_once(c::get('root.lib') . DS . 'html' . DS . 'form.php');
+require_once(TEST_KIRBY_LIB . DS . 'html' . DS . 'form.php');
 
 class TestOfForm extends UnitTestCase {
 
