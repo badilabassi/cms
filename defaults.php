@@ -80,10 +80,10 @@ c::set(array(
    * within the kirby folder.
    */
   'root'           => ROOT,
-  'root.kirby'     => ROOT . DS . 'kirby',
-  'root.lib'       => ROOT . DS . 'kirby' . DS . 'lib',
-  'root.parsers'   => ROOT . DS . 'kirby' . DS . 'parsers',
-  'root.modals'    => ROOT . DS . 'kirby' . DS . 'modals',
+  'root.kirby'     => KIRBY,
+  'root.lib'       => KIRBY . DS . 'lib',
+  'root.parsers'   => KIRBY . DS . 'parsers',
+  'root.modals'    => KIRBY . DS . 'modals',
   'root.content'   => ROOT . DS . 'content',
   'root.site'      => ROOT . DS . 'site',
   'root.cache'     => ROOT . DS . 'site' . DS . 'cache',

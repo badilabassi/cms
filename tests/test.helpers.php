@@ -35,7 +35,6 @@ class TestOfHelpers extends UnitTestCase {
     $this->assertTrue(url('/super/nice') == $this->url . '/index.php/super/nice');
     $this->assertTrue(url('/super/nice/') == $this->url . '/index.php/super/nice');
     $this->assertTrue(url('//super/nice///') == $this->url . '/index.php/super/nice');
-    $this->assertTrue(url('index.php') == $this->url . '/index.php');
     $this->assertTrue(url() == $this->url);
 
     $this->assertTrue(url('super/nice', 'de', array(

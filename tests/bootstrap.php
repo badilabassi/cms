@@ -12,3 +12,4 @@ require_once(TEST_KIRBY_CORE . '/bootstrap.php');
 
 // Simple Test Autorun
 require_once(__DIR__ . '/simpletest/autorun.php');
+

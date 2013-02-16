@@ -9,8 +9,8 @@
 
 if(!defined('DS'))    define('DS', DIRECTORY_SEPARATOR);
 if(!defined('ROOT'))  define('ROOT', dirname(__DIR__));
-if(!defined('LIB'))   define('LIB', __DIR__ . DS . 'lib');
-if(!defined('KIRBY')) define('KIRBY', true);
+if(!defined('KIRBY')) define('KIRBY', __DIR__);
+if(!defined('LIB'))   define('LIB', KIRBY . DS . 'lib');
 
 // load the kirby toolkit
 include(LIB . DS . 'kirby.php');
