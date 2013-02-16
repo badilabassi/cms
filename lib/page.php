@@ -59,6 +59,9 @@ class KirbyPage {
   // cache for the main content file
   protected $content = null;
 
+  // cache for the default content in multi-lang sites
+  protected $defaultContent = null;
+
   /**
    * Constructor
    * 
@@ -503,7 +506,8 @@ class KirbyPage {
    * @return object KirbyContent
    */
   public function defaultContent() {
-    return $this->content(c::get('lang.default'));
+    if(!is_null($this->defaultContent)) return $this->defaultContent;
+    return $this->defaultContent = $this->contents()->filterBy('languageCode', c::get('lang.default'));
   }
 
   // Traversing
