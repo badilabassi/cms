@@ -13,7 +13,10 @@ if(!defined('KIRBY')) die('Direct access is not allowed');
  * @package Kirby CMS
  */
 class Kirbytext {
- 
+  
+  // an array with options
+  protected $options = array();
+
   // the parent KirbyPage object from the KirbyVariable (if available)
   protected $page = null;
 
@@ -69,11 +72,26 @@ class Kirbytext {
    * @param boolean $mdown true: markdown is enabled, false: markdown is disabled
    * @param boolean $smartypants true: smartypants is enabled, false: smartypants is disabled
    */
-  public function __construct($text = false, $mdown = true, $smartypants = true) {
-      
-    $this->text        = $text;  
-    $this->mdown       = $mdown;
-    $this->smartypants = $smartypants;
+  public function __construct($text = false, $params = array()) {
+  
+    $defaults = array(
+      'markdown'    => true,
+      'smartypants' => true, 
+    );
+
+    // enable legacy enabling for markdown with second param
+    // enabling smartypants with the third argument is no longer possible
+    if(is_bool($params)) {
+
+      $markdown = $params;
+      $params   = array(
+        'markdown' => $markdown
+      );
+
+    }
+
+    $this->text    = $text;  
+    $this->options = array_merge($defaults, $params);
           
     // pass the parent page if available
     if(is_a($this->text, 'KirbyVariable')) $this->page = $this->text->page();
@@ -94,12 +112,11 @@ class Kirbytext {
    * Returns a Kirbytext instance
    * 
    * @param mixed $text KirbyVariable object or string
-   * @param boolean $mdown true: markdown is enabled, false: markdown is disabled
-   * @param boolean $smartypants true: smartypants is enabled, false: smartypants is disabled
+   * @param array $options array: array('markdown' => true, 'smartypants' => true, 'widont' => true)
    */
-  static public function instance($text = false, $mdown = true, $smartypants = true) {
+  static public function instance($text = false, $options = array()) {
     $classname = self::classname();            
-    return new $classname($text, $mdown, $smartypants);    
+    return new $classname($text, $options);    
   }
   
   /**
@@ -114,9 +131,9 @@ class Kirbytext {
     $text = preg_replace_callback('!(?=[^\]])\((' . implode('|', $this->tags) . '):(.*?)\)!i', array($this, 'parse'), (string)$this->text);
     $text = preg_replace_callback('!```(.*?)```!is', array($this, 'code'), $text);
     
-    $text = ($this->mdown) ? markdown($text) : $text;
-    $text = ($this->smartypants) ? smartypants($text) : $text;
-    
+    $text = ($this->options['markdown'])    ? markdown($text)    : $text;
+    $text = ($this->options['smartypants']) ? smartypants($text) : $text;
+
     return $text;
     
   }

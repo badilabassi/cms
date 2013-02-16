@@ -261,24 +261,22 @@ function multiline($text) {
  * Shortcut for parsing a text with the Kirbytext parser
  * 
  * @param mixed $text KirbyVariable object or string
- * @param boolean $mdown true: markdown is enabled, false: markdown is disabled
- * @param boolean $smartypants true: smartypants is enabled, false: smartypants is disabled
+ * @param array $options an array of options for kirbytext: array('markdown' => true, 'smartypants' => true)
  * @return string parsed text
  */
-function kirbytext($text, $markdown = true, $smartypants = true) {
-  return Kirbytext::instance($text, $markdown, $smartypants)->get();
+function kirbytext($text, $options = array()) {
+  return Kirbytext::instance($text, $options)->get();
 }
 
 /**
  * Shortcut for parsing a text with the Kirbytext parser
  * 
  * @param mixed $text KirbyVariable object or string
- * @param boolean $mdown true: markdown is enabled, false: markdown is disabled
- * @param boolean $smartypants true: smartypants is enabled, false: smartypants is disabled
+ * @param array $options an array of options for kirbytext: array('markdown' => true, 'smartypants' => true)
  * @return string parsed text
  */
-function kt($text, $markdown = true, $smartypants = true) {
-  return Kirbytext::instance($text, $markdown, $smartypants)->get();
+function kt($text, $options = array()) {
+  return Kirbytext::instance($text, $options)->get();
 }
 
 /**
@@ -306,12 +304,11 @@ function yaml($string) {
  * 
  * @param mixed $text KirbyVariable object or string
  * @param int $length The number of characters which should be included in the excerpt
- * @param boolean $markdown If true, markdown will be parsed first before creating the excerpt
- * @param boolean $smartypants If true, smartypants will be parsed first before creating the excerpt
+ * @param array $options an array of options for kirbytext: array('markdown' => true, 'smartypants' => true)
  * @return string The shortened text
  */
-function excerpt($text, $length = 140, $markdown = true, $smartypants = true) {
-  return str::excerpt(Kirbytext::instance($text, $markdown, $smartypants)->get(), $length);
+function excerpt($text, $length = 140, $options = array()) {
+  return str::excerpt(Kirbytext::instance($text, $options)->get(), $length);
 }
 
 /**

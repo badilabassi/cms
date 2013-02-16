@@ -19,7 +19,9 @@ This is a minor-major release
 - new request API
 - new router API
 - new operators for filterBy methods (<, >, <=, >=)
-
+- new widont() helper
+- new ago() helper
+- new $page->prevInvisible(), $page->hasPrevInvisible(), $page->nextInvisible(), $page->hasNextVisible()
 
 
 
