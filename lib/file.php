@@ -69,6 +69,9 @@ class KirbyFile {
   // cache for the attached meta info object
   protected $meta = null;
   
+  // cache for the default meta file 
+  protected $defaultMeta = null;
+
   /**
    * Constructor
    * 
@@ -78,7 +81,7 @@ class KirbyFile {
   public function __construct($root, KirbyFiles $parent = null) {
     $this->root   = realpath($root);
     $this->parent = $parent;
-  }
+  } 
 
   /**
    * Setter and getter for the parent KirbyFiles object
@@ -394,7 +397,13 @@ class KirbyFile {
       if(isset($this->meta[$lang])) return $this->meta[$lang];
 
       // find the matching content file, store and return it
-      return $this->meta[$lang] = $this->metas()->filterBy('languageCode', $lang)->first();
+      $meta = $this->metas()->filterBy('languageCode', $lang)->first();
+
+      // fall back to the default language
+      if(!$meta) $meta = $this->defaultMeta();
+    
+      // store and return the meta
+      return $this->meta[$lang] = $meta;
 
     }
 
@@ -420,7 +429,8 @@ class KirbyFile {
    * @return object KirbyContent
    */
   public function defaultMeta() {
-    return $this->meta(c::get('lang.default'));
+    if(!is_null($this->defaultMeta)) return $this->defaultMeta;
+    return $this->defaultMeta = $this->metas()->filterBy('languageCode', c::get('lang.default'))->first();
   }
 
   // magic getters

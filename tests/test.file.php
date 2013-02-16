@@ -5,13 +5,13 @@ require_once('bootstrap.php');
 class TestOfFile extends UnitTestCase {
 
   function __construct() {
-    $this->filesdir = TEST_CONTENT . '/01-tests/files';
+    $this->page = site()->pages()->find('tests/files');
   }
 
   function testDocument() {
 
-    $root = $this->filesdir . '/document-01.pdf';
-    $file = new KirbyFile($root);
+    $root = $this->page->root() . '/document-01.pdf';
+    $file = $this->page->files()->find('document-01.pdf');
 
     $this->assertIsA($file, 'KirbyFile');
     $this->assertTrue($file->root() == $root);
@@ -29,8 +29,8 @@ class TestOfFile extends UnitTestCase {
 
   function testImage() {
 
-    $root = $this->filesdir . '/image-01.jpg';
-    $file = new KirbyFile($root);
+    $root = $this->page->root() . '/image-01.jpg';
+    $file = $this->page->files()->find('image-01.jpg');
 
     $this->assertIsA($file, 'KirbyFile');
     $this->assertTrue($file->root() == $root);
@@ -44,20 +44,27 @@ class TestOfFile extends UnitTestCase {
     $this->assertTrue($file->niceSize() == '433 b');
     $this->assertTrue($file->mime() == 'image/jpeg');
 
-    $image = new KirbyImage($file);
+    $this->assertIsA($file, 'KirbyImage');
+    $this->assertIsA($file->dimensions(), 'KirbyDimensions');
+    $this->assertTrue($file->mime(), 'image/jpeg');
+    $this->assertTrue($file->width() == 100);
+    $this->assertTrue($file->height() == 100);
 
-    $this->assertIsA($image, 'KirbyImage');
-    $this->assertIsA($image->dimensions(), 'KirbyDimensions');
-    $this->assertTrue($image->mime(), 'image/jpeg');
-    $this->assertTrue($image->width() == 100);
-    $this->assertTrue($image->height() == 100);
+    // test meta information of image files
+    $this->assertIsA($file->meta(), 'KirbyContent');
+    $this->assertTrue($file->hasMeta());
+    $this->assertIsA($file->title(), 'KirbyVariable');
+    $this->assertTrue($file->title() == 'Title for image-01');
+    $this->assertTrue($file->caption() == 'Caption for image-01');
+    $this->assertTrue($file->meta()->fields() == array('title', 'caption'));
+    $this->assertTrue($file->meta()->raw() == f::read($file->meta()->root()));
 
   }
 
   function testContent() {
 
-    $root = $this->filesdir . '/content.txt';
-    $file = new KirbyFile($root);
+    $root = $this->page->root() . '/content.txt';
+    $file = $this->page->files()->find('content.txt');
 
     $this->assertIsA($file, 'KirbyFile');
     $this->assertTrue($file->root() == $root);
@@ -71,14 +78,12 @@ class TestOfFile extends UnitTestCase {
     $this->assertTrue($file->niceSize() == '61 b');
     $this->assertTrue($file->mime() == 'text/plain');
 
-    $content = new KirbyContent($file);
-
-    $this->assertIsA($content, 'KirbyContent');
-    $this->assertTrue($content->raw() == f::read($content->root()));
-    $this->assertTrue(is_array($content->data()));
-    $this->assertIsA($content->title(), 'KirbyVariable');
-    $this->assertTrue($content->title() == 'My content file');
-    $this->assertTrue($content->fields() == array('title', 'text'));
+    $this->assertIsA($file, 'KirbyContent');
+    $this->assertTrue($file->raw() == f::read($file->root()));
+    $this->assertTrue(is_array($file->data()));
+    $this->assertIsA($file->title(), 'KirbyVariable');
+    $this->assertTrue($file->title() == 'My content file');
+    $this->assertTrue($file->fields() == array('title', 'text'));
 
   }
 

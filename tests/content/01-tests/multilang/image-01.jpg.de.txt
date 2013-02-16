@@ -1,0 +1,3 @@
+Title: Title for a german image-01
+----
+Caption: Caption for a german image-01

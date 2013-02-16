@@ -49,6 +49,8 @@ class TestOfMultilang extends UnitTestCase {
     $this->assertTrue((string)$p->content('en')->title() == 'My english content file');
     $this->assertTrue((string)$p->content('en')->text() == 'This is an english text');
 
+    $this->assertTrue($p->defaultContent()->languageCode() == 'en');
+
     c::set('lang.current', 'en');
 
     $this->assertTrue((string)$p->content()->title() == 'My english content file');
@@ -59,6 +61,16 @@ class TestOfMultilang extends UnitTestCase {
     $this->assertTrue((string)$p->content('de')->text() == 'This is a german text');
 
     $this->assertTrue($p->intendedTemplate() == 'content');
+
+    // multilang file meta support
+    $image = $p->images()->find('image-01.jpg');
+    $this->assertTrue($image->title() == 'Title for an english image-01');
+    $this->assertTrue($image->meta('de')->title() == 'Title for a german image-01');
+
+    c::set('lang.current', 'de');
+
+    $this->assertTrue($image->title() == 'Title for a german image-01');
+    $this->assertTrue($image->meta('en')->title() == 'Title for an english image-01');
 
     c::set('lang.support', false);
 

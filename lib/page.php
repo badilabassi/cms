@@ -480,7 +480,7 @@ class KirbyPage {
       $lang = (is_null($lang)) ? c::get('lang.current') : $lang;
 
       // in cache? 
-      if(isset($this->content[(string)$lang])) return $this->content[$lang];
+      if(isset($this->content[$lang])) return $this->content[$lang];
 
       // find the matching content file, store and return it
       $content = $this->contents()->filterBy('languageCode', $lang)->first();
@@ -507,7 +507,7 @@ class KirbyPage {
    */
   public function defaultContent() {
     if(!is_null($this->defaultContent)) return $this->defaultContent;
-    return $this->defaultContent = $this->contents()->filterBy('languageCode', c::get('lang.default'));
+    return $this->defaultContent = $this->contents()->filterBy('languageCode', c::get('lang.default'))->first();
   }
 
   // Traversing

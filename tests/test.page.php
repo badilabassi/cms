@@ -130,4 +130,14 @@ class TestOfPage extends UnitTestCase {
 
   }
 
+  /**
+   * Tests a page without any content
+   */
+  function testEmptyPage() {
+
+    $p = site()->pages()->find('tests/empty');
+    $this->assertTrue($p->title() == 'empty');
+
+  }
+
 }
