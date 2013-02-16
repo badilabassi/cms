@@ -36,6 +36,9 @@ class KirbyFiles extends KirbyCollection {
   // a cache of all other files in this collection
   protected $others = null;
 
+  // a cache of all thumb images in this collection
+  protected $thumbs = null;
+
   // a cache of all meta files in this collection
   protected $metas = null;
 
@@ -86,16 +89,25 @@ class KirbyFiles extends KirbyCollection {
 
     $contentFileExtension = c::get('content.file.extension', 'txt');
 
-    // detect all meta files
+    // detect all meta and thumb files
     foreach($this->_ as $key => $file) {
 
-      if($file->type() != 'content') continue;
+      if($file->type() == 'content') {
 
-      // try to find a matching file
-      $result = $this->get($file->name());
+        // try to find a matching file
+        $result = $this->get($file->name());
 
-      // convert the content file to a meta file
-      if($result) $file->type('meta');
+        // convert the content file to a meta file
+        if($result) $file->type('meta');
+
+      } else if($file->type() == 'image' && f::extension($file->name()) == 'thumb') {
+        
+        $name   = f::name($file->name());
+        $result = $this->get($name . '.' . $file->extension());
+
+        if($result) $file->type('thumb');
+
+      }
 
     }
 
@@ -212,6 +224,26 @@ class KirbyFiles extends KirbyCollection {
 
   /** 
    * Returns a filtered version of this collection
+   * which contains thumb images only
+   * 
+   * @return object A new KirbyFiles collection
+   */
+  public function thumbs() {
+    if(!is_null($this->thumbs)) return $this->thumbs;
+    return $this->filterBy('type', 'thumb');
+  }
+
+  /** 
+   * Checks if this collection contains thumb files
+   * 
+   * @return boolean
+   */
+  public function hasThumbs() {
+    return ($this->thumbs()->count() > 0) ? true : false;
+  }
+
+  /** 
+   * Returns a filtered version of this collection
    * which contains meta files only
    * 
    * @return object A new KirbyFiles collection
@@ -227,7 +259,7 @@ class KirbyFiles extends KirbyCollection {
    * @return boolean
    */
   public function hasMetas() {
-    return ($this->others()->count() > 0) ? true : false;
+    return ($this->metas()->count() > 0) ? true : false;
   }
 
   /** 

@@ -139,11 +139,21 @@ class KirbyImage extends KirbyFile {
 
   /**
    * Returns the attached thumb file object
+   * 
+   * @return object KirbyImage
    */
   public function thumb() {
+    if(!is_null($this->thumb)) return $this->thumb;
+    return $this->thumb = $this->parent()->thumbs()->find($this->name() . '.thumb.' . $this->extension());
+  }
 
-
-
+  /**
+   * Checks if the current file has a thumb version
+   * 
+   * @return boolean
+   */
+  public function hasThumb() {
+    return ($this->thumb()) ? true : false;
   }
 
 }

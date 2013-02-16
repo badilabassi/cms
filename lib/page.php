@@ -636,6 +636,24 @@ class KirbyPage {
   }
 
   /**
+   * Checks if this page has visible children
+   * 
+   * @return boolean 
+   */
+  public function hasVisibleChildren() {
+    return ($this->children()->visible()->count() > 0) ? true : false;        
+  }
+
+  /**
+   * Checks if this page has invisible children
+   * 
+   * @return boolean 
+   */
+  public function hasInvisibleChildren() {
+    return ($this->children()->invisible()->count() > 0) ? true : false;        
+  }
+
+  /**
    * Returns all siblings of this page
    * 
    * @return object KirbyPages 
@@ -723,6 +741,17 @@ class KirbyPage {
   }
   
   /**
+   * Returns the next invisible page in the current collection if available
+   * 
+   * @param string $sort An optional sort field for the siblings
+   * @param string $direction An optional sort direction  
+   * @return mixed KirbyPage or null  
+   */
+  public function nextInvisible($sort = false, $direction = 'asc') {
+    return $this->_next($this->siblings()->invisible(), $sort, $direction);    
+  }
+
+  /**
    * Checks if there is a next page in the collection
    * 
    * @param string $sort An optional sort field for the siblings
@@ -744,6 +773,17 @@ class KirbyPage {
     return ($this->nextVisible($sort, $direction)) ? true : false;   
   }
   
+  /**
+   * Checks if there is a next invisible page in the collection
+   * 
+   * @param string $sort An optional sort field for the siblings
+   * @param string $direction An optional sort direction  
+   * @return boolean
+   */
+  public function hasNextInvisible($sort = false, $direction = 'asc') {
+    return ($this->nextInvisible($sort, $direction)) ? true : false;   
+  }
+
   /**
    * Returns the previous page in the current collection if available
    * 
@@ -767,6 +807,17 @@ class KirbyPage {
   }
   
   /**
+   * Returns the previous invisible page in the current collection if available
+   * 
+   * @param string $sort An optional sort field for the siblings
+   * @param string $direction An optional sort direction  
+   * @return mixed KirbyPage or null  
+   */
+  public function prevInvisible($sort = false, $direction = 'asc') {
+    return $this->_prev($this->siblings()->invisible(), $sort, $direction);
+  }
+
+  /**
    * Checks if there is a previous page in the collection
    * 
    * @param string $sort An optional sort field for the siblings
@@ -786,6 +837,17 @@ class KirbyPage {
    */
   public function hasPrevVisible($sort = false, $direction = 'asc') {
     return ($this->prevVisible($sort, $direction)) ? true : false; 
+  }
+
+  /**
+   * Checks if there is a previous invisible page in the collection
+   * 
+   * @param string $sort An optional sort field for the siblings
+   * @param string $direction An optional sort direction  
+   * @return boolean
+   */
+  public function hasPrevInvisible($sort = false, $direction = 'asc') {
+    return ($this->prevInvisible($sort, $direction)) ? true : false; 
   }
 
   // state checkers

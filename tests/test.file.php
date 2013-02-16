@@ -59,6 +59,14 @@ class TestOfFile extends UnitTestCase {
     $this->assertTrue($file->meta()->fields() == array('title', 'caption'));
     $this->assertTrue($file->meta()->raw() == f::read($file->meta()->root()));
 
+    // test attached thumbs
+    $p = site()->pages()->find('tests/thumb');
+    $image = $p->images()->find('image-01.jpg');
+
+    $this->assertIsA($image->thumb(), 'KirbyImage');
+    $this->assertTrue($image->thumb()->filename() == 'image-01.thumb.jpg');
+    $this->assertTrue($image->hasThumb());
+
   }
 
   function testContent() {

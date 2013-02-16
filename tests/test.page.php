@@ -111,6 +111,11 @@ class TestOfPage extends UnitTestCase {
     $this->assertTrue($p->hasPrev());
     $this->assertTrue($p->hasNext());
 
+    $this->assertFalse($p->hasPrevVisible());
+    $this->assertTrue($p->hasPrevInvisible());
+    $this->assertTrue($p->hasNextVisible());
+    $this->assertTrue($p->hasNextInvisible());
+
   }
 
   function testDepth() {
