@@ -76,7 +76,6 @@ class KirbyLoader {
     require_once($root . DS . 'yaml.php');
     require_once($root . DS . 'kirbytext.php');
     require_once($root . DS . 'smartypants.php');
-    require_once($root . DS . 'shortcuts.php');
 
     if(c::get('markdown.extra')) {
       require_once($root . DS . 'markdown.extra.php');

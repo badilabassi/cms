@@ -206,16 +206,254 @@ function raise($message) {
   throw new KirbyException($message);
 }
 
+/**
+ * Generates a single attribute or a list of attributes
+ * 
+ * @see html::attr();
+ * @param string $name mixed string: a single attribute with that name will be generated. array: a list of attributes will be generated. Don't pass a second argument in that case. 
+ * @param string $value if used for a single attribute, pass the content for the attribute here
+ * @return string the generated html
+ */
 function attr($name, $value = null) {
-  if(is_array($name)) {
-    $attributes = array();
-    foreach($name as $key => $val) {
-      $a = attr($key, $val);
-      if($a) $attributes[] = $a;
-    }
-    return implode(' ', $attributes);
-  }  
-
-  if(empty($value)) return false;
-  return $name . '="' . $value . '"';    
+  return html::attr($name, $value);
 }  
+
+/**
+ * Creates safe html by encoding special characters
+ * 
+ * @param string $text unencoded text
+ * @return string
+ */
+function html($text) {
+  return str::html($text, false);
+}
+
+/**
+ * Shortcut for html()
+ * 
+ * @see html()
+ */
+function h($text) {
+  return html($text);
+}
+
+/**
+ * Creates safe xml by encoding special characters
+ * 
+ * @param string $text unencoded text
+ * @return string
+ */
+function xml($text) {
+  return str::xml($text);
+}
+
+/**
+ * Converts new lines to html breaks
+ * 
+ * @param string $text with new lines
+ * @return string
+ */
+function multiline($text) {
+  return nl2br(html($text));
+}
+
+/**
+ * Shortcut for parsing a text with the Kirbytext parser
+ * 
+ * @param mixed $text KirbyVariable object or string
+ * @param boolean $mdown true: markdown is enabled, false: markdown is disabled
+ * @param boolean $smartypants true: smartypants is enabled, false: smartypants is disabled
+ * @return string parsed text
+ */
+function kirbytext($text, $markdown = true, $smartypants = true) {
+  return Kirbytext::instance($text, $markdown, $smartypants)->get();
+}
+
+/**
+ * Shortcut for parsing a text with the Kirbytext parser
+ * 
+ * @param mixed $text KirbyVariable object or string
+ * @param boolean $mdown true: markdown is enabled, false: markdown is disabled
+ * @param boolean $smartypants true: smartypants is enabled, false: smartypants is disabled
+ * @return string parsed text
+ */
+function kt($text, $markdown = true, $smartypants = true) {
+  return Kirbytext::instance($text, $markdown, $smartypants)->get();
+}
+
+/**
+ * Shortcut for markdown()
+ * 
+ * @param string $text
+ * @return string parsed text
+ */
+function md($text) {
+  return markdown($text);
+}
+
+/**
+ * Parses yaml structured text
+ * 
+ * @param string $text
+ * @return string parsed text
+ */
+function yaml($string) {
+  return spyc_load(trim($string));
+}
+
+/**
+ * Creates an excerpt without html and kirbytext
+ * 
+ * @param mixed $text KirbyVariable object or string
+ * @param int $length The number of characters which should be included in the excerpt
+ * @param boolean $markdown If true, markdown will be parsed first before creating the excerpt
+ * @param boolean $smartypants If true, smartypants will be parsed first before creating the excerpt
+ * @return string The shortened text
+ */
+function excerpt($text, $length = 140, $markdown = true, $smartypants = true) {
+  return str::excerpt(Kirbytext::instance($text, $markdown, $smartypants)->get(), $length);
+}
+
+/**
+ * Embeds a Youtube video by url
+ * 
+ * @param string $url The Youtube url, ie. http://www.youtube.com/watch?v=d9NF2edxy-M
+ * @param int $width The width of the embedded video
+ * @param int $height The height of the embedded video
+ * @param string $class an additional class selector which should be added to the iframe
+ * @return string The generated html
+ */
+function youtube($url, $width = false, $height = false, $class = false) {
+  return Kirbytext::instance()->youtube(array(
+    'youtube' => $url,
+    'width'   => $width,
+    'height'  => $height,
+    'class'   => $class
+  ));
+}
+
+/**
+ * Embeds a Vimeo video by url
+ * 
+ * @param string $url The Vimeo url, ie. http://vimeo.com/52345557
+ * @param int $width The width of the embedded video
+ * @param int $height The height of the embedded video
+ * @param string $class an additional class selector which should be added to the iframe
+ * @return string The generated html
+ */
+function vimeo($url, $width = false, $height = false, $class = false) {
+  return Kirbytext::instance()->vimeo(array(
+    'vimeo'  => $url,
+    'width'  => $width,
+    'height' => $height,
+    'class'  => $class
+  ));
+}
+
+/**
+ * Embeds a flash file
+ * 
+ * @param string $url the url for the fla or swf file
+ * @param int $width
+ * @param int $height 
+ * @return string
+ */
+function flash($url, $width = false, $height = false) {
+  return Kirbytext::instance()->flash($url, $width, $height);
+}
+
+/**
+ * Generates a link to a twitter profile
+ * 
+ * @param string $username Twitter username (with or without prepended @)
+ * @param string $text Optional Link text. If not specified the username will be used
+ * @param string $title Optional link title
+ * @param string $class Optional class selector for the a tag
+ * @return string twitter link
+ */
+function twitter($username, $text = false, $title = false, $class = false) {
+  return Kirbytext::instance()->twitter(array(
+    'twitter' => $username,
+    'text'    => $text,
+    'title'   => $title,
+    'class'   => $class
+  ));
+}
+
+/**
+ * Embeds a github gist
+ * 
+ * @param string $url Gist url: i.e. https://gist.github.com/2924148
+ * @param string $file The name of a particular file from the gist, which should displayed only. 
+ * @return string
+ */
+function gist($url, $file = false) {
+  return Kirbytext::instance()->gist(array(
+    'gist' => $url,
+    'file' => $file
+  ));
+}
+
+/**
+ * The widont function makes sure that there are no 
+ * typographical widows at the end of a paragraph –
+ * that's a single word in the last line
+ * 
+ * @param string $str
+ * @return string
+ */
+function widont($str = '') {
+  return preg_replace( '|([^\s])\s+([^\s]+)\s*$|', '$1&nbsp;$2', $str);
+}
+
+
+/**
+  * displays past times in a human readble format (i.e. 2 years ago)
+  * 
+  * @param int unix timestamp
+  * @return string
+  */
+function ago($timestamp) {
+
+  if(empty($timestamp)) return time();
+  
+  $now = time();
+
+  // the timestamp must be in the past
+  if($now < $timestamp) return false;
+  
+  // intervals and translation keys
+  $periods = array('sec', 'min', 'hour', 'day', 'week', 'month', 'year');
+  $lengths = array('60','60','24','7','4.35','12');
+
+  $translation = l::get('ago', array(
+    'now'    => 'just now',
+    'sec'    => 'one second ago',
+    'secs'   => '%s seconds ago',
+    'min'    => 'one minute ago',
+    'mins'   => '%s minutes ago',
+    'hour'   => 'one hour ago',
+    'hours'  => '%s hours ago',
+    'day'    => 'yesterday',
+    'days'   => '%s days ago',
+    'week'   => 'last week',
+    'weeks'  => '%s weeks ago',
+    'month'  => 'last month',
+    'months' => '%s months ago',
+    'year'   => 'last year',
+    'years'  => '%s years ago'
+  ));
+
+  // calculate the difference between both timestamps
+  $difference = $now - $timestamp;
+    
+  for($x = 0; $difference >= $lengths[$x] && $x < count($lengths)-1; $x++) {
+    $difference /= $lengths[$x];
+  }
+  
+  $difference = round($difference);
+  if($difference != 1) $periods[$x] .= 's';
+
+  return sprintf($translation[$periods[$x]], $difference); 
+    
+}
