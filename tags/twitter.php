@@ -13,6 +13,7 @@ class KirbyTextTwitterTag extends KirbyTag {
   protected $attr = array(
     'class',
     'title',
+    'text',
     'rel',
     'target', 
     'popup',

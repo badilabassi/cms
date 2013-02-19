@@ -18,6 +18,8 @@ class KirbyTextImageTag extends KirbyTag {
     'title',
     'class',
     'link',
+    'target',
+    'rel'
   );
 
   /**
