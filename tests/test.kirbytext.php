@@ -12,16 +12,13 @@ class TestOfKirbytext extends UnitTestCase {
   function testLink() {
 
     // a
-    $link = $this->kt->link(array(
-      'link' => 'http://google.com', 
-    ));
+    $link = $this->kt->tag('link', 'http://google.com'); 
 
     $expected = '<a href="http://google.com">http://google.com</a>';
     $this->assertTrue($link == $expected);
 
     // b
-    $link = $this->kt->link(array(
-      'link' => 'http://google.com', 
+    $link = $this->kt->tag('link', 'http://google.com', array(
       'text' => 'Google'
     ));
 
@@ -29,8 +26,7 @@ class TestOfKirbytext extends UnitTestCase {
     $this->assertTrue($link == $expected);
 
     // c
-    $link = $this->kt->link(array(
-      'link'   => 'http://google.com', 
+    $link = $this->kt->tag('link', 'http://google.com', array(
       'text'   => 'Google',
       'title'  => 'Super title', 
       'class'  => 'classy', 
@@ -60,16 +56,13 @@ class TestOfKirbytext extends UnitTestCase {
   function testImage() {
 
     // a
-    $image = $this->kt->image(array(
-      'image'  => 'myimage.jpg', 
-    ));
+    $image = $this->kt->tag('image', 'myimage.jpg');
 
     $expected = '<img src="' . $this->url . '/myimage.jpg" />';
     $this->assertTrue($image == $expected);
 
     // b
-    $image = $this->kt->image(array(
-      'image'  => 'myimage.jpg', 
+    $image = $this->kt->tag('image', 'myimage.jpg', array(
       'alt'    => 'My image'
     ));
 
@@ -77,8 +70,7 @@ class TestOfKirbytext extends UnitTestCase {
     $this->assertTrue($image == $expected);
 
     // c
-    $image = $this->kt->image(array(
-      'image'  => 'myimage.jpg', 
+    $image = $this->kt->tag('image', 'myimage.jpg', array(
       'title'  => 'Super title', 
       'class'  => 'classy', 
     ));
@@ -87,8 +79,7 @@ class TestOfKirbytext extends UnitTestCase {
     $this->assertTrue($image == $expected);
 
     // d
-    $image = $this->kt->image(array(
-      'image'  => 'myimage.jpg', 
+    $image = $this->kt->tag('image', 'myimage.jpg', array(
       'title'  => 'Super title', 
       'class'  => 'classy', 
       'target' => '_parent',
@@ -99,8 +90,7 @@ class TestOfKirbytext extends UnitTestCase {
     $this->assertTrue($image == $expected);
 
     // e
-    $image = $this->kt->image(array(
-      'image'  => 'myimage.jpg', 
+    $image = $this->kt->tag('image', 'myimage.jpg', array(
       'title'  => 'Super title', 
       'class'  => 'classy', 
       'target' => '_parent',
@@ -115,16 +105,13 @@ class TestOfKirbytext extends UnitTestCase {
   function testFile() {
 
     // a
-    $file = $this->kt->file(array(
-      'file'   => 'myfile.jpg', 
-    ));
+    $file = $this->kt->tag('file', 'myfile.jpg');
 
     $expected = '<a href="' . $this->url . '/myfile.jpg">myfile.jpg</a>';
     $this->assertTrue($file == $expected);
 
     // b
-    $file = $this->kt->file(array(
-      'file'   => 'myfile.jpg', 
+    $file = $this->kt->tag('file', 'myfile.jpg', array(
       'text'   => 'What an awesome file'
     ));
 
@@ -132,8 +119,7 @@ class TestOfKirbytext extends UnitTestCase {
     $this->assertTrue($file == $expected);
 
     // c
-    $file = $this->kt->file(array(
-      'file'   => 'myfile.jpg', 
+    $file = $this->kt->tag('file', 'myfile.jpg', array(
       'text'   => 'What an awesome file', 
       'title'  => 'Super title', 
       'class'  => 'classy', 
@@ -148,62 +134,54 @@ class TestOfKirbytext extends UnitTestCase {
   function testTwitter() {
 
     // a
-    $twitter = $this->kt->twitter(array(
-      'twitter' => 'bastianallgeier'
-    ));
+    $twitter = $this->kt->tag('twitter', 'bastianallgeier');
 
-    $expected = '<a href="http://twitter.com/bastianallgeier">@bastianallgeier</a>';
+    $expected = '<a href="https://twitter.com/bastianallgeier">@bastianallgeier</a>';
     $this->assertTrue($twitter == $expected);
 
     // b
-    $twitter = $this->kt->twitter(array(
-      'twitter' => 'bastianallgeier',
-      'text'    => 'This is my twitter account'
+    $twitter = $this->kt->tag('twitter', 'bastianallgeier', array(
+      'text' => 'This is my twitter account'
     ));
 
-    $expected = '<a href="http://twitter.com/bastianallgeier">This is my twitter account</a>';
+    $expected = '<a href="https://twitter.com/bastianallgeier">This is my twitter account</a>';
     $this->assertTrue($twitter == $expected);
 
     // c
-    $twitter = $this->kt->twitter(array(
-      'twitter' => 'bastianallgeier',
+    $twitter = $this->kt->tag('twitter', 'bastianallgeier', array(
       'text'    => 'This is my twitter account', 
       'target'  => '_blank'
     ));
 
-    $expected = '<a href="http://twitter.com/bastianallgeier" target="_blank">This is my twitter account</a>';
+    $expected = '<a href="https://twitter.com/bastianallgeier" target="_blank">This is my twitter account</a>';
     $this->assertTrue($twitter == $expected);
 
     // d
-    $twitter = $this->kt->twitter(array(
-      'twitter' => 'bastianallgeier',
+    $twitter = $this->kt->tag('twitter', 'bastianallgeier', array(
       'text'    => 'This is my twitter account', 
       'target'  => '_blank',
       'rel'     => 'Twitter'
     ));
 
-    $expected = '<a href="http://twitter.com/bastianallgeier" rel="Twitter" target="_blank">This is my twitter account</a>';
+    $expected = '<a href="https://twitter.com/bastianallgeier" rel="Twitter" target="_blank">This is my twitter account</a>';
     $this->assertTrue($twitter == $expected);
 
     // e
-    $twitter = $this->kt->twitter(array(
-      'twitter' => 'bastianallgeier',
+    $twitter = $this->kt->tag('twitter', 'bastianallgeier', array(
       'text'    => 'This is my twitter account', 
       'target'  => '_blank',
       'rel'     => 'Twitter', 
       'class'   => 'twitter',
     ));
 
-    $expected = '<a href="http://twitter.com/bastianallgeier" class="twitter" rel="Twitter" target="_blank">This is my twitter account</a>';
+    $expected = '<a href="https://twitter.com/bastianallgeier" class="twitter" rel="Twitter" target="_blank">This is my twitter account</a>';
     $this->assertTrue($twitter == $expected);
 
   }
 
   function testYoutube() {
 
-    $youtube = $this->kt->youtube(array(
-      'youtube' => 'http://www.youtube.com/watch?feature=player_embedded&v=_9tHtxOCvy4',
-    ));
+    $youtube = $this->kt->tag('youtube', 'http://www.youtube.com/watch?feature=player_embedded&v=_9tHtxOCvy4');
 
     $expected = '<iframe src="http://www.youtube.com/embed/_9tHtxOCvy4" frameborder="0" webkitAllowFullScreen="true" mozAllowFullScreen="true" allowFullScreen="true" width="480" height="358"></iframe>';
     $this->assertTrue($youtube == $expected);
@@ -212,9 +190,7 @@ class TestOfKirbytext extends UnitTestCase {
 
   function testVimeo() {
 
-    $vimeo = $this->kt->vimeo(array(
-      'vimeo' => 'http://vimeo.com/52345557',
-    ));
+    $vimeo = $this->kt->tag('vimeo', 'http://vimeo.com/52345557');
 
     $expected = '<iframe src="http://player.vimeo.com/video/52345557" frameborder="0" webkitAllowFullScreen="true" mozAllowFullScreen="true" allowFullScreen="true" width="480" height="358"></iframe>';
     $this->assertTrue($vimeo == $expected);
@@ -223,9 +199,7 @@ class TestOfKirbytext extends UnitTestCase {
 
   function testGist() {
 
-    $gist = $this->kt->gist(array(
-      'gist' => 'https://gist.github.com/2924148',
-    ));
+    $gist = $this->kt->tag('gist', 'https://gist.github.com/2924148');
 
     $expected = '<script src="https://gist.github.com/2924148.js"></script>';
     $this->assertTrue($gist == $expected);

@@ -7,10 +7,8 @@ class AllTests extends TestSuite {
   function AllTests() {
 
     site(array(
-      'url'          => 'http://superurl.com', 
-      'subfolder'    => '',
-      'root.content' => TEST_CONTENT, 
-      'root.site'    => TEST_CONTENT
+      'url'       => 'http://superurl.com', 
+      'subfolder' => '',
     ));
 
     $this->TestSuite('All tests');

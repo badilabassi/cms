@@ -72,28 +72,6 @@ c::set(array(
   'currentURL' => null,
 
   /**
-   * Setup for all relevant system directories
-   * 
-   * You can overwrite them all, if you prefer
-   * a different location for particular folders.
-   * It's required though, to keep the structure
-   * within the kirby folder.
-   */
-  'root'           => ROOT,
-  'root.kirby'     => KIRBY,
-  'root.lib'       => KIRBY . DS . 'lib',
-  'root.parsers'   => KIRBY . DS . 'parsers',
-  'root.modals'    => KIRBY . DS . 'modals',
-  'root.content'   => ROOT . DS . 'content',
-  'root.site'      => ROOT . DS . 'site',
-  'root.cache'     => ROOT . DS . 'site' . DS . 'cache',
-  'root.templates' => ROOT . DS . 'site' . DS . 'templates',
-  'root.snippets'  => ROOT . DS . 'site' . DS . 'snippets',
-  'root.config'    => ROOT . DS . 'site' . DS . 'config',
-  'root.plugins'   => ROOT . DS . 'site' . DS . 'plugins',
-  'root.languages' => ROOT . DS . 'site' . DS . 'languages',
-
-  /**
    * URI of the home page
    * 
    * You can rename the content folder of the 

@@ -4,26 +4,21 @@ set_exception_handler(function($exception) {
   echo $exception->getMessage();
 });
 
-define('ROOT', $root);
-define('LIB', $rootKirby . DIRECTORY_SEPARATOR . 'lib');
+// legacy root handling
+if(!isset($roots)) {
+
+  $roots = array(
+    'root'         => $root, 
+    'root.kirby'   => $rootKirby,
+    'root.site'    => $rootSite,
+    'root.content' => $rootContent,
+  );
+
+}
 
 require(__DIR__ . DIRECTORY_SEPARATOR . 'bootstrap.php');
 
-$site = site(array(
-  'root.content'   => $rootContent,
-  'root.kirby'     => $rootKirby,
-  'root.lib'       => $rootKirby . DS . 'lib',
-  'root.parsers'   => $rootKirby . DS . 'parsers',
-  'root.modals'    => $rootKirby . DS . 'modals',
-  'root.site'      => $rootSite,
-  'root.cache'     => $rootSite . DS . 'cache',
-  'root.templates' => $rootSite . DS . 'templates',
-  'root.snippets'  => $rootSite . DS . 'snippets',
-  'root.config'    => $rootSite . DS . 'config',
-  'root.plugins'   => $rootSite . DS . 'plugins',
-  'root.languages' => $rootSite . DS . 'languages',
-));
-
+$site = site(array());
 
 $site->rewrite();
 $site->show();

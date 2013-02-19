@@ -7,29 +7,64 @@
  * files to initiate a new Kirby site
  */
 
-if(!defined('DS'))    define('DS', DIRECTORY_SEPARATOR);
-if(!defined('ROOT'))  define('ROOT', dirname(__DIR__));
-if(!defined('KIRBY')) define('KIRBY', __DIR__);
-if(!defined('LIB'))   define('LIB', KIRBY . DS . 'lib');
+// build a default roots array if not available
+if(!isset($roots)) {
+  $roots = array(
+    'root'         => dirname(__DIR__),
+    'root.kirby'   => __DIR__,
+    'root.site'    => dirname(__DIR__) . DIRECTORY_SEPARATOR . 'site',
+    'root.content' => dirname(__DIR__) . DIRECTORY_SEPARATOR . 'content'
+  );
+}
+
+// global key for direct inclusion protection
+define('KIRBY', true);
+
+// shortcut for the directory separator
+define('DS', DIRECTORY_SEPARATOR);
+
+// build constants for all roots
+define('ROOT',                $roots['root']);
+
+// the content folder
+define('ROOT_CONTENT',        $roots['root.content']);
+
+// all stuff in the main kirby folder
+define('ROOT_KIRBY',          $roots['root.kirby']);
+define('ROOT_KIRBY_LIB',      ROOT_KIRBY . DS . 'lib');
+define('ROOT_KIRBY_TAGS',     ROOT_KIRBY . DS . 'tags');
+define('ROOT_KIRBY_PARSERS',  ROOT_KIRBY . DS . 'parsers');
+define('ROOT_KIRBY_MODALS',   ROOT_KIRBY . DS . 'modals');
+
+// all stuff in the site folder
+define('ROOT_SITE',           $roots['root.site']);
+define('ROOT_SITE_CACHE',     ROOT_SITE . DS . 'cache');
+define('ROOT_SITE_TEMPLATES', ROOT_SITE . DS . 'templates');
+define('ROOT_SITE_SNIPPETS',  ROOT_SITE . DS . 'snippets');
+define('ROOT_SITE_CONFIG',    ROOT_SITE . DS . 'config');
+define('ROOT_SITE_PLUGINS',   ROOT_SITE . DS . 'plugins');
+define('ROOT_SITE_LANGUAGES', ROOT_SITE . DS . 'languages');
+define('ROOT_SITE_TAGS',      ROOT_SITE . DS . 'tags');
 
 // load the kirby toolkit
-include(LIB . DS . 'kirby.php');
+include(ROOT_KIRBY_LIB . DS . 'kirby.php');
 
+// autoloader for all classes in the lib
 function autoload($class) {
-  $file = LIB . DS . strtolower(str_replace('Kirby', '', $class)) . '.php';
+  $file = ROOT_KIRBY_LIB . DS . strtolower(str_replace('Kirby', '', $class)) . '.php';
   if(file_exists($file)) include $file;
 }
 
 spl_autoload_register('autoload');
 
 // load all default config values
-include(__DIR__ . DS . 'defaults.php');
+include(ROOT_KIRBY . DS . 'defaults.php');
 
 // load all helper functions
-include(LIB . DS . 'helpers.php');
+include(ROOT_KIRBY_LIB . DS . 'helpers.php');
 
 // load all legacy code adapters
-include(LIB . DS . 'legacy.php');
+include(ROOT_KIRBY_LIB . DS . 'legacy.php');
 
 // load the main site class
-include(LIB . DS . 'site.php');
+include(ROOT_KIRBY_LIB . DS . 'site.php');
