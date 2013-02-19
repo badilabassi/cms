@@ -904,7 +904,7 @@ class KirbyPage {
    * @return boolean
    */
   public function isErrorPage() {
-    return ($this->uri() === c::get('404')) ? true : false;    
+    return ($this->uri() === c::get('error')) ? true : false;    
   }
 
   /**

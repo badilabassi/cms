@@ -145,4 +145,40 @@ class TestOfPage extends UnitTestCase {
 
   }
 
+  function testHomePage() {
+
+    site(array(
+      'home' => 'tests'
+    ));
+
+    $this->assertTrue(site()->pages()->find('tests')->isHomePage());
+    $this->assertFalse(site()->pages()->find('home')->isHomePage());
+
+    site(array(
+      'home' => 'home'
+    ));
+
+    $this->assertTrue(site()->pages()->find('home')->isHomePage());
+    $this->assertFalse(site()->pages()->find('tests')->isHomePage());
+
+  }
+
+  function testErrorPage() {
+
+    site(array(
+      'error' => 'tests'
+    ));
+
+    $this->assertTrue(site()->pages()->find('tests')->isErrorPage());
+    $this->assertFalse(site()->pages()->find('error')->isErrorPage());
+
+    site(array(
+      'error' => 'error'
+    ));
+
+    $this->assertTrue(site()->pages()->find('error')->isErrorPage());
+    $this->assertFalse(site()->pages()->find('tests')->isErrorPage());
+
+  }
+
 }
