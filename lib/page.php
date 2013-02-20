@@ -244,7 +244,7 @@ class KirbyPage {
     if(!is_null($this->template)) return $this->template;
 
     $templateName = $this->intendedTemplate();
-    $templateFile = c::get('root.templates') . DS . $templateName . '.php';
+    $templateFile = ROOT_SITE_TEMPLATES . DS . $templateName . '.php';
 
     return $this->template = (file_exists($templateFile)) ? $templateName : c::get('tpl.default');
   
@@ -256,7 +256,7 @@ class KirbyPage {
    * @return string
    */
   public function templateFile() {
-    return c::get('root.templates') . DS . $this->template() . '.php';
+    return ROOT_SITE_TEMPLATES . DS . $this->template() . '.php';
   }
 
   /**
@@ -294,7 +294,7 @@ class KirbyPage {
    * @return string
    */
   public function intendedTemplateFile() {
-    return c::get('root.templates') . DS . $this->intendedTemplate() . '.php';
+    return ROOT_SITE_TEMPLATES . DS . $this->intendedTemplate() . '.php';
   }
 
   /**
@@ -904,7 +904,7 @@ class KirbyPage {
    * @return boolean
    */
   public function isErrorPage() {
-    return ($this->uri() === c::get('404')) ? true : false;    
+    return ($this->uri() === c::get('error')) ? true : false;    
   }
 
   /**

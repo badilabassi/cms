@@ -1,6 +1,6 @@
 #Kirby Changelog
 
-## 1.2
+## 1.5
 
 This is a minor-major release
 
@@ -22,8 +22,8 @@ This is a minor-major release
 - new widont() helper
 - new ago() helper
 - new $page->prevInvisible(), $page->hasPrevInvisible(), $page->nextInvisible(), $page->hasNextVisible()
-
-
+- new kirbytext tag handling –> sooooooo easy!
+- new improved roots and path management
 
 
 ## 1.1.2

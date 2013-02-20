@@ -166,7 +166,6 @@ class TestOfHelpers extends UnitTestCase {
     $text     = '(image: myimage.jpg link: http://google.com)';
     $result   = kirbytext($text, false);
     $expected = '<a href="http://google.com"><img src="' . $this->url . '/myimage.jpg" /></a>';
-    //dump($result);
 
     $this->assertTrue($result == $expected);
 
@@ -179,6 +178,5 @@ class TestOfHelpers extends UnitTestCase {
     $this->assertTrue($result == $expected);
 
   }
-
 
 }

@@ -4,9 +4,9 @@
 if(!defined('KIRBY')) die('Direct access is not allowed');
 
 // dependencies
-require(LIB . DS . 'uri' . DS . 'params.php');
-require(LIB . DS . 'uri' . DS . 'path.php');
-require(LIB . DS . 'uri' . DS . 'query.php');
+require(ROOT_KIRBY_LIB . DS . 'uri' . DS . 'params.php');
+require(ROOT_KIRBY_LIB . DS . 'uri' . DS . 'path.php');
+require(ROOT_KIRBY_LIB . DS . 'uri' . DS . 'query.php');
 
 /**
  * URI

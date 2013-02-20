@@ -52,7 +52,7 @@ class KirbyTemplate {
    * @return string
    */
   static public function load($template='default', $vars=array(), $return=false) {    
-    $file = c::get('root.templates') . '/' . $template . '.php';
+    $file = ROOT_SITE_TEMPLATES . '/' . $template . '.php';
     return self::loadFile($file, $vars, $return);
   }
   

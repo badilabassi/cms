@@ -8,9 +8,9 @@ if(!defined('KIRBY')) die('Direct access is not allowed');
 $modules   = (function_exists('apache_get_modules')) ? apache_get_modules() : array(); 
 $rewrite   = in_array('mod_rewrite', $modules);
 $subfolder = ltrim(dirname(server::get('script_name')), '/');
-$root      = c::get('root');
-$templates = c::get('root.templates');
-$cache     = c::get('root.cache');
+$root      = ROOT;
+$templates = ROOT_SITE_TEMPLATES;
+$cache     = ROOT_SITE_CACHE;
 
 // auto-detect the url if it is not set
 $url = (c::get('url') === false) ? c::get('scheme') . server::get('http_host') : rtrim(c::get('url'), '/');
@@ -118,16 +118,16 @@ strong {
   <?php endif ?>
 
   <dt>Root</dt>
-  <dd><?php echo c::get('root') ?></dd>
+  <dd><?php echo ROOT ?></dd>
 
   <dt>System Folder</dt>
-  <dd><?php echo c::get('root.kirby') ?></dd>
+  <dd><?php echo ROOT_KIRBY ?></dd>
 
   <dt>Content Folder</dt>
-  <dd><?php echo c::get('root.content') ?></dd>
+  <dd><?php echo ROOT_CONTENT ?></dd>
 
   <dt>Site Folder</dt>
-  <dd><?php echo c::get('root.site') ?></dd>
+  <dd><?php echo ROOT_SITE ?></dd>
 
   <dt>Templates Folder</dt>
   <?php if(is_dir($templates)): ?>
@@ -182,13 +182,13 @@ strong {
   <dd><?php echo $_SERVER['SERVER_SOFTWARE'] ?></dd>
 
   <dt>Installed Plugins</dt>
-  <dd><?php a::show(dir::read(c::get('root.plugins'))) ?></dd>
+  <dd><?php a::show(dir::read(ROOT_SITE_PLUGINS)) ?></dd>
     
   <dt>Installed Snippets</dt>
-  <dd><?php a::show(dir::read(c::get('root.snippets'))) ?></dd>
+  <dd><?php a::show(dir::read(ROOT_SITE_SNIPPETS)) ?></dd>
 
   <dt>Your config files</dt>
-  <dd><?php a::show(dir::read(c::get('root.site') . '/config')) ?></dd>
+  <dd><?php a::show(dir::read(ROOT_SITE_CONFIG)) ?></dd>
     
   <dt>Your entire config</dt>
   <dd><?php a::show(c::get()) ?></dd>

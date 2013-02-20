@@ -21,7 +21,7 @@ class Cache {
    * @return  string  Returns the full path
    */
   static function file($file) {
-    return c::get('root.cache') . DS . $file;
+    return ROOT_SITE_CACHE . DS . $file;
   }
   
   /**
@@ -69,9 +69,8 @@ class Cache {
     * Removes all files from the cache directory
     */ 
   static function flush() {
-    $root = c::get('root.cache');
-    if(!is_dir($root)) return $root;
-    dir::clean($root);  
+    if(!is_dir(ROOT_SITE_CACHE)) return ROOT_SITE_CACHE;
+    dir::clean(ROOT_SITE_CACHE);  
   }
   
   /** 

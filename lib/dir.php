@@ -101,10 +101,10 @@ class KirbyDir {
     
     if(!is_null($this->uri)) return $this->uri;
 
-    if(c::get('root') == DS) {
+    if(ROOT == DS) {
       $this->uri = ltrim($this->root, DS);
     } else {
-      $this->uri = ltrim(str_replace(c::get('root'), '', $this->root), DS);
+      $this->uri = ltrim(str_replace(ROOT, '', $this->root), DS);
     }
 
     $this->uri = str_replace(DS, '/', $this->uri);
@@ -119,7 +119,7 @@ class KirbyDir {
   private function scan() {
 
     // dependencies
-    require_once(LIB . DS . 'cache' . DS . 'structure.php');
+    require_once(ROOT_KIRBY_LIB . DS . 'cache' . DS . 'structure.php');
 
     $this->files    = array();
     $this->children = array();

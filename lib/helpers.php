@@ -4,9 +4,9 @@
 if(!defined('KIRBY')) die('Direct access is not allowed');
 
 // dependencies
-require_once(LIB . DS . 'html' . DS . 'html.php');
-require_once(LIB . DS . 'html' . DS . 'form.php');
-require_once(LIB . DS . 'html' . DS . 'embed.php');
+require_once(ROOT_KIRBY_LIB . DS . 'html' . DS . 'html.php');
+require_once(ROOT_KIRBY_LIB . DS . 'html' . DS . 'form.php');
+require_once(ROOT_KIRBY_LIB . DS . 'html' . DS . 'embed.php');
 
 /**
  * Main URL builder
@@ -117,7 +117,7 @@ function notFound() {
  * @return string
  */ 
 function snippet($snippet, $data=array(), $return=false) {
-  return KirbyTemplate::loadFile(c::get('root.snippets') . DS . $snippet . '.php', $data, $return);
+  return KirbyTemplate::loadFile(ROOT_SITE_SNIPPETS . DS . $snippet . '.php', $data, $return);
 }
 
 /**
@@ -321,11 +321,10 @@ function excerpt($text, $length = 140, $options = array()) {
  * @return string The generated html
  */
 function youtube($url, $width = false, $height = false, $class = false) {
-  return Kirbytext::instance()->youtube(array(
-    'youtube' => $url,
-    'width'   => $width,
-    'height'  => $height,
-    'class'   => $class
+  return Kirbytext::instance()->tag('youtube', $url, array(
+    'width'  => $width,
+    'height' => $height,
+    'class'  => $class
   ));
 }
 
@@ -339,8 +338,7 @@ function youtube($url, $width = false, $height = false, $class = false) {
  * @return string The generated html
  */
 function vimeo($url, $width = false, $height = false, $class = false) {
-  return Kirbytext::instance()->vimeo(array(
-    'vimeo'  => $url,
+  return Kirbytext::instance()->tag('vimeo', $url, array(
     'width'  => $width,
     'height' => $height,
     'class'  => $class
@@ -356,7 +354,10 @@ function vimeo($url, $width = false, $height = false, $class = false) {
  * @return string
  */
 function flash($url, $width = false, $height = false) {
-  return Kirbytext::instance()->flash($url, $width, $height);
+  return Kirbytext::instance()->tag('flash', $url, array(
+    'width'  => $width, 
+    'height' => $height
+  ));
 }
 
 /**
@@ -369,8 +370,7 @@ function flash($url, $width = false, $height = false) {
  * @return string twitter link
  */
 function twitter($username, $text = false, $title = false, $class = false) {
-  return Kirbytext::instance()->twitter(array(
-    'twitter' => $username,
+  return Kirbytext::instance()->tag('twitter', $username, array(
     'text'    => $text,
     'title'   => $title,
     'class'   => $class
@@ -385,8 +385,7 @@ function twitter($username, $text = false, $title = false, $class = false) {
  * @return string
  */
 function gist($url, $file = false) {
-  return Kirbytext::instance()->gist(array(
-    'gist' => $url,
+  return Kirbytext::instance()->tag('gist', $url, array(
     'file' => $file
   ));
 }

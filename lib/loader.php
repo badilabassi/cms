@@ -20,13 +20,10 @@ class KirbyLoader {
    * @param array $config Additional config variables to merge into the loaded configuration
    */
   public function config($late = array()) {
-    
-    // the root of all custom config files
-    $root = c::get('root.config');
-    
+        
     // load custom config files
-    $this->file($root . DS . 'config.php');
-    $this->file($root . DS . 'config.' . server::get('server_name') . '.php');
+    $this->file(ROOT_SITE_CONFIG . DS . 'config.php');
+    $this->file(ROOT_SITE_CONFIG . DS . 'config.' . server::get('server_name') . '.php');
 
     // get all config options that have been stored so far
     $defaults = c::get();
@@ -46,8 +43,7 @@ class KirbyLoader {
    */
   public function plugins($folder=false) {
 
-    $root   = c::get('root.plugins');
-    $folder = ($folder) ? $folder : $root;
+    $folder = ($folder) ? $folder : ROOT_SITE_PLUGINS;
     $files  = dir::read($folder);
 
     if(!is_array($files)) return false;
@@ -70,17 +66,14 @@ class KirbyLoader {
    * Loads all text parsers
    */
   public function parsers() {
-    
-    $root = c::get('root.parsers');
-
-    require_once($root . DS . 'yaml.php');
-    require_once($root . DS . 'kirbytext.php');
-    require_once($root . DS . 'smartypants.php');
+  
+    require_once(ROOT_KIRBY_PARSERS . DS . 'yaml.php');
+    require_once(ROOT_KIRBY_PARSERS . DS . 'smartypants.php');
 
     if(c::get('markdown.extra')) {
-      require_once($root . DS . 'markdown.extra.php');
+      require_once(ROOT_KIRBY_PARSERS . DS . 'markdown.extra.php');
     } else {
-      require_once($root . DS . 'markdown.php');    
+      require_once(ROOT_KIRBY_PARSERS . DS . 'markdown.php');    
     }
     
   }
@@ -89,9 +82,8 @@ class KirbyLoader {
    * Loads custom language files
    */
   public function language() {
-    $root    = c::get('root.languages');
-    $default = $root . DS . c::get('lang.default') . '.php';    
-    $current = $root . DS . c::get('lang.current') . '.php';    
+    $default = ROOT_SITE_LANGUAGES . DS . c::get('lang.default') . '.php';    
+    $current = ROOT_SITE_LANGUAGES . DS . c::get('lang.current') . '.php';    
     
     $this->file($default);
     $this->file($current);

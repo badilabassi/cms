@@ -89,7 +89,7 @@ class KirbySite extends KirbyPage {
     $this->load()->config($params);
 
     // initiate the page object with the given root    
-    parent::__construct(c::get('root.content'));
+    parent::__construct(ROOT_CONTENT);
 
     $this->plugins()->add('router', new KirbyRouter($this));
     $this->plugins()->add('request', new KirbyRequest());
@@ -143,7 +143,7 @@ class KirbySite extends KirbyPage {
     
     if(!c::get('troubleshoot')) return false;
 
-    require(c::get('root.modals') . DS . 'troubleshoot.php');
+    require(ROOT_KIRBY_MODALS . DS . 'troubleshoot.php');
     exit();
   
   }
@@ -408,7 +408,7 @@ class KirbySite extends KirbyPage {
    */
   public function toHtml($echo = false) {
 
-    require_once(LIB . DS . 'cache' . DS . 'html.php');
+    require_once(ROOT_KIRBY_LIB . DS . 'cache' . DS . 'html.php');
 
     $page  = $this->activePage();
     $cache = new KirbyHTMLCache($this, $page);
@@ -549,7 +549,7 @@ class KirbySite extends KirbyPage {
     if(!is_dir($this->root)) raise('The content directory is not readable');
 
     // check for an existing site directory
-    if(!is_dir(c::get('root.site'))) raise('The site directory is not readable');
+    if(!is_dir(ROOT_SITE)) raise('The site directory is not readable');
 
     // check for a proper phpversion
     if(floatval(phpversion()) < 5.2) raise('Please upgrade to PHP 5.2 or higher');
