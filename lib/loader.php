@@ -50,7 +50,7 @@ class KirbyLoader {
     
     foreach($files as $file) {
       
-      if(is_dir($folder . DS . $file) && $folder == $root) {
+      if(is_dir($folder . DS . $file) && $folder == ROOT_SITE_PLUGINS) {
         $this->plugins($folder . DS . $file);
         continue;
       }

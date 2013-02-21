@@ -1,6 +1,17 @@
 <?php
 
+/**
+ * Kirby System file
+ * This is used by the index.php to load the bootstrapper 
+ * and initialize the site. It also makes sure to be compatible
+ * with old index.php files from recent versions
+ * 
+ * @package Kirby CMS
+ */
+
+// handle thrown exceptions and display a nice error page
 set_exception_handler(function($exception) {
+  // TODO: add a nice error page here
   echo $exception->getMessage();
 });
 
@@ -16,9 +27,11 @@ if(!isset($roots)) {
 
 }
 
+// load the bootstrapper
 require(__DIR__ . DIRECTORY_SEPARATOR . 'bootstrap.php');
 
-$site = site(array());
+// initialize the site for the first time
+$site = site();
 
 $site->rewrite();
 $site->show();

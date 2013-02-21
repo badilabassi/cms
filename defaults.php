@@ -196,6 +196,13 @@ c::set(array(
   'kirbytext.video.height' => 358,
 
   /**
+   * Markdown automatically wraps single images in a new line
+   * with p tags. You can manually switch that behavior 
+   * off with this parameter. 
+   */
+  'kirbytext.unwrapImages' => false,
+
+  /**
     * Tiny url setup
     */
   'tinyurl.enabled' => true,

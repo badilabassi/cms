@@ -96,7 +96,7 @@ class Kirbytext {
     $text = ($this->options['smartypants']) ? smartypants($text) : $text;
 
     // unwrap single images, which are wrapped with p elements
-    $text = preg_replace('!\<p>(<img.*?\/>)<\/p>!', '$1', $text);
+    if(c::get('kirbytext.unwrapImages')) $text = preg_replace('!\<p>(<img.*?\/>)<\/p>!', '$1', $text);
 
     return $text;
     
@@ -119,7 +119,7 @@ class Kirbytext {
     $class = $this->tagclass($name);
 
     // if the class is not available, return the entire tag
-    if(!$class) return $args;
+    if(!$class) return $tag;
 
     // initialize the tag class
     $object = new $class(array(
