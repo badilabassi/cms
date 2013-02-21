@@ -1,4 +1,4 @@
-# New Kirby Core
+# New Kirby Core [![Build Status](https://travis-ci.org/kirbycms/core.png)](https://travis-ci.org/kirbycms/core)
 
 ## DISLCAIMER
 
