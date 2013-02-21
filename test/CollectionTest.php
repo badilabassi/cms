@@ -90,13 +90,10 @@ class CollectionTest extends PHPUnit_Framework_TestCase {
     $this->assertInstanceOf('KirbyCollection', $this->collection->shuffle());
     
     $this->isUntouched();
-    
-    // filter (not working in PHP 5.2)
-    /*
-    $filtered = $this->collection->filter(function($element) {
-      return ($element == 'My second element') ? true : false;
-    });
-    */
+
+    $func = create_function('$element', 'return ($element == "My second element") ? true : false;');
+
+    $filtered = $this->collection->filter($func);
     
     $this->assertEquals('My second element', $filtered->first());
     $this->assertEquals('My second element', $filtered->last());
