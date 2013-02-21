@@ -19,6 +19,9 @@ class KirbyRouter {
   // the parent site object
   protected $site = null;
 
+  // found arguments
+  protected $args = array();
+
   /**
    * Constructor
    * 
@@ -63,25 +66,14 @@ class KirbyRouter {
     $method = $this->site->request()->method();
     
     foreach($this->routes as $key => $route) {  
-          
+      
       if(!in_array($method, $route->methods())) continue;
       
-      $args  = array();
-      $regex = preg_replace_callback(
-        '#@([\w]+)(:([^/\(\)]*))?#',
-        function($matches) use (&$args) {
-          $args[$matches[1]] = null;
-          if(isset($matches[3])) {
-            return '(?P<'.$matches[1].'>'.$matches[3].')';
-          }
-          return '(?P<'.$matches[1].'>[^/\?]+)';
-        },
-        $key
-      );
+      $regex = preg_replace_callback('#@([\w]+)(:([^/\(\)]*))?#', array($this, 'match'), $key);
       
       if(preg_match('#^'.$regex.'(?:\?.*)?$#i', $path, $matches)) {
 
-        foreach($args as $k => $v) {
+        foreach($this->args as $k => $v) {
           $route->params($k, (array_key_exists($k, $matches)) ? urldecode($matches[$k]) : null);
         }
 
@@ -92,6 +84,16 @@ class KirbyRouter {
     }
     
     return false;    
+
+  }
+
+  protected function match($matches) {
+
+    $this->args[$matches[1]] = null;
+    if(isset($matches[3])) {
+      return '(?P<'.$matches[1].'>'.$matches[3].')';
+    }
+    return '(?P<'.$matches[1].'>[^/\?]+)';
 
   }
 
