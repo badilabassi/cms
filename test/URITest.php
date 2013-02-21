@@ -24,7 +24,6 @@ class URITest extends PHPUnit_Framework_TestCase {
     $this->assertEquals('superurl.com', $this->uri->host());
     $this->assertEquals($this->url, $this->uri->original());
     $this->assertEquals('http://superurl.com/mysubfolder', $this->uri->baseurl());
-    $this->assertEquals('php', $this->uri->extension()); // ???
     $this->assertEquals('fantastic/path', (string)$this->uri->path());
     $this->assertEquals('fantastic/path', $this->uri->toString());
     $this->assertEquals($this->uri->url(), $this->uri->toURL());
@@ -37,6 +36,9 @@ class URITest extends PHPUnit_Framework_TestCase {
     $this->uri->set($url);
     $this->assertEquals($this->uri->original(), $url);
     
+    // check for a php extension
+    $this->assertEquals('php', $this->uri->extension()); // ???
+
     // strip the path
     $this->uri->stripPath();
     $this->assertEquals(null, $this->uri->path(1));

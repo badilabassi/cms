@@ -27,8 +27,8 @@ class SiteTest extends PHPUnit_Framework_TestCase {
   public function testMethods() {
     $this->assertInstanceOf('KirbyPages', $this->site->children());
     $this->assertInstanceOf('KirbyPages', $this->site->pages());
-    $this->assertEquals(6, $this->site->children()->count());
-    $this->assertEquals(6, $this->site->pages()->count());
+    $this->assertEquals(3, $this->site->children()->count());
+    $this->assertEquals(3, $this->site->pages()->count());
     $this->assertEquals('tests', $this->site->pages()->first()->uid());
     $this->assertEquals('home', $this->site->pages()->last()->uid());
     $this->assertInstanceOf('KirbyLoader', $this->site->load());
@@ -45,7 +45,7 @@ class SiteTest extends PHPUnit_Framework_TestCase {
     $this->assertInstanceOf('KirbyPage', $this->site->errorPage());
     $this->assertEquals('tests', $this->site->activePage()->uid());
     $this->assertInstanceOf('KirbyPages', $this->site->breadcrumb());
-    $this->assertFalse($this->site->hasPlugins('testplugin'));
+    //$this->assertFalse($this->site->hasPlugins('testplugin'));
   }
   
   public function testSiteData() {
