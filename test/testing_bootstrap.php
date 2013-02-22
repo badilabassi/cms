@@ -15,7 +15,11 @@ $roots = array(
 // include the kirby bootstrapper file
 require_once(TEST_KIRBY_CORE . '/bootstrap.php');
 
-site(array(
-  'url'       => 'http://superurl.com', 
-  'subfolder' => '',
-));
+try {
+  site(array(
+    'url'       => 'http://superurl.com', 
+    'subfolder' => '',
+  ));
+} catch(KirbyException $e) {
+  echo $e->getMessage();
+}
