@@ -23,3 +23,6 @@ try {
 } catch(KirbyException $e) {
   echo $e->getMessage();
 }
+
+// Information about the testing tool
+echo "\033[0;34m  ==> Did you know? There's a fancy testing tool called \033[31mkirbytest \033[34myou can use instead of plain PHPUnit:\n      Simply run \033[0;32mtest/bin/kirbytest\n\n\033[0m";
