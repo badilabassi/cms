@@ -5,14 +5,14 @@
  * Kirbytest
  * A CLI to test the Kirby core. Use this for developing Kirby.
  *
- * @version 1.0
+ * @version 1.0.1
  * @author Lukas Bestle <http://lu-x.me>
  * @link https://github.com/kirbycms/core
  * @copyright Copyright 2013 Lukas Bestle
  * @license http://www.opensource.org/licenses/mit-license.php MIT License
  */
 
-$version = '1.0';
+$version = '1.0.1';
 
 $rockmsg = (on_travis())? "\n\033[0;32mThanks Travis CI for this great service, you rock!" : "\n\033[0;32mThanks for helping developing \033[0;31mKirby\033[0;32m, you rock!";
 echo "\033[0;34mWelcome to \033[0;31mkirbytest \033[0;36mv$version\033[0;34m.\033[0m$rockmsg\n\n\033[0m";
@@ -108,7 +108,7 @@ switch($arguments['task']) {
 		// Get information about run time and memory usage
 		if(preg_match('{Time: ([0-9]*?) seconds, Memory: (.*?)Mb}', $results['output'], $matches)) {
 			$plural = ($matches[1] == 1)? '': 's';
-			$time = "\033[0m  ==> \033[32mTesting took \033[0;34m{$matches[2]}MB\033[32m in \033[0;34m{$matches[1]}\033[32m second$plural.\033[0m\n";
+			$time = "\033[0m  ==> \033[32mTesting took \033[0;34m{$matches[2]}MB\033[32m of RAM in \033[0;34m{$matches[1]}\033[32m second$plural.\033[0m\n";
 		} else {
 			$time = '';
 		}
