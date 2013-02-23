@@ -1,6 +1,6 @@
 <?php
 
-require_once('testing_bootstrap.php');
+require_once('lib/testing_bootstrap.php');
 require_once(TEST_KIRBY_LIB . DS . 'html' . DS . 'html.php');
 require_once(TEST_KIRBY_LIB . DS . 'html' . DS . 'embed.php');
 require_once(TEST_KIRBY_LIB . DS . 'html' . DS . 'form.php');

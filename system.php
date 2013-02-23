@@ -28,7 +28,7 @@ if(!isset($roots)) {
 }
 
 // load the bootstrapper
-require(__DIR__ . DIRECTORY_SEPARATOR . 'bootstrap.php');
+require(dirname(__FILE__) . DIRECTORY_SEPARATOR . 'bootstrap.php');
 
 // initialize the site for the first time
 $site = site();

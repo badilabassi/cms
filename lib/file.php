@@ -267,9 +267,13 @@ class KirbyFile {
    */
   public function mime() {
     if(!is_null($this->mime)) return $this->mime;
-    
-    if(function_exists('mime_content_type')) {
-      $mime = @mime_content_type($this->root);
+
+    if(function_exists('finfo_file')) {
+      $finfo = finfo_open(FILEINFO_MIME_TYPE);
+      $mime = finfo_file($finfo, $this->root);
+      finfo_close($finfo);
+    } else if(function_exists('mime_content_type') && $mime = @mime_content_type($this->root) !== false) {
+      // The mime type has already been set by the if statement!
     } else {
       // get the matching fileinfo for the extension
       $info = a::get(c::get('fileinfo'), $this->extension(), array());
@@ -278,6 +282,8 @@ class KirbyFile {
       $mime = @$info['mime'];
 
     }
+
+    if($mime == null) $mime = false;
 
     return $this->mime = $mime;
 

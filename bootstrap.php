@@ -10,10 +10,10 @@
 // build a default roots array if not available
 if(!isset($roots)) {
   $roots = array(
-    'root'         => dirname(__DIR__),
-    'root.kirby'   => __DIR__,
-    'root.site'    => dirname(__DIR__) . DIRECTORY_SEPARATOR . 'site',
-    'root.content' => dirname(__DIR__) . DIRECTORY_SEPARATOR . 'content'
+    'root'         => dirname(dirname(__FILE__)),
+    'root.kirby'   => dirname(__FILE__),
+    'root.site'    => dirname(dirname(__FILE__)) . DIRECTORY_SEPARATOR . 'site',
+    'root.content' => dirname(dirname(__FILE__)) . DIRECTORY_SEPARATOR . 'content'
   );
 }
 

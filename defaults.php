@@ -341,30 +341,36 @@ c::set(array(
    */
   'fileinfo' => array(
 
+    // content files
+    'txt'      => array('type' => 'content', 'mime' => 'text/plain'),
+    'mdown'    => array('type' => 'content', 'mime' => 'text/plain'),
+    'md'       => array('type' => 'content', 'mime' => 'text/plain'),
+    'markdown' => array('type' => 'content', 'mime' => 'text/plain'),
+
     // images
-    'jpg'   => array('type' => 'image', 'mime' => 'image/jpeg'),
-    'jpeg'  => array('type' => 'image', 'mime' => 'image/jpeg'),
-    'gif'   => array('type' => 'image', 'mime' => 'image/gif'),
-    'png'   => array('type' => 'image', 'mime' => 'image/png'),
+    'jpg'      => array('type' => 'image', 'mime' => 'image/jpeg'),
+    'jpeg'     => array('type' => 'image', 'mime' => 'image/jpeg'),
+    'gif'      => array('type' => 'image', 'mime' => 'image/gif'),
+    'png'      => array('type' => 'image', 'mime' => 'image/png'),
 
     // documents
-    'pdf'   => array('type' => 'document', 'mime' => 'application/pdf'),
-    'doc'   => array('type' => 'document', 'mime' => 'application/msword'),
-    'xls'   => array('type' => 'document', 'mime' => 'application/msexcel'),
-    'ppt'   => array('type' => 'document', 'mime' => 'application/mspowerpoint'),
+    'pdf'      => array('type' => 'document', 'mime' => 'application/pdf'),
+    'doc'      => array('type' => 'document', 'mime' => 'application/msword'),
+    'xls'      => array('type' => 'document', 'mime' => 'application/msexcel'),
+    'ppt'      => array('type' => 'document', 'mime' => 'application/mspowerpoint'),
 
     // videos
-    'mov'   => array('type' => 'video', 'mime' => 'video/quicktime'),
-    'avi'   => array('type' => 'video', 'mime' => 'video/avi'),
-    'ogg'   => array('type' => 'video', 'mime' => 'video/ogg'),
-    'ogv'   => array('type' => 'video', 'mime' => 'video/ogg'),
-    'webm'  => array('type' => 'video', 'mime' => 'video/webm'),
-    'flv'   => array('type' => 'video', 'mime' => 'video/x-flv'),
-    'swf'   => array('type' => 'video', 'mime' => 'application/x-shockwave-flash'),
-    'mp4'   => array('type' => 'video', 'mime' => 'video/mp4'),
+    'mov'      => array('type' => 'video', 'mime' => 'video/quicktime'),
+    'avi'      => array('type' => 'video', 'mime' => 'video/avi'),
+    'ogg'      => array('type' => 'video', 'mime' => 'video/ogg'),
+    'ogv'      => array('type' => 'video', 'mime' => 'video/ogg'),
+    'webm'     => array('type' => 'video', 'mime' => 'video/webm'),
+    'flv'      => array('type' => 'video', 'mime' => 'video/x-flv'),
+    'swf'      => array('type' => 'video', 'mime' => 'application/x-shockwave-flash'),
+    'mp4'      => array('type' => 'video', 'mime' => 'video/mp4'),
 
     // sounds
-    'mp3'   => array('type' => 'sound', 'mime' => 'audio/mp3'),
+    'mp3'      => array('type' => 'sound', 'mime' => 'audio/mp3'),
 
   ),
 

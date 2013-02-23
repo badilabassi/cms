@@ -1,6 +1,6 @@
 <?php
 
-require_once('testing_bootstrap.php');
+require_once('lib/testing_bootstrap.php');
 
 class CustomObject extends KirbyObject {
   function setUsername($value) {

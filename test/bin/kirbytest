@@ -1,0 +1,309 @@
+#!/usr/bin/env php
+<?php
+
+/**
+ * Kirbytest
+ * A CLI to test the Kirby core. Use this for developing Kirby.
+ *
+ * @version 1.0.1
+ * @author Lukas Bestle <http://lu-x.me>
+ * @link https://github.com/kirbycms/core
+ * @copyright Copyright 2013 Lukas Bestle
+ * @license http://www.opensource.org/licenses/mit-license.php MIT License
+ */
+
+$version = '1.0.1';
+
+$rockmsg = (on_travis())? "\n\033[0;32mThanks Travis CI for this great service, you rock!" : "\n\033[0;32mThanks for helping developing \033[0;31mKirby\033[0;32m, you rock!";
+echo "\033[0;34mWelcome to \033[0;31mkirbytest \033[0;36mv$version\033[0;34m.\033[0m$rockmsg\n\n\033[0m";
+
+// ============================
+// Check requirements
+// ============================
+if(!command_exists('phpunit')) {
+	fail("\033[0;31m!! You don't have \033[0;32mPHPUnit\033[0;31m installed. \033[0;32mPHPUnit\033[0;31m is the testing framework Kirby uses.\n   You can install it like this:\n     \033[0;34mpear config-set auto_discover 1\033[0;31m\n     \033[0;34mpear install pear.phpunit.de/PHPUnit\033[0;31m\n");
+}
+
+// ============================
+// Parse the arguments
+// ============================
+$arguments = array(
+	'task'    => null,
+	'options' => array(),
+	'toggles' => array()
+);
+
+foreach(array_slice($argv, 1) as $argument) {
+	if(substr($argument, 0, 1) == '-') {
+		if(substr($argument, 0, 2) == '--') $argument = '-' . substr($argument, 2, 1);
+		
+		if(in_array($toggle = substr($argument, 1), $arguments['toggles'])) continue;
+		
+		$arguments['toggles'][] = $toggle;
+	} else if($arguments['task'] === null) {
+		$arguments['task'] = $argument;
+	} else {
+		$arguments['options'][] = $argument;
+	}
+}
+
+// ============================
+// Check if CLI is installed
+// ============================
+if(strpos(__FILE__, "test" . DIRECTORY_SEPARATOR . "bin" . DIRECTORY_SEPARATOR) !== false && $arguments['task'] != 'install' && !on_travis()) {
+	echo "\033[0;31m!\033[0;34m You can install \033[0;31mkirbytest\033[0;34m to make it available globally using\n    kirbytest install\n\n";
+}
+
+// ============================
+// Get the root testing path
+// ============================
+if($arguments['task'] == 'test' || $arguments['task'] == 'report') {
+	$path = realpath('.');
+	while(!file_exists($path . DIRECTORY_SEPARATOR . 'phpunit.xml') && !file_exists($path . DIRECTORY_SEPARATOR . '.travis.yml') && !file_exists($path . DIRECTORY_SEPARATOR . 'bootstrap.php')) {
+		$path = realpath($path . DIRECTORY_SEPARATOR . '..');
+		
+		if($path === false || $path === DIRECTORY_SEPARATOR) fail("\033[0;31m!! You are not in a Kirby core repository or a subfolder of it.\n");
+	}
+	
+	// Echo some information
+	echo "\033[0;1mDetermined the \033[0;31mKirby\033[0m\033[1m root: \033[0;34m" . $path . "\033[0m\033[1m.\n\n";
+}
+
+// ============================
+// Determine the task
+// ============================
+switch($arguments['task']) {
+	case 'test':
+		echo "\033[0m\033[1mTesting \033[0;31mKirby\033[0m\033[1m...\n";
+		
+		// Run the tests
+		$results = phpunit("--debug");
+		
+		$errors = array();
+		
+		// Match all failures and errors
+		preg_match("{There [^\n]*? (?:failures?|errors?):\n\n(.*?)\nFAILURES!}s", $results['output'], $failedMatches);
+		if(isset($failedMatches[1])) {
+			preg_match_all("{[0-9]\) ([^\n]*?::[^\n]*?)\n(.*?)\n\n(.*?):(.*?)\n}s", $failedMatches[1], $failedMatches, PREG_SET_ORDER);
+			
+			foreach($failedMatches as $match) {
+				$errors[$match[1]] = array('file' => $match[3], 'line' => $match[4], 'error' => $match[2]);
+			}
+		}
+		
+		// Match all tests and display results
+		preg_match_all('{Starting test \'(.*?)\'\.\n([.EF])}', $results['output'], $allMatches, PREG_SET_ORDER);
+		foreach($allMatches as $match) {
+			if($match[2] == '.') {
+				if(in_array('d', $arguments['toggles'])) echo " \033[0;32m✔ {$match[1]}\033[0m\n";
+			} else {
+				$error = $errors[$match[1]];
+				
+				$desc = ($match[2] == 'E')? 'Error' : 'Failure';
+				
+				echo " \033[0;31m✘ {$match[1]}\033[0;31m\n    " . $desc . " \033[0;33min \033[34m" . $error['file'] . "\033[33m at line \033[34m" . $error['line'] . "\033[33m:\033[0m\n      " . str_replace("\n", "\n      ", $error['error']) . "\n";
+			}
+		}
+		
+		// Get information about run time and memory usage
+		if(preg_match('{Time: ([0-9]*?) seconds, Memory: (.*?)Mb}', $results['output'], $matches)) {
+			$plural = ($matches[1] == 1)? '': 's';
+			$time = "\033[0m  ==> \033[32mTesting took \033[0;34m{$matches[2]}MB\033[32m of RAM in \033[0;34m{$matches[1]}\033[32m second$plural.\033[0m\n";
+		} else {
+			$time = '';
+		}
+		
+		if(preg_match('{FAILURES!\nTests: (?P<tests>[0-9]*?), Assertions: (?P<asserts>[0-9]*?)(?:, Failures: (?P<fails>[0-9]*?))?(?:, Errors: (?P<errors>[0-9]*?))?\.}', $results['output'], $matches)  && $results['returnval'] != 0) {
+			$errored = (isset($matches['errors']))? "\033[0;34m" . $matches['errors'] . "\033[0;31m errored" : "";
+			$failed = (isset($matches['fails']))? "\033[0;34m" . $matches['fails'] . "\033[0;31m failed" : "";
+			
+			if($errored != "" && $failed != "") $failed .= " and ";
+			
+			fail("\n$time  ==>\033[0;31m Ran \033[0;34m" . $matches['tests'] . "\033[0;31m tests with \033[0;34m" . $matches['asserts'] . "\033[0;31m assertions, but $failed$errored.\n");
+		} else if(preg_match('{OK \(([0-9]*?) tests, ([0-9]*?) assertions\)}', $results['output'], $matches) && $results['returnval'] == 0) {
+			echo "\n$time  ==>\033[0;32m Ran \033[0;34m" . $matches[1] . "\033[0;32m tests with \033[0;34m" . $matches[2] . "\033[0;32m assertions. YAY, everything is fine.\n";
+		} else {
+			echo "\n$time  ==>\033[0;31m Something went wrong. PHPUnit exited with status code \033[0;34m{$results['returnval']}\033[0;31m:\n\n";
+			
+			echo "\033[0m  " . str_replace("\n", "\n  ", $results['output']) . "\n";
+			
+			exit(1);
+		}
+		break;
+	case 'report':
+		// Generate code coverage report
+		if(!function_exists('xdebug_enable')) {
+			fail("\033[0;31m!! You don't have \033[0;32mXdebug\033[0;31m installed. \033[0;32mXdebug\033[0;31m is a requirement to create code coverage reports.\n   You can get it from here:\n     \033[0;34mhttp://xdebug.org/download.php\n");
+		}
+		
+		// Get the path to save the report to
+		if(isset($arguments['options'][0])) {
+			if(substr($arguments['options'][0], 0, 1) == DIRECTORY_SEPARATOR || substr($arguments['options'][0], 0, 1) == '.') {
+				$reportPath = $arguments['options'][0];
+			} else {
+				$reportPath = getcwd() . DIRECTORY_SEPARATOR . $arguments['options'][0];
+			}
+		} else {
+			$reportPath = $path . DIRECTORY_SEPARATOR . 'report';
+		}
+		
+		// Check if it's possible to write there
+		if(file_exists($reportPath)) {
+			if(in_array('f', $arguments['toggles'])) {
+				echo "\033[0m\033[1mRemoving \033[0;34m" . $reportPath . "\033[0m\033[1m...\n";
+				if(rrmdir($reportPath)) {
+					echo "  ==>\033[0;32m Done.\n\n";
+				} else {
+					fail("  ==>\033[0;31m Could not remove \033[0;34m" . $reportPath . "\033[1m.\n");
+				}
+			} else {
+				fail("\033[0;31m!! The directory \033[0;34m" . $reportPath . "\033[0;31m already exists. Use \033[0;33m-f\033[0;31m to overwrite it.\n");
+			}
+		} else if(!is_dir(dirname($reportPath))) {
+			fail("\033[0;31m!! The directory \033[0;34m" . dirname($reportPath) . "\033[0;31m does not exist.\n");
+		} else if(!is_writable(dirname($reportPath))) {
+			fail("\033[0;31m!! The directory \033[0;34m" . dirname($reportPath) . "\033[0;31m is not writable.\n");
+		}
+		
+		echo "\033[0m\033[1mGenerating a code coverage report to \033[0;34m" . $reportPath . "\033[0m\033[1m...\nThis might take a while or two. :)\n";
+		
+		$result = phpunit("--coverage-html $reportPath");
+		
+		if(strpos($result['output'], "Generating code coverage report in HTML format ... done") === false || !file_exists($reportPath . DIRECTORY_SEPARATOR . 'index.html')) {
+			fail("  ==>\033[0;31m Could not generate a code coverage report.\n");
+		} else {
+			echo "  ==>\033[0;32m Done.\n";
+		}
+		
+		if(command_exists('open')) {
+			echo "\n\033[0m\033[1mOpening the report in your browser...\n";
+			
+			$output = array();
+			$returnval = -1;
+			exec("open $reportPath" . DIRECTORY_SEPARATOR . "index.html 2>&1", $output, $returnval);
+			
+			if($returnval == 0) {
+				echo "  ==>\033[0;32m Done.\n";
+			} else {
+				fail("  ==>\033[0;31m Could not open the report.\n");
+			}
+		}
+		break;
+	case 'install':
+		if(isset($arguments['options'][0])) {
+			if(is_dir($arguments['options'][0])) {
+				$installPath = realpath($arguments['options'][0]);
+			} else if(is_file($arguments['options'][0])) {
+				$installPath = realpath(dirname($arguments['options'][0]));
+			} else {
+				fail("\033[0;31m!! The directory \033[0;34m" . $arguments['options'][0] . "\033[0;31m does not exist.\n");
+			}
+		} else {
+			$installPath = DIRECTORY_SEPARATOR . 'usr' . DIRECTORY_SEPARATOR . 'local' . DIRECTORY_SEPARATOR . 'bin';
+		}
+		
+		echo "\033[0m\033[1mInstalling \033[0;31mkirbytest\033[0;1m to \033[0;34m$installPath\033[0;1m...\n";
+		
+		if(!is_writable($installPath) || (is_file($installPath . DIRECTORY_SEPARATOR . 'kirbytest') && !is_writable($installPath . DIRECTORY_SEPARATOR . 'kirbytest'))) {
+			echo "\033[0;31mThe directory \033[0;34m" . $installPath . "\033[0;31m is not writable by your current user. You might need to enter your \033[0;34msudo\033[0;31m password:\n\033[0;35m";
+			
+			$output = array();
+			$returnval = -1;
+			exec('sudo cp ' . __FILE__ . ' ' . $installPath . DIRECTORY_SEPARATOR . 'kirbytest 2>&1', $output, $returnval);
+			
+			if($returnval == 0) {
+				if(command_exists('kirbytest')) {
+					echo "\033[0m  ==>\033[0;32m Done.\n";
+				} else {
+					echo "\033[0m  ==>\033[0;31m Could write the file, but \033[0;34m$installPath\033[0;31m is not in your \033[0;34m\$PATH\033[0;31m yet.\n";
+				}
+			} else {
+				fail("\033[0m  ==>\033[0;31m Could not write the file.\n");
+			}
+		} else {
+			$output = array();
+			$returnval = -1;
+			exec('cp ' . __FILE__ . ' ' . $installPath . DIRECTORY_SEPARATOR . 'kirbytest 2>&1', $output, $returnval);
+			
+			if($returnval == 0) {
+				if(command_exists('kirbytest')) {
+					echo "\033[0m  ==>\033[0;32m Done.\n";
+				} else {
+					echo "\033[0m  ==>\033[0;31m Could write the file, but \033[0;34m$installPath\033[0;31m is not in your \033[0;34m\$PATH\033[0;31m yet.\n";
+				}
+			} else {
+				fail("\033[0m  ==>\033[0;31m Could not write the file.\n");
+			}
+		}
+		break;
+	default:
+		echo "\033[0;31m!! There's no task named \033[0;34m" . $arguments['task'] . "\033[0;31m.\n\n";
+	case '':
+	case 'help':
+		// Home screen -> help
+			echo "\033[0m\033[1mUsage: \033[0;31mkirbytest \033[0;34m<command>\033[0m\n\nwhere \033[0;34m<command>\033[0m is one of:\n\n";
+	
+			echo "  \033[0;34mtest     \033[0;33m[-d]\033[0m          Runs Kirby Unit tests.\n                           \033[0;33m-d\033[0m or \033[0;33m--details\033[0m: Verbose output\n";
+			echo "  \033[0;34mreport   \033[0;33m[PATH] [-f]\033[0m   Creates a code coverage report in HTML format and saves it to \033[0;34mreport/\033[0m.\n                           \033[0;33mPATH\033[0m: Change the path to write the report to.\n                           \033[0;33m-f\033[0m or \033[0;33m--force\033[0m: Overwrite existing directories.\n";
+			echo "  \033[0;34minstall  \033[0;33m[PATH]\033[0m        Installs \033[0;31mkirbytest\033[0m to \033[0;34m/usr/local/bin/\033[0m or \033[0;33mPATH\033[0m.\n                           \033[0;33mPATH\033[0m: Change the path to write the \033[0;31mkirbytest\033[0m 'binary' to.\n";
+}
+
+// ============================
+// Result
+// ============================
+echo "\n\033[0;32mEverything worked as expected. YAY!\n";
+exit(0);
+
+// ============================
+// Helpers
+// ============================
+function on_travis() {
+	return strstr(__FILE__, '/home/travis/build')	!== false;
+}
+
+function command_exists($cmd) {
+	$return = shell_exec("which $cmd");
+	return empty($return) ? false : true;
+}
+
+function phpunit($args = '') {
+	global $path;
+	
+	if($args != '') $args .= ' ';
+	
+	$output = array();
+	$returnval = -1;
+	
+	exec("cd $path;phpunit " . $args . "2>&1", $output, $returnval);
+	
+	return array('output' => implode("\n", $output), 'returnval' => $returnval);
+}
+
+function rrmdir($dir) {
+	if(is_dir($dir)) {
+		$objects = scandir($dir);
+		
+		foreach ($objects as $object) {
+			if($object != "." && $object != "..") {
+				if(filetype($dir . DIRECTORY_SEPARATOR . $object) == "dir") {
+					if(!rrmdir($dir . DIRECTORY_SEPARATOR . $object)) return false;
+				} else {
+					if(!unlink($dir . DIRECTORY_SEPARATOR . $object)) return false;
+				}
+			}
+		}
+		
+		reset($objects);
+		return rmdir($dir);
+	} else if(is_file($dir)) {
+		return unlink($dir);
+	} else {
+		return false;
+	}
+}
+
+function fail($text) {
+	echo $text;
+	
+	exit(1);
+}

@@ -1,6 +1,6 @@
 <?php
 
-require_once('testing_bootstrap.php');
+require_once('lib/testing_bootstrap.php');
 
 class DirTest extends PHPUnit_Framework_TestCase {
   public function testMainDir() {
@@ -16,7 +16,7 @@ class DirTest extends PHPUnit_Framework_TestCase {
     $this->assertEquals(is_writable($root), $dir->isWritable());
 
     // the main test dir is located in @root/test/testContent
-    $this->assertEquals(basename(TEST_KIRBY_CORE) . DS . 'test' . DS . basename(TEST_CONTENT), $dir->uri());
+    $this->assertEquals(basename(TEST_KIRBY_CORE) . DS . 'test' . DS . 'etc' . DS . basename(TEST_CONTENT), $dir->uri());
 
     // echoing the test dir should result in the root 
     $this->assertEquals($root, (string)$dir);
@@ -40,6 +40,6 @@ class DirTest extends PHPUnit_Framework_TestCase {
     $this->assertEquals('01', $dir->num());
 
     // the tests dir is located in @root/test/testContent/01-tests
-    $this->assertEquals(basename(TEST_KIRBY_CORE) . DS . 'test' . DS . basename(TEST_CONTENT) . DS . '01-tests', $dir->uri());
+    $this->assertEquals(basename(TEST_KIRBY_CORE) . DS . 'test' . DS . 'etc' . DS . basename(TEST_CONTENT) . DS . '01-tests', $dir->uri());
   }
 }
