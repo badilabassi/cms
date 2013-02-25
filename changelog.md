@@ -24,6 +24,7 @@ This is a minor-major release
 - new $page->prevInvisible(), $page->hasPrevInvisible(), $page->nextInvisible(), $page->hasNextVisible()
 - new kirbytext tag handling –> sooooooo easy!
 - new improved roots and path management
+- pagination has now a new page option, which lets you modify the current active page
 
 
 ## 1.1.2

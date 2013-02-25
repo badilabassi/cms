@@ -1,5 +1,8 @@
 <?php
 
+// direct access protection
+if(!isset($root) && !isset($roots)) die('Direct access is not allowed');
+
 /**
  * Kirby System file
  * This is used by the index.php to load the bootstrapper 

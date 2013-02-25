@@ -620,9 +620,9 @@ class KirbyCollection implements Iterator {
    * @param array $options and optional array with options for the pagination class
    * @return object a sliced set of data
    */
-  public function paginate($limit, $options=array()) {
+  public function paginate($limit, $options = array()) {
 
-    $pagination = new KirbyPagination($this, $limit, $options);
+    $pagination = new KirbyPagination($this->count(), $limit, $options);
     $pages = $this->slice($pagination->offset(), $pagination->limit());
     $pages->pagination = $pagination;
 

@@ -18,7 +18,7 @@ class KirbyPagination {
   protected $options = array();
   
   // the current page
-  protected $page = 0;
+  protected $page = null;
       
   // total count of items
   protected $count = 0;
@@ -45,27 +45,24 @@ class KirbyPagination {
    * @param int $limit The number of items per page
    * @param array $options Additional parameters to control the pagination object
    */
-  public function __construct($data, $limit, $options=array()) {
+  public function __construct($count, $limit, $options=array()) {
 
     $defaults = array(
       'variable' => c::get('pagination.variable', 'page'),
       'mode'     => c::get('pagination.method', 'params'),
+      'page'     => false
     );
+
+    // In legacy mode, you can still pass an entire collection
+    if(is_a($count, 'KirbyCollection')) {
+      $count = $count->count();
+    }
       
     $this->options = array_merge($defaults, $options);
-    $this->data    = $data;
-    $this->count   = $data->count();
+    $this->count   = $count;
     $this->limit   = $limit;
-    $this->page    = ($this->options['mode'] == 'query') ? intval(get($this->options['variable'])) : intval(site()->uri()->param($this->options['variable']));
     $this->pages   = ceil($this->count / $this->limit);
-
-    // sanitize the page
-    if($this->page < 1) $this->page = 1;
-
-    if($this->page > $this->pages && $this->count > 0) go($this->firstPageURL());
-
-    // generate the offset
-    $this->offset = ($this->page-1)*$this->limit;  
+    $this->offset  = ($this->page()-1) * $this->limit;  
     
   }
   
@@ -75,7 +72,27 @@ class KirbyPagination {
    * @return int 
    */
   public function page() {
+
+    if(!is_null($this->page)) return $this->page;
+
+    if($this->options['page']) {
+      $this->page = $this->options['page']; 
+    } else {
+      $this->page = ($this->options['mode'] == 'query') ? get($this->options['variable']) : param($this->options['variable']);  
+    }
+
+    // make sure the page is an int
+    $this->page = intval($this->page);
+
+    // sanitize the page if too low
+    if($this->page < 1) $this->page = 1;
+
+    // sanitize the page if too high
+    if($this->page > $this->pages && $this->count > 0) $this->page = $this->lastPage();
+
+    // return the sanitized page number
     return $this->page;
+  
   }
   
   /**
@@ -125,7 +142,7 @@ class KirbyPagination {
    * @return int
    */
   public function countItems() {
-    return $this->data->count();
+    return $this->count;
   }
 
   /**
