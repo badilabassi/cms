@@ -19,7 +19,3 @@ site(array(
   'url'       => 'http://superurl.com', 
   'subfolder' => '',
 ));
-
-set_exception_handler(function($exception) {
-  echo $exception->getMessage();
-});
