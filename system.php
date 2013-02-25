@@ -12,12 +12,6 @@ if(!isset($root) && !isset($roots)) die('Direct access is not allowed');
  * @package Kirby CMS
  */
 
-// handle thrown exceptions and display a nice error page
-set_exception_handler(function($exception) {
-  // TODO: add a nice error page here
-  echo $exception->getMessage();
-});
-
 // legacy root handling
 if(!isset($roots)) {
 
@@ -33,8 +27,13 @@ if(!isset($roots)) {
 // load the bootstrapper
 require(dirname(__FILE__) . DIRECTORY_SEPARATOR . 'bootstrap.php');
 
+// create a exception handler old school style to be compatible with PHP 5.2
+$exceptionHandler = create_function('$exception', 'require(ROOT_KIRBY_MODALS . DS . "exception.php"); exit();');
+
+// handle thrown exceptions and display a nice error page
+set_exception_handler($exceptionHandler);
+
 // initialize the site for the first time
 $site = site();
-
 $site->rewrite();
 $site->show();
