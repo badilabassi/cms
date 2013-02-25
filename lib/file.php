@@ -269,8 +269,9 @@ class KirbyFile {
     if(!is_null($this->mime)) return $this->mime;
 
     if(function_exists('finfo_file')) {
+      // Fileinfo is prefered if available
       $finfo = finfo_open(FILEINFO_MIME_TYPE);
-      $mime = finfo_file($finfo, $this->root);
+      $mime  = finfo_file($finfo, $this->root);
       finfo_close($finfo);
     } else if(function_exists('mime_content_type') && $mime = @mime_content_type($this->root) !== false) {
       // The mime type has already been set by the if statement!
@@ -283,6 +284,9 @@ class KirbyFile {
 
     }
 
+    // mark the mime as false if not available
+    // otherwise the entire stuff above will be executed 
+    // on each function call even if we already know it's not possible
     if($mime == null) $mime = false;
 
     return $this->mime = $mime;

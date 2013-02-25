@@ -18,4 +18,5 @@ require_once(TEST_KIRBY_CORE . '/bootstrap.php');
 site(array(
   'url'       => 'http://superurl.com', 
   'subfolder' => '',
+  'debug'     => true
 ));

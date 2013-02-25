@@ -2257,7 +2257,7 @@ class r {
     * @return string POST, GET, DELETE, PUT
     */  
   static function method() {
-    return strtoupper(server::get('request_method'));
+    return strtoupper(server::get('request_method', 'GET'));
   }
 
   /**

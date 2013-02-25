@@ -113,6 +113,15 @@ class KirbyTag {
   }
 
   /**
+   * Tries to find all related files for the current page
+   * 
+   * @return object KirbyFiles
+   */
+  protected function files() {
+    return ($this->page()) ? $this->page()->files() : null;
+  }
+
+  /**
    * Tries to find a file for the given url/uri
    * 
    * @param string $url a full path to a file or just a filename for files form the current active page
@@ -127,7 +136,7 @@ class KirbyTag {
     if(!preg_match('!\.[a-z]+$!',$url)) return false;
 
     // try to get all files for the current page
-    $files = $this->page()->files();
+    $files = $this->files();
     
     // cancel if no files are available
     if(!$files) return false;

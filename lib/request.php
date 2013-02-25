@@ -99,7 +99,7 @@ class KirbyRequest {
    */
   public function method() {
     if(!is_null($this->method)) return $this->method;
-    return $this->method = strtoupper(server::get('request_method'));
+    return $this->method = strtoupper(server::get('request_method', 'GET'));
   }
 
   /**

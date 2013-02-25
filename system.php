@@ -35,5 +35,6 @@ set_exception_handler($exceptionHandler);
 
 // initialize the site for the first time
 $site = site();
+
 $site->rewrite();
 $site->show();

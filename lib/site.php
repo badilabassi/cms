@@ -317,8 +317,20 @@ class KirbySite extends KirbyPage {
       $p = null;
     }
 
-    // error fallback    
-    return $this->activePage = (!$p) ? $this->children()->find(c::get('error', 'error')) : $p;
+    if(!$p) {
+      if($route = $this->router()->resolve()) {
+        // if a route has been found for this url, use that page
+        $this->activePage = $route->page();
+      } else {
+        // last resort: error page
+        $this->activePage = $this->errorPage();        
+      }
+    } else {
+      $this->activePage = $p;
+    }
+
+    // return the final active page
+    return $this->activePage;
 
   }
 

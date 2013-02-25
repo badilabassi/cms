@@ -29,6 +29,24 @@ class KirbyRoute {
    * Constructor
    * 
    * @param string $url The url pattern for this route
+   * 
+   * 1) literal match:
+   *     /contact
+   *     /about
+   *
+   * 2) named parameters, with optional paramters in parentheses:
+   *     /blog/category/@slug ... matches '/blog/category/photography'
+   *     /blog(/@year(/@month(/@day))) .. matches '/blog/2013', 'blog/2013/2' and 'blog/2013/2/14'
+   *
+   * 3) named parameters with regular expressions:
+   *     /blog(/@year:[0-9]{4}(/@month:[0-9]{1,2}(/@day:[0-9]{1,2})))
+   *     /page/@page:[a-zA-Z0-9-_] 
+   *     /user/edit/@id:[0-9]+
+   *     /users/@id:[0-9]
+   * 
+   * 4) wildcards:
+   *     /blog/*
+   * 
    * @param array $params Additional params for the route (allowed methods and the page uri)
    */
   public function __construct($url, $params = array()) {

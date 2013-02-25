@@ -158,5 +158,6 @@ class HelpersTest extends PHPUnit_Framework_TestCase {
     $expected = '<a href="' . $this->url . '/myimage.jpg"><img src="' . $this->url . '/myimage.jpg" /></a>';
     
     $this->assertEquals($expected, $result);
+
   }
 }

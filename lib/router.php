@@ -22,6 +22,9 @@ class KirbyRouter {
   // found arguments
   protected $args = array();
 
+  // found route
+  protected $route = null;
+
   /**
    * Constructor
    * 
@@ -53,10 +56,26 @@ class KirbyRouter {
   }
 
   /**
+   * Returns the found route if available
+   * 
+   * @return object KirbyRoute
+   */
+  public function route() {
+    return $this->route;    
+  }
+
+  /**
+   * Returns all matched parameters from the active Route
+   * 
+   * @return array
+   */
+  public function params() {
+    return ($this->route) ? $this->route->params() : array();
+  }
+
+  /**
    * Goes through all available routes and tries
    * to match the current URL with one of the route patterns
-   * 
-   * TODO: needs documentation of available formats for the url pattern 
    *
    * @return mixed KirbyRoute or false
    */
@@ -69,16 +88,33 @@ class KirbyRouter {
       
       if(!in_array($method, $route->methods())) continue;
       
+      $char  = substr($key, -1);
+      $key   = str_replace(')', ')?', $key);
       $regex = preg_replace_callback('#@([\w]+)(:([^/\(\)]*))?#', array($this, 'match'), $key);
-      
+
+      switch($char) {
+        // fix trailing slash
+        case '/':
+          $regex .= '?';
+          break;
+        // enable wildcard
+        case '*':
+          $regex = str_replace('*', '.+?', $key);
+          break;
+        default:
+          $regex .= '/?';
+          break;
+      }
+
       if(preg_match('#^'.$regex.'(?:\?.*)?$#i', $path, $matches)) {
 
         foreach($this->args as $k => $v) {
           $route->params($k, (array_key_exists($k, $matches)) ? urldecode($matches[$k]) : null);
         }
 
-        return $route;
-
+        // the route is only valid if the attached page exists
+        if($route && $route->page()) return $this->route = $route;
+          
       }
 
     }
