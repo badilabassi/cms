@@ -36,6 +36,7 @@ define('ROOT_KIRBY',          $roots['root.kirby']);
 define('ROOT_KIRBY_LIB',      ROOT_KIRBY . DS . 'lib');
 define('ROOT_KIRBY_TAGS',     ROOT_KIRBY . DS . 'tags');
 define('ROOT_KIRBY_PARSERS',  ROOT_KIRBY . DS . 'parsers');
+define('ROOT_KIRBY_PLUGINS',  ROOT_KIRBY . DS . 'plugins');
 define('ROOT_KIRBY_MODALS',   ROOT_KIRBY . DS . 'modals');
 
 // all stuff in the site folder

@@ -1,0 +1,9 @@
+{
+    "name": "Request",
+    "readable": "Request Plugin",
+    "version": "1.0",
+    "stable": true,
+    "description": "Gives useful information about the current request",
+    "author": "Bastian Allgeier",
+    "url": "http://getkirby.com/"
+}

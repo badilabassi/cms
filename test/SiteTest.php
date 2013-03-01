@@ -31,7 +31,6 @@ class SiteTest extends PHPUnit_Framework_TestCase {
     $this->assertEquals(3, $this->site->pages()->count());
     $this->assertEquals('tests', $this->site->pages()->first()->uid());
     $this->assertEquals('home', $this->site->pages()->last()->uid());
-    $this->assertInstanceOf('KirbyLoader', $this->site->load());
     $this->assertFalse($this->site->troubleshoot());
     $this->assertInstanceOf('KirbyURI', $this->site->uri());
     $this->assertEquals('mysubfolder', $this->site->subfolder());

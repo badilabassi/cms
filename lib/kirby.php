@@ -3,7 +3,7 @@
 /**
  * Kirby -- A stripped down and easy to use toolkit for PHP
  *
- * @version 0.96
+ * @version 0.97
  * @author Bastian Allgeier <bastian@getkirby.com>
  * @link http://toolkit.getkirby.com
  * @copyright Copyright 2009-2012 Bastian Allgeier
@@ -1693,9 +1693,9 @@ class dir {
    * @return  mixed   An array of filenames or false
    */
   static function read($dir, $ignore=array()) {
-    if(!is_dir($dir)) return false;
+    if(!is_dir($dir)) return array();
     $skip = array_merge(array('.', '..', '.DS_Store'), $ignore);
-    return array_diff(scandir($dir),$skip);
+    return (array)array_diff(scandir($dir),$skip);
   }
 
   /**

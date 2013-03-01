@@ -95,4 +95,37 @@ class Cache {
     return (cache::modified($file) < time()-$time) ? true : false;
   }
 
+  /**
+   * Checks if the url or template should be ignored
+   * 
+   * @param string $url the uri string of the current page
+   * @param string $template the template name (without .php)
+   * @return boolean
+   */
+  static function ignored($url, $template) {
+
+    // get all templates that shuold be ignored
+    $templates = c::get('cache.ignore.templates');
+
+    // ignore all pages with one of the templates from above
+    if(in_array($template, $templates)) return true;
+
+    // get all urls that shuold be ignored, with a fallback for the old format
+    $urls = c::get('cache.ignore.urls', c::get('cache.ignore'));
+
+    foreach($urls as $pattern) {
+
+      if(($pattern == '/' || $pattern == c::get('home')) && in_array($url, array(c::get('home'), '/', ''))) return true;
+
+      $regex = '!^' . $pattern . '$!i';
+      $regex = str_replace('*', '.*?', $regex);
+
+      if(preg_match($regex, $url)) return true;
+
+    }        
+
+    return false;
+
+  }
+
 }

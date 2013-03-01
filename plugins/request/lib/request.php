@@ -53,7 +53,7 @@ class KirbyRequest {
   }
 
   /**
-   * Alternative to self::date($key, $default)
+   * Alternative to self::data($key, $default)
    * 
    * @param string $key An optional key to receive only parts of the data array
    * @param mixed $default A default value, which will be returned if nothing can be found for a given key

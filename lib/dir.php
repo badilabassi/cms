@@ -118,9 +118,6 @@ class KirbyDir {
    */
   private function scan() {
 
-    // dependencies
-    require_once(ROOT_KIRBY_LIB . DS . 'cache' . DS . 'structure.php');
-
     $this->files    = array();
     $this->children = array();
     

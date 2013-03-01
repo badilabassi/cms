@@ -37,10 +37,7 @@ class KirbyHTMLCache {
     $this->site    = $site;  
     $this->parent  = $parent;
     $this->id      = 'html/' . $this->parent->dir()->hash();
-    $this->enabled = c::get('cache.html');
-
-    // make sure the directory is there
-    dir::make(cache::file('html'));
+    $this->enabled = (c::get('cache') && c::get('cache.html')) ? true : false;
 
   }
 
@@ -51,6 +48,13 @@ class KirbyHTMLCache {
    */
   public function isEnabled() {
     return $this->enabled;
+  }
+
+  /**
+   * 
+   */
+  public function isIgnored() {
+    return cache::ignored($this->parent->uri(), $this->parent->template());
   }
 
   /**
@@ -69,7 +73,7 @@ class KirbyHTMLCache {
    */
   public function get() {
 
-    if(!$this->isAvailable()) return false;
+    if(!$this->isAvailable() || $this->isIgnored()) return false;
 
     return $this->data = cache::get($this->id, true);    
   
@@ -91,8 +95,14 @@ class KirbyHTMLCache {
 
     $this->data = $html;
 
-    if($this->isEnabled()) {
+    if($this->isEnabled() && !$this->isIgnored()) {
+
+      // make sure the directory is there
+      dir::make(cache::file('html'));
+
+      // store the cache file 
       cache::set($this->id, $this->data, true);
+
     }
 
   }

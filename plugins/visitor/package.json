@@ -1,0 +1,9 @@
+{
+    "name": "Visitor",
+    "readable": "Visitor Plugin",
+    "version": "1.0",
+    "stable": true,
+    "description": "Adds info about the visitor to Kirby's core system",
+    "author": "Bastian Allgeier",
+    "url": "http://getkirby.com/"
+}

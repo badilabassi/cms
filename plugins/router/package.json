@@ -1,0 +1,9 @@
+{
+    "name": "Router",
+    "readable": "Router Plugin",
+    "version": "1.0",
+    "stable": true,
+    "description": "Adds routing to Kirby's core system",
+    "author": "Bastian Allgeier",
+    "url": "http://getkirby.com/"
+}

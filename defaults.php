@@ -265,20 +265,6 @@ c::set(array(
   'cache.autoupdate' => true,
 
   /**
-   * Enable/disable structure caching
-   * The structure cache stores all folders and files of a page
-   * so the directory does not need to be scanned each time
-   */
-  'cache.structure' => true,
-
-  /**
-   * Enable/disable data caching
-   * The data cache stores the parsed contents of 
-   * text files so parsing takes place only once
-   */
-  'cache.data' => true,
-
-  /**
    * Enable/disable html caching
    * When enabled, Kirby will cache 
    * the entire generated html for each page, 
@@ -288,9 +274,14 @@ c::set(array(
 
   /**
    * A list of pages, which should be ignored 
-   * by the cache. Add the uri of each page to ignore. 
+   * by the cache. Add the uri (relative urls) of each page to ignore. 
    */
-  'cache.ignore' => array(),
+  'cache.ignore.urls' => array(),
+
+  /**
+   * A list of templates, which should be ignored by the cache. 
+   */
+  'cache.ignore.templates' => array(),
 
   /**
     * Enable/disable multi-language support

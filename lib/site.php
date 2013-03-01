@@ -64,16 +64,13 @@ class KirbySite extends KirbyPage {
   // cache for the generated html
   protected $html = null;
 
-  // cache for the loader object
-  protected $loader = null;
-
   // cache for the current language 
   protected $language = array();
 
   // cache for all available languages
   protected $languages = null;
 
-  // cache for plugins
+  // cache for added plugins
   protected $plugins = null;
 
   /**
@@ -85,15 +82,11 @@ class KirbySite extends KirbyPage {
 
     g::set('site', $this);
 
-    // load the site specific config files
-    $this->load()->config($params);
+    // load all needed config vars
+    $this->configure($params);
 
     // initiate the page object with the given root    
     parent::__construct(ROOT_CONTENT);
-
-    $this->plugins()->add('router', new KirbyRouter($this));
-    $this->plugins()->add('request', new KirbyRequest());
-    $this->plugins()->add('visitor', new KirbyVisitor());
 
     if(c::get('debug')) {
       // switch on all errors
@@ -106,14 +99,15 @@ class KirbySite extends KirbyPage {
     }
 
     // apply all locale settings and timezone stuff
-    $this->localization();
+    $this->localize();
 
     // load additional stuff
-    $this->load()->parsers();
-    $this->load()->plugins();
-    $this->load()->language();
+    KirbyLoader::language();
+    KirbyLoader::parsers();
 
-    
+    // initialize plugins
+    $this->plugins();
+
     // get the main url for the site
     $this->url();
 
@@ -123,16 +117,6 @@ class KirbySite extends KirbyPage {
     // show the troubleshoot modal if required
     $this->troubleshoot();
 
-  }
-
-  /**
-   * Initiates the KirbyLoader object, which 
-   * handles loading of additional dependencies and plugins
-   * @return object KirbyLoader
-   */
-  public function load() {
-    if(!is_null($this->loader)) return $this->loader;
-    return $this->loader = new KirbyLoader();
   }
 
   /**
@@ -333,48 +317,6 @@ class KirbySite extends KirbyPage {
     return $this->activePage;
 
   }
-
-  /**
-   * Returns a collection of pages, which are currently open
-   * This is perfect to create a breadcrumb navigation
-   * 
-   * @return object KirbyPages
-   */
-  public function breadcrumb() {
-
-    if(!is_null($this->breadcrumb)) return $this->breadcrumb;
-
-    $path  = $this->uri()->path()->toArray(); 
-    $crumb = array();
-  
-    foreach($path AS $p) {
-      $tmp  = implode('/', $path);
-      $data = $this->pages()->find($tmp);
-            
-      if(!$data || $data->isErrorPage()) {
-        // add the error page to the crumb
-        $crumb[] = $this->errorPage();
-        // don't move on with subpages, because there won't be 
-        // any if the first page hasn't been found at all
-        break;
-      } else {      
-        $crumb[] = $data;
-      }
-      array_pop($path);        
-    }
-    
-    // we've been moving through the uri from tail to head
-    // so we need to reverse the array to get a proper crumb    
-    $crumb = array_reverse($crumb);   
-
-    // add the homepage to the beginning of the crumb array
-    array_unshift($crumb, $this->homePage());
-    
-    // make it a pages object so we can handle it
-    // like we handle all pages on the site  
-    return $this->breadcrumb = new KirbyPages($crumb);
-
-  }
   
   /**
    * Returns all available languages for this site
@@ -409,6 +351,58 @@ class KirbySite extends KirbyPage {
       return $this->language[$code] = $this->languages()->find($code);
     }
 
+  }
+
+  /**
+   * Returns the Plugins object with all installed plugins
+   * 
+   * @return object KirbyPlugins
+   */
+  public function plugins() {
+    if(!is_null($this->plugins)) return $this->plugins;
+    
+    $this->plugins = new KirbyPlugins();
+    $this->plugins->load();
+
+    return $this->plugins;
+  
+  }
+
+  /**
+   * Shortcut for the router plugin instance
+   * 
+   * @return object KirbyRouter
+   */
+  public function router() {
+    return $this->plugins()->router()->instance();
+  }
+
+  /**
+   * Shortcut for the visitor plugin instance
+   * 
+   * @return object KirbyVisitor
+   */
+  public function visitor() {
+    return $this->plugins()->visitor()->instance();
+  }
+
+  /**
+   * Shortcut for the request plugin instance
+   * 
+   * @return object KirbyRequest
+   */
+  public function request() {
+    return $this->plugins()->request()->instance();
+  }
+
+  /**
+   * Returns a collection of pages, which are currently open
+   * This is perfect to create a breadcrumb navigation
+   * 
+   * @return object KirbyPages
+   */
+  public function breadcrumb() {
+    return $this->plugins()->breadcrumb()->instance();
   }
 
   // rendering
@@ -480,43 +474,7 @@ class KirbySite extends KirbyPage {
     if(c::get('rewrite') && preg_match('!index.php!i', $this->uri()->original())) {      
       go($page->url());    
     }
-  
-  }
-
-  // Plugins
-
-  public function plugins() {
-    if(!is_null($this->plugins)) return $this->plugins;
-    return $this->plugins = new KirbyPlugins();
-  }
-
-  /**
-   * Returns the visitor object 
-   * 
-   * @return object KirbyVisitor
-   */
-  public function visitor() {
-    return $this->plugins()->visitor();
-  }
-
-  /**
-   * The router makes it possible to route any url pattern
-   * to a specific page
-   * 
-   * @return object KirbyRouter
-   */
-  public function router() {
-    return $this->plugins()->router();
-  }
-
-  /**
-   * The request object contains useful information and data
-   * of the current request
-   *   
-   * @return object KirbyRequest
-   */
-  public function request() {
-    return $this->plugins()->request();
+ 
   }
 
   // magic stuff
@@ -532,13 +490,40 @@ class KirbySite extends KirbyPage {
     return '<a href="' . $this->url() . '">' . $this->url() . '</a>';
   }
 
+  /**
+   * Get variables and lazy loaded attributes
+   */
+  public function __get($key) {
+    if(method_exists($this, $key)) return $this->$key();
+    return ($this->content()) ? $this->content()->$key() : null;
+  }
 
   // protected methods
 
   /**
+   * Loads all config files 
+   */
+  protected function configure($params = array()) {
+
+    // load custom config files
+    KirbyLoader::file(ROOT_SITE_CONFIG . DS . 'config.php');
+    KirbyLoader::file(ROOT_SITE_CONFIG . DS . 'config.' . server::get('server_name') . '.php');
+
+    // get all config options that have been stored so far
+    $defaults = c::get();
+
+    // merge them with the passed late options again
+    $config = array_merge($defaults, $params);
+
+    // store them again
+    c::set($config);
+
+  }
+
+  /**
    * Initializes some basic local settings
    */  
-  protected function localization() {
+  protected function localize() {
 
     // set the timezone to make sure we 
     // avoid errors in php 5.3
@@ -569,14 +554,6 @@ class KirbySite extends KirbyPage {
     // check for existing mbstring functions
     if(!function_exists('mb_strtolower')) raise('mb_string functions are required in order to run Kirby properly');
     
-  }
-
-  public function __get($key) {
-
-    if(method_exists($this, $key)) return $this->$key();
-
-    return ($this->content()) ? $this->content()->$key() : null;
-
   }
 
 }

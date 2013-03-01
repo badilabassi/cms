@@ -13,59 +13,9 @@ if(!defined('KIRBY')) die('Direct access is not allowed');
 class KirbyLoader {
 
   /**
-   * Loads the configuration for the site
-   * including the environment based config
-   * (detected by host name)
-   * 
-   * @param array $config Additional config variables to merge into the loaded configuration
-   */
-  public function config($late = array()) {
-        
-    // load custom config files
-    $this->file(ROOT_SITE_CONFIG . DS . 'config.php');
-    $this->file(ROOT_SITE_CONFIG . DS . 'config.' . server::get('server_name') . '.php');
-
-    // get all config options that have been stored so far
-    $defaults = c::get();
-
-    // merge them with the passed late options again
-    $config = array_merge($defaults, $late);
-
-    // store them again
-    c::set($config);
-
-  }
-
-  /**
-   * Loads all available plugins
-   * 
-   * @param string $folder This is used to recursively search for plugins in subfolders
-   */
-  public function plugins($folder=false) {
-
-    $folder = ($folder) ? $folder : ROOT_SITE_PLUGINS;
-    $files  = dir::read($folder);
-
-    if(!is_array($files)) return false;
-    
-    foreach($files as $file) {
-      
-      if(is_dir($folder . DS . $file) && $folder == ROOT_SITE_PLUGINS) {
-        $this->plugins($folder . DS . $file);
-        continue;
-      }
-        
-      if(f::extension($file) != 'php') continue;
-      $this->file($folder . DS . $file);
-
-    }
-
-  }
-
-  /**
    * Loads all text parsers
    */
-  public function parsers() {
+  static public function parsers() {
   
     require_once(ROOT_KIRBY_PARSERS . DS . 'yaml.php');
     require_once(ROOT_KIRBY_PARSERS . DS . 'smartypants.php');
@@ -81,18 +31,15 @@ class KirbyLoader {
   /**
    * Loads custom language files
    */
-  public function language() {
-    $default = ROOT_SITE_LANGUAGES . DS . c::get('lang.default') . '.php';    
-    $current = ROOT_SITE_LANGUAGES . DS . c::get('lang.current') . '.php';    
-    
-    $this->file($default);
-    $this->file($current);
+  static public function language() {
+    self::file(ROOT_SITE_LANGUAGES . DS . c::get('lang.default') . '.php');
+    self::file(ROOT_SITE_LANGUAGES . DS . c::get('lang.current') . '.php');
   }
 
   /**
    * Loads the given file if it exists
    */
-  public function file($file) {
+  static public function file($file) {
     if(!file_exists($file)) return false;
     require($file);    
   }

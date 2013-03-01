@@ -42,6 +42,11 @@ class KirbyRouter {
    * @return object $this
    */
   public function add($url, $params = array()) {
+
+    if(!is_array($params)) $params = array(
+      'page' => $params
+    );
+
     $this->routes[$url] = new KirbyRoute($url, $params);
     return $this;
   }
@@ -67,10 +72,12 @@ class KirbyRouter {
   /**
    * Returns all matched parameters from the active Route
    * 
-   * @return array
+   * @param string $key An optional key to receive only a part of the params array
+   * @param string $value If a key and a value are being passed, this is used as a setter
+   * @return mixed
    */
-  public function params() {
-    return ($this->route) ? $this->route->params() : array();
+  public function params($key = null, $value = null) {
+    return ($this->route) ? $this->route->params($key, $value) : array();
   }
 
   /**
@@ -123,6 +130,12 @@ class KirbyRouter {
 
   }
 
+  /**
+   * Callback for the preg_replace_callback function in self::resolve()
+   * 
+   * @param array $matches
+   * @return string
+   */
   protected function match($matches) {
 
     $this->args[$matches[1]] = null;

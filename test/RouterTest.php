@@ -44,6 +44,8 @@ class RouterTest extends PHPUnit_Framework_TestCase {
 
     $this->assertEquals('tests/page/subpage-1', site()->activePage()->uri());    
     $this->assertEquals(array('year' => 2012), site()->router()->params());
+    $this->assertEquals(2012, site()->router()->params('year'));
+    $this->assertEquals(2012, site()->router()->route()->params('year'));
 
   }
 

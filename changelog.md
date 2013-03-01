@@ -25,7 +25,9 @@ This is a minor-major release
 - new kirbytext tag handling –> sooooooo easy!
 - new improved roots and path management
 - pagination has now a new page option, which lets you modify the current active page
-
+- brand new plugin api!
+- new exception handling screen
+- new cache.ignore.urls with wildcards and cache.ignore.templates
 
 ## 1.1.2
 

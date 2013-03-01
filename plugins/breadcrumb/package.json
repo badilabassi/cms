@@ -1,0 +1,9 @@
+{
+    "name": "Breadcrumb",
+    "readable": "Breadcrumb Plugin",
+    "version": "1.0",
+    "stable": true,
+    "description": "Helps displaying a breadcrumb for the current page",
+    "author": "Bastian Allgeier",
+    "url": "http://getkirby.com/"
+}
