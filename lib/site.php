@@ -152,6 +152,24 @@ class KirbySite extends KirbyPage {
   }
 
   /**
+   * The site doesn't have a translated uid
+   * 
+   * @return null
+   */
+  public function translatedUID() {
+    return null;
+  }
+
+  /**
+   * The site doesn't have a translated uri
+   * 
+   * @return null
+   */
+  public function translatedURI() {
+    return null;
+  }
+
+  /**
    * Returns the subfolder(s)
    * A subfolder will be auto-detected or can be set in the config file
    * If you run the site under its own domain, the subfolder will be empty
@@ -261,7 +279,10 @@ class KirbySite extends KirbyPage {
    */
   public function homePage() {
     if(!is_null($this->homePage)) return $this->homePage;
-    return $this->homePage = $this->children()->find(c::get('home', 'home'));
+    $this->homePage = $this->children()->findBy('uid', c::get('home', 'home'), false);
+    // if the home page can't be found something is truly wrong
+    if(!$this->homePage) raise('The home page could not be found');
+    return $this->homePage;
   }
 
   /**
@@ -271,7 +292,10 @@ class KirbySite extends KirbyPage {
    */
   public function errorPage() {
     if(!is_null($this->errorPage)) return $this->errorPage;
-    return $this->errorPage = $this->children()->find(c::get('error', 'error'));
+    $this->errorPage = $this->children()->findBy('uid', c::get('error', 'error'), false);
+    // if the error page can't be found something is truly wrong
+    if(!$this->errorPage) raise('The error page could not be found');
+    return $this->errorPage;
   }
 
   /**
@@ -288,13 +312,14 @@ class KirbySite extends KirbyPage {
     $uri = (string)$this->uri()->path();
 
     // if the path is empty, use the homepage uid
-    if(empty($uri)) $uri = c::get('home', 'home');
+    if(empty($uri) || $uri == $this->subfolder()) $uri = c::get('home', 'home');
 
     // try to find an active page by the given uri
     $activePage = $this->children()->find($uri);
 
-    if($activePage && $activePage->uri() == $uri) {      
-      $p = $activePage;
+    // check if the active page is valid    
+    if($activePage && $activePage->translatedURI() == $uri) {      
+      $p = $activePage;    
     } else if($route = $this->router()->resolve()) {
       $p = $route->page();
     } else {
@@ -311,7 +336,7 @@ class KirbySite extends KirbyPage {
       }
     } else {
       $this->activePage = $p;
-    }
+    }    
 
     // return the final active page
     return $this->activePage;
@@ -474,7 +499,13 @@ class KirbySite extends KirbyPage {
     if(c::get('rewrite') && preg_match('!index.php!i', $this->uri()->original())) {      
       go($page->url());    
     }
- 
+
+    // in case the url has no language code yet redirect 
+    // to the default language home page i.e. from / to /en
+    if(c::get('lang.support') && $this->uri() == $this->subfolder()) {
+      go($this->language()->url());
+    }
+
   }
 
   // magic stuff

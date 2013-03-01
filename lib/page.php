@@ -156,6 +156,11 @@ class KirbyPage {
     // unless you set the home.keepurl option to true. 
     if($this->isHomePage() && !c::get('home.keepurl')) {
       return url();                    
+    } else if(c::get('lang.support')) {
+
+      // return the translated URL if language support is available
+      return $this->translatedURL();
+
     } else {
       return url($this->uri());
     }
@@ -183,6 +188,37 @@ class KirbyPage {
    */
   public function tinyurl() {
     return (c::get('tinyurl.enabled')) ? url(c::get('tinyurl.folder') . '/' . $this->hash()) : $this->url(false);    
+  }
+
+  // Translated Stuff
+
+  /**
+   * Returns the translated UID if set in the content file (with URL-key)
+   * Otherwise returns the default UID
+   * 
+   * @return string
+   */
+  public function translatedUID() {
+    $key = (string)$this->url_key();
+    return (empty($key)) ? $this->uid() : $key;
+  }
+
+  /**
+   * Returns the translated URI
+   * 
+   * @return string
+   */
+  public function translatedURI() {
+    return trim($this->parent()->translatedURI() . '/' . $this->translatedUID(), '/');
+  }
+
+  /**
+   * Returns the full translated URL
+   * 
+   * @return string
+   */
+  public function translatedURL() {
+    return url($this->translatedURI());
   }
 
   // Getters
@@ -526,7 +562,7 @@ class KirbyPage {
     $parentURI = trim($parentURI, '.');
 
     // fetch the parent object by the parent uri
-    return $this->parent = ($parentURI) ? site()->pages()->find($parentURI) : site();
+    return $this->parent = ($parentURI) ? site()->pages()->findBy('uri', $parentURI) : site();
 
   }
 
@@ -942,7 +978,7 @@ class KirbyPage {
     if($this->isActive()) return true;
 
     $u = array_values(site()->uri()->path()->toArray());
-    $p = str::split($this->uri(), '/');
+    $p = str::split($this->translatedURI(), '/');
 
     for($x=0; $x<count($p); $x++) {
       if(a::get($p, $x) != a::get($u, $x)) return $this->isOpen = false;

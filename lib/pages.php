@@ -159,10 +159,12 @@ class KirbyPages extends KirbyCollection {
     $array = str::split($path, '/');
     $obj   = $this;
     $page  = false;
+    $lang  = c::get('lang.support');
 
     foreach($array as $p) {    
 
-      $next = $obj->findBy('uid', $p);
+      $by   = ($lang) ? 'translatedUID' : 'uid';
+      $next = $obj->findBy($by, $p, false);
 
       if(!$next) return $page;
 
