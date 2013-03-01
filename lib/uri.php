@@ -128,7 +128,7 @@ class KirbyUri {
     }
 
     $this->original = $url;                    
-    $this->parsed   = (object)array_merge($defaults, (array)parse_url($url));
+    $this->parsed   = (object)array_merge($defaults, (array)@parse_url($url));
             
     // take some values from the parsed object and store it in URI attributes
     $this->scheme = $this->parsed->scheme;

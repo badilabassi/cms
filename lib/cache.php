@@ -102,7 +102,7 @@ class Cache {
    * @param string $template the template name (without .php)
    * @return boolean
    */
-  static function ignored($url, $template) {
+  static function ignored($url, $template = null) {
 
     // get all templates that shuold be ignored
     $templates = c::get('cache.ignore.templates');
