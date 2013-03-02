@@ -36,11 +36,11 @@ class PaginationTest extends PHPUnit_Framework_TestCase {
     $this->assertEquals(1, $this->pagination->numStart());
     $this->assertEquals(10, $this->pagination->numEnd());
 
+    $this->assertEquals($this->url, $this->pagination->firstPageURL());
+    $this->assertEquals($this->url, $this->pagination->prevPageURL());
     $this->assertEquals($this->url . '/page:3', $this->pagination->pageURL(3));
     $this->assertEquals($this->url . '/page:5', $this->pagination->pageURL(5));
-    $this->assertEquals($this->url . '/page:1', $this->pagination->firstPageURL());
     $this->assertEquals($this->url . '/page:10', $this->pagination->lastPageURL());
-    $this->assertEquals($this->url . '/page:1', $this->pagination->prevPageURL());
     $this->assertEquals($this->url . '/page:2', $this->pagination->nextPageURL());
 
     $pagination = new KirbyPagination($this->pages, 20, array(
@@ -50,10 +50,10 @@ class PaginationTest extends PHPUnit_Framework_TestCase {
     
     $this->assertEquals($this->url . '/?seite=3', $pagination->pageURL(3));
     $this->assertEquals($this->url . '/?seite=5', $pagination->pageURL(5));
-    $this->assertEquals($this->url . '/?seite=1', $pagination->firstPageURL());
-    $this->assertEquals($this->url . '/?seite=1', $pagination->lastPageURL());
-    $this->assertEquals($this->url . '/?seite=1', $pagination->prevPageURL());
-    $this->assertEquals($this->url . '/?seite=1', $pagination->nextPageURL());
+    $this->assertEquals($this->url, $pagination->firstPageURL());
+    $this->assertEquals($this->url, $pagination->lastPageURL());
+    $this->assertEquals($this->url, $pagination->prevPageURL());
+    $this->assertEquals($this->url, $pagination->nextPageURL());
 
     // test the new page option
     $pagination = new KirbyPagination(200, 20, array(

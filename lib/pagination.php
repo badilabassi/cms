@@ -152,9 +152,18 @@ class KirbyPagination {
    * @return string The url
    */
   public function pageURL($page) {
+    
     $uri = clone site()->uri();
-    ($this->options['mode'] == 'query') ? $uri->replaceQueryKey($this->options['variable'], $page) : $uri->replaceParam($this->options['variable'], $page);
+  
+    if($this->options['mode'] == 'query') {
+      $method = ($page == 1) ? 'removeQueryKey' : 'replaceQueryKey';
+    } else {
+      $method = ($page == 1) ? 'removeParam' : 'replaceParam';
+    } 
+
+    $uri->$method($this->options['variable'], $page);
     return $uri->toUrl();      
+  
   }
 
   /**
