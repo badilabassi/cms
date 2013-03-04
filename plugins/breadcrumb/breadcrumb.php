@@ -5,7 +5,7 @@ if(!defined('KIRBY')) die('Direct access is not allowed');
 
 class KirbyBreadcrumbPlugin extends KirbyPlugin {
 
-  public function onInit() {
+  public function onInit($arguments = array()) {
     return $this->crumb();
   }
 

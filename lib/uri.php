@@ -115,7 +115,7 @@ class KirbyUri {
   private function parse($url) {
     
     $defaults = array(
-      'scheme' => (isset($_SERVER['HTTPS'])) ? 'https' : 'http',
+      'scheme' => (server::get('https') && str::lower(server::get('https')) != 'off') ? 'https://' : 'http://',
       'host'   => server::get('http_host'),
       'path'   => '',
       'port'   => '',
