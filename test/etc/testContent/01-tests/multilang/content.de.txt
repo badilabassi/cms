@@ -1,3 +1,5 @@
 Title: My german content file
 ----
+URL-Key: mehrsprachig
+----
 Text: This is a german text

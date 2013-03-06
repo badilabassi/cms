@@ -21,7 +21,7 @@ class KirbyLanguages extends KirbyCollection {
 
     // get the uri including the language code
     $uri    = new KirbyURI(null, array('subfolder' => site()->subfolder()));
-    $active = $uri->path()->first();
+    $active = (c::get('lang.current') && in_array(c::get('lang.current'), $codes)) ? c::get('lang.current') : $uri->path()->first();
 
     // if there's no code available in the url, use the default language
     if(empty($active) || !in_array($active, c::get('lang.available'))) $active = c::get('lang.default');

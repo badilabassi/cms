@@ -978,7 +978,8 @@ class KirbyPage {
     if($this->isActive()) return true;
 
     $u = array_values(site()->uri()->path()->toArray());
-    $p = str::split($this->translatedURI(), '/');
+    $p = str::split($this->uri(), '/');
+    // TODO: translatedURI
 
     for($x=0; $x<count($p); $x++) {
       if(a::get($p, $x) != a::get($u, $x)) return $this->isOpen = false;

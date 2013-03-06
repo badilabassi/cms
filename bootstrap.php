@@ -34,6 +34,7 @@ define('ROOT_CONTENT',        $roots['root.content']);
 // all stuff in the main kirby folder
 define('ROOT_KIRBY',          $roots['root.kirby']);
 define('ROOT_KIRBY_LIB',      ROOT_KIRBY . DS . 'lib');
+define('ROOT_KIRBY_LEGACY',   ROOT_KIRBY . DS . 'legacy');
 define('ROOT_KIRBY_TAGS',     ROOT_KIRBY . DS . 'tags');
 define('ROOT_KIRBY_PARSERS',  ROOT_KIRBY . DS . 'parsers');
 define('ROOT_KIRBY_PLUGINS',  ROOT_KIRBY . DS . 'plugins');
@@ -53,21 +54,21 @@ define('ROOT_SITE_TAGS',      ROOT_SITE . DS . 'tags');
 include(ROOT_KIRBY_LIB . DS . 'kirby.php');
 
 // autoloader for all classes in the lib
-function autoload($class) {
+function libLoader($class) {
   $file = ROOT_KIRBY_LIB . DS . strtolower(str_replace('Kirby', '', $class)) . '.php';
-  if(file_exists($file)) include $file;
+  if(file_exists($file)) require_once($file);
 }
 
-spl_autoload_register('autoload');
+spl_autoload_register('libLoader');
 
 // load all default config values
 include(ROOT_KIRBY . DS . 'defaults.php');
 
+// load the legacy bootstrapper
+include(ROOT_KIRBY_LEGACY . DS . 'bootstrap.php');
+
 // load all helper functions
 include(ROOT_KIRBY_LIB . DS . 'helpers.php');
-
-// load all legacy code adapters
-include(ROOT_KIRBY_LIB . DS . 'legacy.php');
 
 // load the main site class
 include(ROOT_KIRBY_LIB . DS . 'site.php');

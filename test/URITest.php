@@ -19,6 +19,8 @@ class URITest extends PHPUnit_Framework_TestCase {
     $this->assertEquals($this->url, $this->uri->url());
     $this->assertEquals($this->subfolder, $this->uri->subfolder());
     $this->assertEquals('fantastic/path', (string)$this->uri);
+
+    $this->assertEquals('http', $this->uri->scheme());
     
     $this->assertEquals('http', $this->uri->scheme());
     $this->assertEquals('superurl.com', $this->uri->host());
