@@ -104,4 +104,13 @@ class KirbyDimensions {
     return $this;      
   }
 
+  /**
+   * Echos the dimensions as width x height
+   * 
+   * @return string
+   */
+  public function __toString() {
+    return $this->width . ' x ' . $this->height;
+  }
+
 }

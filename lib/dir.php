@@ -40,6 +40,9 @@ class KirbyDir {
   public function __construct($root) {
     $this->root = $root; 
     $this->name = basename($this->root);
+
+    // full stop if there's no such dir 
+    if(empty($this->root) || !is_dir($this->root)) raise('The directory cannot be scanned: ' . $this->root);
     
     // extract the uid and num of the directory
     if(preg_match('/^([0-9]+[\-]+)/', $this->name, $match)) {

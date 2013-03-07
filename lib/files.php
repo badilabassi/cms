@@ -30,11 +30,14 @@ class KirbyFiles extends KirbyCollection {
   // a cache of all videos in this collection
   protected $videos = null;
 
-  // a cache of all sounds in this collection
-  protected $sounds = null;
+  // a cache of all audio files in this collection
+  protected $audio = null;
 
-  // a cache of all other files in this collection
-  protected $others = null;
+  // a cache of all code files in this collection
+  protected $code = null;
+
+  // a cache of all unknown files in this collection
+  protected $unknown = null;
 
   // a cache of all thumb images in this collection
   protected $thumbs = null;
@@ -184,42 +187,98 @@ class KirbyFiles extends KirbyCollection {
 
   /** 
    * Returns a filtered version of this collection
-   * which contains sounds only
+   * which contains audio files only
    * 
    * @return object A new KirbyFiles collection
    */
+  public function audio() {
+    if(!is_null($this->audio)) return $this->audio;
+    return $this->filterBy('type', 'audio');
+  }
+
+  /**
+   * Alternative for $this->audio()
+   * 
+   * @see self::audio()
+   */
   public function sounds() {
-    if(!is_null($this->sounds)) return $this->sounds;
-    return $this->filterBy('type', 'sound');
+    return $this->audio();
   }
 
   /** 
-   * Checks if this collection contains sound files
+   * Checks if this collection contains audio files
    * 
    * @return boolean
    */
+  public function hasAudio() {
+    return ($this->audio()->count() > 0) ? true : false;
+  }
+
+  /**
+   * Alternative for $this->hasAudio()
+   * 
+   * @see self::hasAudio()
+   */
   public function hasSounds() {
-    return ($this->sounds()->count() > 0) ? true : false;
+    return $this->hasAudio();
   }
 
   /** 
    * Returns a filtered version of this collection
-   * which contains other file types only
+   * which contains unknown file types only
    * 
    * @return object A new KirbyFiles collection
    */
+  public function unknown() {
+    if(!is_null($this->unknown)) return $this->unknown;
+    return $this->filterBy('type', 'unknown');
+  }
+
+  /**
+   * Alternative for $this->unkown()
+   * 
+   * @see self::unknown()
+   */
   public function others() {
-    if(!is_null($this->others)) return $this->others;
-    return $this->filterBy('type', 'other');
+    return $this->unkown();
   }
 
   /** 
-   * Checks if this collection contains other files
+   * Checks if this collection contains unknown files
    * 
    * @return boolean
    */
+  public function hasUnknown() {
+    return ($this->unknown()->count() > 0) ? true : false;
+  }
+
+  /**
+   * Alternative for $this->hasUnkown()
+   * 
+   * @see self::hasUnknown()
+   */
   public function hasOthers() {
-    return ($this->others()->count() > 0) ? true : false;
+    return $this->hasUnkown();
+  }
+
+  /** 
+   * Returns a filtered version of this collection
+   * which contains code only
+   * 
+   * @return object A new KirbyFiles collection
+   */
+  public function code() {
+    if(!is_null($this->code)) return $this->code;
+    return $this->filterBy('type', 'code');
+  }
+
+  /** 
+   * Checks if this collection contains code files
+   * 
+   * @return boolean
+   */
+  public function hasCode() {
+    return ($this->code()->count() > 0) ? true : false;
   }
 
   /** 

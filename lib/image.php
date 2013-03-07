@@ -16,9 +16,6 @@ if(!defined('KIRBY')) die('Direct access is not allowed');
  */
 class KirbyImage extends KirbyFile {
 
-  // cache for a child KirbyDimensions object
-  protected $dimensions = null;
-
   // cache for the attached thumb – if available
   protected $thumb = null;
 
@@ -36,51 +33,6 @@ class KirbyImage extends KirbyFile {
     $this->extension = $file->extension();
     $this->type      = 'image';
 
-  }
-
-  /**
-   * Initializes and returns a KirbyDimensions object
-   * 
-   * @return object KirbyDimensions
-   */
-  public function dimensions() {
-
-    if(!is_null($this->dimensions)) return $this->dimensions;
-
-    $size = @getimagesize($this->root());
-
-    // also set the mime type since this is more reliable
-    $this->mime = $size['mime'];
-
-    return $this->dimensions = new KirbyDimensions($size[0], $size[1]);
-
-  }
-
-  /**
-   * Returns the width of the image
-   * 
-   * @return int
-   */
-  public function width() {
-    return $this->dimensions()->width();
-  }
-
-  /**
-   * Returns the height of the image
-   * 
-   * @return int
-   */
-  public function height() {
-    return $this->dimensions()->height();
-  }
-
-  /**
-   * Returns the ratio of the image
-   * 
-   * @return int
-   */
-  public function ratio() {
-    return $this->dimensions()->ratio();
   }
 
   /**
@@ -117,24 +69,6 @@ class KirbyImage extends KirbyFile {
    */
   public function fitHeight($height, $force=false) {
     return $this->dimensions()->fitHeight($height, $force);
-  }
-
-  /**
-   * Returns the mime type of the image
-   * This method is overwriting the original KirbyFile::mime
-   * because getimagesize has more reliable mime type detection. 
-   * 
-   * @return string
-   */
-  public function mime() {
-    
-    if(!is_null($this->mime)) return $this->mime;
-    
-    // use the dimension getter to determine the mime type
-    $this->dimensions();
-
-    return $this->mime;
-
   }
 
   /**

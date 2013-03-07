@@ -13,50 +13,14 @@ if(!defined('KIRBY')) die('Direct access is not allowed');
  * 
  * @package Kirby CMS
  */
-class KirbyFile {
+class KirbyFile extends KirbyAsset {
 
   // the parent KirbyFiles object
   protected $parent = null;
-
-  // the full root/path of the file
-  protected $root = null;
-  
-  // the full public url to the file
-  protected $url = null;
-
-  // the filename without directory including extension
-  protected $filename = null;
-
-  // the filename without extension 
-  protected $name = null;
-
-  // the parent directory
-  protected $dir = null;
-  
-  // the name of the parent directory
-  protected $dirname = null;
-  
-  // the file extension without dot (jpg, gif, etc)
-  protected $extension = null;
-
-  // the detected file type  
-  protected $type = null;
   
   // the uri (url relative to the content directory)
   protected $uri = null;
-  
-  // unix timestamp of the last modification date
-  protected $modified = null;
-  
-  // the raw file size
-  protected $size = null;
-
-  // a human readable file size (i.e. 1 MB)
-  protected $niceSize = null;
-
-  // the mime type if detectable
-  protected $mime = null;
-
+    
   // the next file
   protected $next = null;
 
@@ -106,15 +70,6 @@ class KirbyFile {
   }
 
   /**
-   * Returns the full root/path of the file
-   * 
-   * @return string
-   */
-  public function root() {
-    return $this->root;
-  }
-
-  /**
    * Returns the URI for the file. 
    * The URI is the URL to its location within the content folder
    * without the base url of the site. 
@@ -138,58 +93,6 @@ class KirbyFile {
   }
 
   /**
-   * Returns the filename of the file
-   * i.e. somefile.jpg
-   *
-   * @return string
-   */
-  public function filename() {
-    if(!is_null($this->filename)) return $this->filename;
-    return $this->filename = basename($this->root);
-  }
-
-  /**
-   * Returns the parent directory path
-   *
-   * @return string
-   */
-  public function dir() {
-    if(!is_null($this->dir)) return $this->dir;
-    return $this->dir = dirname($this->root());
-  }
-
-  /**
-   * Returns the parent directory's name
-   *
-   * @return string
-   */
-  public function dirname() {
-    if(!is_null($this->dirname)) return $this->dirname;
-    return $this->dirname = basename($this->dir());
-  }
-
-  /**
-   * Returns the name of the file without extension   
-   *
-   * @return string
-   */
-  public function name() {
-    if(!is_null($this->name)) return $this->name;
-    return $this->name = f::name($this->filename());
-  }
-
-  /**
-   * Returns the extension of the file 
-   * i.e. jpg
-   *
-   * @return string
-   */
-  public function extension() {
-    if(!is_null($this->extension)) return $this->extension;
-    return $this->extension = f::extension($this->filename());
-  }
-
-  /**
    * Returns the file type i.e. image
    * Is also being used as setter
    * 
@@ -205,7 +108,7 @@ class KirbyFile {
     
     // setter    
     if(!is_null($type)) return $this->type = $type;
-    
+
     // get the cached type if available
     if(!is_null($this->type)) return $this->type;
 
@@ -215,7 +118,7 @@ class KirbyFile {
     }
 
     // get the matching fileinfo for the extension
-    $info = a::get(c::get('fileinfo'), $this->extension());
+    $info = a::get($this->filetypes(), $this->extension());
 
     // get the type matching to this extension
     if($info && isset($info['type'])) {
@@ -223,73 +126,7 @@ class KirbyFile {
     }
 
     // unkown file type
-    return $this->type = 'other';
-
-  }
-
-  /**
-   * Returns the last modified date of this file
-   * as unix timestamp
-   * 
-   * @return int
-   */
-  public function modified() {
-    if(!is_null($this->modified)) return $this->modified;
-    return $this->modified = @filectime($this->root);
-  }
-
-  /**
-   * Returns the raw file size of this file
-   * 
-   * @return int
-   */
-  public function size() {
-    if(!is_null($this->size)) return $this->size;
-    return $this->size = f::size($this->root);
-  }
-
-  /**
-   * Returns a human readble file size
-   * i.e. 1.2 MB
-   * 
-   * @return string
-   */
-  public function niceSize() {
-    if(!is_null($this->niceSize)) return $this->niceSize;
-    return $this->niceSize = f::nice_size($this->size());
-  }
-
-  /**
-   * Returns the mime type of this file
-   * if detectable. i.e. image/jpeg
-   * 
-   * @return string
-   */
-  public function mime() {
-    if(!is_null($this->mime)) return $this->mime;
-
-    if(function_exists('finfo_file')) {
-      // Fileinfo is prefered if available
-      $finfo = finfo_open(FILEINFO_MIME_TYPE);
-      $mime  = finfo_file($finfo, $this->root);
-      finfo_close($finfo);
-    } else if(function_exists('mime_content_type') && $mime = @mime_content_type($this->root) !== false) {
-      // The mime type has already been set by the if statement!
-    } else {
-      // get the matching fileinfo for the extension
-      $info = a::get(c::get('fileinfo'), $this->extension(), array());
-
-      // try to guess the mime type
-      $mime = @$info['mime'];
-
-    }
-
-    // mark the mime as false if not available
-    // otherwise the entire stuff above will be executed 
-    // on each function call even if we already know it's not possible
-    if($mime == null) $mime = false;
-
-    return $this->mime = $mime;
+    return $this->type = 'unknown';
 
   }
 

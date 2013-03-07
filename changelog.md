@@ -28,6 +28,9 @@ This is a minor-major release
 - brand new plugin api!
 - new exception handling screen
 - new cache.ignore.urls with wildcards and cache.ignore.templates
+- new KirbyAsset class and Exif data handling for all images
+- new code and unknown filters for files 
+- better file type recognition
 
 ## 1.1.2
 

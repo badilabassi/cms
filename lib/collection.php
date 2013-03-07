@@ -52,15 +52,16 @@ class KirbyCollection implements Iterator {
       foreach($key as $key => $value) {
         $this->set($key, $value);
       }
-      return true;    
+      return $this;    
     }
     
     if($value === false || $value === null) {
       unset($this->{$key});
-      return false;
+      return $this;
     }
     
     $this->_['_' . $key] = $value;
+    return $this;
   }
       
   /**

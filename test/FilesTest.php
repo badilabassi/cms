@@ -26,9 +26,9 @@ class FilesTest extends PHPUnit_Framework_TestCase {
     $this->assertInstanceOf('KirbyFiles', $this->files->sounds());
     $this->assertFalse($this->files->hasSounds());
     
-    $this->assertInstanceOf('KirbyFiles', $this->files->others());
-    $this->assertTrue($this->files->hasOthers());
-    $this->assertEquals(2, $this->files->others()->count());
+    $this->assertInstanceOf('KirbyFiles', $this->files->code());
+    $this->assertTrue($this->files->hasCode());
+    $this->assertEquals(2, $this->files->code()->count());
     
     $this->assertInstanceOf('KirbyFiles', $this->files->metas());
     $this->assertTrue($this->files->hasMetas());
@@ -40,10 +40,10 @@ class FilesTest extends PHPUnit_Framework_TestCase {
   }
 
   public function testFilters() {
-    $this->assertEquals(1, $this->files->others()->filterBy('extension', 'js')->count());
-    $this->assertEquals(2, $this->files->others()->count());
+    $this->assertEquals(1, $this->files->code()->filterBy('extension', 'js')->count());
+    $this->assertEquals(2, $this->files->code()->count());
     $this->assertEquals(1, $this->files->filterBy('extension', 'js')->count());
-    $this->assertEquals(2, $this->files->filterBy('type', 'other')->count());
+    $this->assertEquals(2, $this->files->filterBy('type', 'code')->count());
     $this->assertEquals(1, $this->files->filterBy('name', 'image-01')->count());
   }
 
