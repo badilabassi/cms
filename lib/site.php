@@ -183,6 +183,9 @@ class KirbySite extends KirbyPage {
     // try to detect the subfolder      
     $subfolder = (c::get('subfolder') !== false) ? trim(c::get('subfolder'), '/') : trim(dirname(server::get('script_name')), '/\\');
     
+    // If there is no subfolder, we don't actually need the dot.
+    if($subfolder == '.') $subfolder = '';
+    
     c::set('subfolder', $subfolder);
     return $this->subfolder = $subfolder;
 
