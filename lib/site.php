@@ -541,6 +541,7 @@ class KirbySite extends KirbyPage {
 
     // load custom config files
     KirbyLoader::file(ROOT_SITE_CONFIG . DS . 'config.php');
+    KirbyLoader::file(ROOT_SITE_CONFIG . DS . 'config.' . server::get('server_addr') . '.php');
     KirbyLoader::file(ROOT_SITE_CONFIG . DS . 'config.' . server::get('server_name') . '.php');
 
     // get all config options that have been stored so far
