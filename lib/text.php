@@ -12,7 +12,7 @@ if(!defined('KIRBY')) die('Direct access is not allowed');
  * 
  * @package Kirby CMS
  */
-class Kirbytext {
+class KirbyText {
   
   // an array with options
   protected $options = array();

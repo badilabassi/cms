@@ -26,7 +26,7 @@ class KirbyVisitor {
    */
   public function ip() {
     if(!is_null($this->ip)) return $this->ip;
-    return $this->ip = site()->request()->ip();
+    return $this->ip = r::ip();
   }
 
   /**
@@ -63,8 +63,10 @@ class KirbyVisitor {
    * @return string
    */
   public function acceptedLanguageCode() {
-    $detected = str::split($this->acceptedLanguage(), '-');
-    $detected = str::lower(str::trim(a::first($detected)));
+    $detected = str::split(server::get('http_accept_language'), ',');
+    $detected = a::first($detected);
+    $detected = str::split($detected, '-');
+    $detected = str::lower(a::first($detected));
     return (empty($detected) || !in_array($detected, c::get('lang.available'))) ? c::get('lang.default') : $detected;    
   }
 

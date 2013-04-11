@@ -41,7 +41,7 @@ class FileTest extends PHPUnit_Framework_TestCase {
     $this->assertEquals('image/jpeg', $file->mime());
     
     $this->assertInstanceOf('KirbyImage', $file);
-    $this->assertInstanceOf('KirbyDimensions', $file->dimensions());
+    $this->assertInstanceOf('Dimensions', $file->dimensions());
     $this->assertEquals('image/jpeg', $file->mime());
     $this->assertEquals(100, $file->width());
     $this->assertEquals(100, $file->height());

@@ -32,7 +32,7 @@ class SiteTest extends PHPUnit_Framework_TestCase {
     $this->assertEquals('tests', $this->site->pages()->first()->uid());
     $this->assertEquals('home', $this->site->pages()->last()->uid());
     $this->assertFalse($this->site->troubleshoot());
-    $this->assertInstanceOf('KirbyURI', $this->site->uri());
+    $this->assertInstanceOf('URI', $this->site->uri());
     $this->assertEquals('mysubfolder', $this->site->subfolder());
     $this->assertEquals('http://superurl.com/mysubfolder', $this->site->url());
     $this->assertTrue(in_array($this->site->scheme(), array('http', 'https')));

@@ -11,7 +11,7 @@ if(!defined('KIRBY')) die('Direct access is not allowed');
  * 
  * @package Kirby CMS
  */
-class KirbyPages extends KirbyCollection {
+class KirbyPages extends Collection {
 
   // cache for all visible pages in this collection
   protected $visible = null;

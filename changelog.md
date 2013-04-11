@@ -1,8 +1,6 @@
 #Kirby Changelog
 
-## 1.5
-
-This is a minor-major release
+## 2
 
 - entire new core structure
 - new class naming conventions
@@ -31,6 +29,7 @@ This is a minor-major release
 - new KirbyAsset class and Exif data handling for all images
 - new code and unknown filters for files 
 - better file type recognition
+- brand new toolkit
 
 ## 1.1.2
 

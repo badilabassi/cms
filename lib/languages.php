@@ -8,7 +8,7 @@ if(!defined('KIRBY')) die('Direct access is not allowed');
  * 
  * @package Kirby CMS
  */
-class KirbyLanguages extends KirbyCollection {
+class KirbyLanguages extends Collection {
 
   /**
    * Constructor
@@ -20,7 +20,7 @@ class KirbyLanguages extends KirbyCollection {
     if(empty($codes)) $codes = c::get('lang.available', array());
 
     // get the uri including the language code
-    $uri    = new KirbyURI(null, array('subfolder' => site()->subfolder()));
+    $uri    = new uri(null, array('subfolder' => site()->subfolder()));
     $active = (c::get('lang.current') && in_array(c::get('lang.current'), $codes)) ? c::get('lang.current') : $uri->path()->first();
 
     // if there's no code available in the url, use the default language

@@ -1,3 +1,6 @@
 [submodule "test/bin"]
 	path = test/bin
 	url = https://github.com/vis7mac/unitify
+[submodule "toolkit"]
+	path = toolkit
+	url = https://bastianallgeier@github.com/kirbycms/toolkit

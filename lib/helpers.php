@@ -3,11 +3,6 @@
 // direct access protection
 if(!defined('KIRBY')) die('Direct access is not allowed');
 
-// dependencies
-require_once(ROOT_KIRBY_LIB . DS . 'html' . DS . 'html.php');
-require_once(ROOT_KIRBY_LIB . DS . 'html' . DS . 'form.php');
-require_once(ROOT_KIRBY_LIB . DS . 'html' . DS . 'embed.php');
-
 /**
  * Main URL builder
  * 
@@ -117,7 +112,7 @@ function notFound() {
  * @return string
  */ 
 function snippet($snippet, $data=array(), $return=false) {
-  return KirbyTemplate::loadFile(ROOT_SITE_SNIPPETS . DS . $snippet . '.php', $data, $return);
+  return tpl::loadFile(ROOT_SITE_SNIPPETS . DS . $snippet . '.php', $data, $return);
 }
 
 /**
@@ -143,59 +138,6 @@ function js($url, $async = false) {
 }
 
 /**
- * Returns a parameter from the URI object
- *
- * @see KirbyURI::param() 
- * @param string $key The parameter name/key
- * @param string $default The default value if the parameter could not be found or is empty
- * @return string
- */ 
-function param($key, $default=false) {
-  return site()->uri()->param($key, $default);
-}
-
-/**
- * Smart version of echo with an if condition as first argument
- * 
- * @param boolean $condition
- * @param string $value The string to be echoed if the condition is true
- * @param string $alternative An alternative string which should be echoed when the condition is false
- */
-function e($condition, $value, $alternative = null) {
-  echo r($condition, $value, $alternative);
-}
-
-/**
- * Alternative for e()
- * 
- * @see e()
- */
-function ecco($condition, $value, $alternative = null) {
-  e($condition, $value, $alternative);
-}
-
-/**
- * Smart version of return with an if condition as first argument
- * 
- * @param boolean $condition
- * @param string $value The string to be returned if the condition is true
- * @param string $alternative An alternative string which should be returned when the condition is false
- */
-function r($condition, $value, $alternative = null) {
-  return ($condition) ? $value : $alternative;
-}
-
-/**
- * Shortcut for a::show()
- * 
- * @see a::show()
- * @param mixed $variable Whatever you like to inspect
- */ 
-function dump($variable) {
-  a::show($variable);
-}
-
-/**
  * Raises a Kirby Exception
  * 
  * @see KirbyException
@@ -204,57 +146,6 @@ function dump($variable) {
 function raise($message) {
   require_once('exception.php');
   throw new KirbyException($message);
-}
-
-/**
- * Generates a single attribute or a list of attributes
- * 
- * @see html::attr();
- * @param string $name mixed string: a single attribute with that name will be generated. array: a list of attributes will be generated. Don't pass a second argument in that case. 
- * @param string $value if used for a single attribute, pass the content for the attribute here
- * @return string the generated html
- */
-function attr($name, $value = null) {
-  return html::attr($name, $value);
-}  
-
-/**
- * Creates safe html by encoding special characters
- * 
- * @param string $text unencoded text
- * @return string
- */
-function html($text) {
-  return str::html($text, false);
-}
-
-/**
- * Shortcut for html()
- * 
- * @see html()
- */
-function h($text) {
-  return html($text);
-}
-
-/**
- * Creates safe xml by encoding special characters
- * 
- * @param string $text unencoded text
- * @return string
- */
-function xml($text) {
-  return str::xml($text);
-}
-
-/**
- * Converts new lines to html breaks
- * 
- * @param string $text with new lines
- * @return string
- */
-function multiline($text) {
-  return nl2br(html($text));
 }
 
 /**
@@ -295,8 +186,14 @@ function md($text) {
  * @param string $text
  * @return string parsed text
  */
-function yaml($string) {
-  return spyc_load(trim($string));
+if(!function_exists('yaml')) {
+
+  require_once(ROOT_KIRBY_PARSERS . DS . 'yaml.php');
+
+  function yaml($string) {
+    return spyc_load(trim($string));
+  }
+
 }
 
 /**
@@ -391,65 +288,33 @@ function gist($url, $file = false) {
 }
 
 /**
- * The widont function makes sure that there are no 
- * typographical widows at the end of a paragraph –
- * that's a single word in the last line
+ * displays past times in a human readble format (i.e. 2 years ago)
  * 
- * @param string $str
+ * @param mixed $date Either a unix timestamp or KirbyDate object
  * @return string
  */
-function widont($str = '') {
-  return preg_replace( '|([^\s])\s+([^\s]+)\s*$|', '$1&nbsp;$2', $str);
+function ago($date = null) {
+
+  // transfer timestamps first
+  if(!is_a($date, 'KirbyDate')) $date = new KirbyDate($date);
+  return $date->ago();
+    
 }
 
 
-/**
-  * displays past times in a human readble format (i.e. 2 years ago)
-  * 
-  * @param int unix timestamp
-  * @return string
-  */
-function ago($timestamp) {
+function objectify($array) {
 
-  if(empty($timestamp)) return time();
-  
-  $now = time();
+  $result = new KirbyCollection();
 
-  // the timestamp must be in the past
-  if($now < $timestamp) return false;
-  
-  // intervals and translation keys
-  $periods = array('sec', 'min', 'hour', 'day', 'week', 'month', 'year');
-  $lengths = array('60','60','24','7','4.35','12');
-
-  $translation = l::get('ago', array(
-    'now'    => 'just now',
-    'sec'    => 'one second ago',
-    'secs'   => '%s seconds ago',
-    'min'    => 'one minute ago',
-    'mins'   => '%s minutes ago',
-    'hour'   => 'one hour ago',
-    'hours'  => '%s hours ago',
-    'day'    => 'yesterday',
-    'days'   => '%s days ago',
-    'week'   => 'last week',
-    'weeks'  => '%s weeks ago',
-    'month'  => 'last month',
-    'months' => '%s months ago',
-    'year'   => 'last year',
-    'years'  => '%s years ago'
-  ));
-
-  // calculate the difference between both timestamps
-  $difference = $now - $timestamp;
-    
-  for($x = 0; $difference >= $lengths[$x] && $x < count($lengths)-1; $x++) {
-    $difference /= $lengths[$x];
+  foreach($array as $key => $value) {
+    if(is_array($value) || is_object($value)) {
+      $result->$key = objectify($value);
+    } else {
+      $result->$key = new KirbyString($value);
+    }
   }
-  
-  $difference = round($difference);
-  if($difference != 1) $periods[$x] .= 's';
 
-  return sprintf($translation[$periods[$x]], $difference); 
-    
+  return $result;
+
 }
+

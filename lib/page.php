@@ -1000,7 +1000,7 @@ class KirbyPage {
    */
   public function __call($key, $arguments = null) {    
     
-    $content = ($this->content()) ? $this->content()->$key() : null;
+    $content = ($this->content()) ? $this->content()->data($key) : null;
   
     if($content && $key == 'date') {
       $content = (!empty($arguments)) ? $content->toDate(a::first($arguments)) : $content->toTimestamp();

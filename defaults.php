@@ -21,17 +21,17 @@ c::set(array(
   /**
     * Human-readable version
     */ 
-  'version.string' => '1.5',
+  'cms.version.string' => '2.0',
   
   /**
     * Machine-readable version 
     */
-  'version.number' => 1.5,
+  'cms.version.number' => 2.0,
 
   /**
     * Required panel version
     */ 
-  'panel.min.version' => 1.0,
+  'panel.min.version' => 2.0,
 
   /**
     * The base url
@@ -117,6 +117,11 @@ c::set(array(
    * template here if needed
    */
   'tpl.default' => 'default',
+
+  /**
+   * Default location for templates
+   */
+  'tpl.root' => ROOT_SITE_TEMPLATES,
 
   /**
    * Show/hide PHP errors

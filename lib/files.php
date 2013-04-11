@@ -3,11 +3,6 @@
 // direct access protection
 if(!defined('KIRBY')) die('Direct access is not allowed');
 
-// dependencies
-require_once('collection.php');
-require_once('file.php');
-require_once('image.php');
-
 /**
  * Files
  * 
@@ -16,7 +11,7 @@ require_once('image.php');
  * 
  * @package Kirby CMS
  */
-class KirbyFiles extends KirbyCollection {
+class KirbyFiles extends Collection {
   
   // the parent page object
   protected $page = null;

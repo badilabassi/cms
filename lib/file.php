@@ -13,7 +13,7 @@ if(!defined('KIRBY')) die('Direct access is not allowed');
  * 
  * @package Kirby CMS
  */
-class KirbyFile extends KirbyAsset {
+class KirbyFile extends Asset {
 
   // the parent KirbyFiles object
   protected $parent = null;

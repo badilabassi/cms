@@ -104,10 +104,34 @@ class KirbyContent extends KirbyFile {
   /**
    * Returns an array with all keys and values/KirbyVariables
    * 
+   * @param string $key Optional key to get a single item from the data array
+   * @param mixed $default Optional default value if the item is not in the array
    * @return array
    */
-  public function data() {
+  public function data($key = null, $default = null) {
 
+    // getter for a specific data key
+    if(!is_null($key)) {
+
+      // if language support is switched off, or this is the default
+      // language file, a fallback for missing/untranslated fields is not needed
+      if(!c::get('lang.support') || $this->isDefaultContent()) {
+        return a::get($this->data(), $key, $default);
+      }
+
+      // get the full data array
+      $data = $this->data();
+
+      // if the field exists, just return its content 
+      if(isset($data[$key])) return $data[$key];
+
+      // load the default language content file for the parent page
+      // and try to get the field from that file as a fallback
+      return $this->page()->defaultContent()->$key();
+
+    }
+
+    // getter for the entire data array
     if(!is_null($this->data)) return $this->data;
 
     $sections = preg_split('![\r\n]+[-]{4,}!i', $this->raw());
@@ -164,23 +188,7 @@ class KirbyContent extends KirbyFile {
    * @return mixed
    */
   public function __call($key, $arguments = null) {    
-    
-    // if language support is switched off, or this is the default
-    // language file, a fallback for missing/untranslated fields is not needed
-    if(!c::get('lang.support') || $this->isDefaultContent()) {
-      return a::get($this->data(), $key);
-    }
-
-    // get the full data array
-    $data = $this->data();
-
-    // if the field exists, just return its content 
-    if(isset($data[$key])) return $data[$key];
-
-    // load the default language content file for the parent page
-    // and try to get the field from that file as a fallback
-    return $this->page()->defaultContent()->$key();
-
+    return $this->data($key);
   }
 
   /**

@@ -1,8 +1,5 @@
 <?php
 
-// direct access protection
-if(!isset($root) && !isset($roots)) die('Direct access is not allowed');
-
 /**
  * Kirby System file
  * This is used by the index.php to load the bootstrapper 
@@ -13,19 +10,21 @@ if(!isset($root) && !isset($roots)) die('Direct access is not allowed');
  */
 
 // legacy root handling
-if(!isset($roots)) {
+if(!defined('ROOT')) {
 
-  $roots = array(
-    'root'         => $root, 
-    'root.kirby'   => $rootKirby,
-    'root.site'    => $rootSite,
-    'root.content' => $rootContent,
-  );
+  // system independent shortcut for /
+  define('DS', DIRECTORY_SEPARATOR);
+
+  // grab and define custom roots from the index.php
+  define('ROOT',         $root);
+  define('ROOT_KIRBY',   $rootKirby); 
+  define('ROOT_SITE',    $rootSite);
+  define('ROOT_CONTENT', $rootContent);  
 
 }
 
 // load the bootstrapper
-require(dirname(__FILE__) . DIRECTORY_SEPARATOR . 'bootstrap.php');
+require(ROOT_KIRBY . DS . 'bootstrap.php');
 
 // create a exception handler old school style to be compatible with PHP 5.2
 $exceptionHandler = create_function('$exception', 'require(ROOT_KIRBY_MODALS . DS . "exception.php"); exit();');

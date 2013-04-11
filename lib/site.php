@@ -101,9 +101,8 @@ class KirbySite extends KirbyPage {
     // apply all locale settings and timezone stuff
     $this->localize();
 
-    // load additional stuff
-    KirbyLoader::language();
-    KirbyLoader::parsers();
+    // load all available parsers
+    $this->parsers();
 
     // initialize plugins
     $this->plugins();
@@ -133,16 +132,16 @@ class KirbySite extends KirbyPage {
   }
 
   /**
-   * Returns the KirbyURI object, which can be used
+   * Returns the uri object, which can be used
    * to inspect and work with the current URL/URI
    * 
-   * @return object KirbyUri
+   * @return object uri
    */
   public function uri($uri = null) {
 
     if(!is_null($this->uri)) return $this->uri;
 
-    return $this->uri = new KirbyUri(array(
+    return $this->uri = new uri(array(
       // attach the language code to the subfolder if multi-lang support is activated
       'subfolder' => (!c::get('lang.support')) ? $this->subfolder() : $this->subfolder() . '/' . $this->language()->code(),
       // set a current URL if available in options
@@ -319,27 +318,19 @@ class KirbySite extends KirbyPage {
 
     // check if the active page is valid    
     if($activePage && $activePage->translatedURI() == $uri) {      
-      $p = $activePage;    
-    } else if($route = $this->router()->resolve()) {
-      $p = $route->page();
-    } else {
-      $p = null;
-    }
+      return $this->activePage = $activePage;    
+    } else if($route = router::match($this->uri())) {
 
-    if(!$p) {
-      if($route = $this->router()->resolve()) {
-        // if a route has been found for this url, use that page
-        $this->activePage = $route->page();
-      } else {
-        // last resort: error page
-        $this->activePage = $this->errorPage();        
-      }
-    } else {
-      $this->activePage = $p;
-    }    
+      // path to an existing page
+      $uri = $route->action();      
 
-    // return the final active page
-    return $this->activePage;
+      // try to find a page for that uri
+      if($p = $this->pages->find($uri)) return $this->activePage = $p;
+
+    } 
+
+    // fallback to the error page
+    return $this->activePage = $this->errorPage();
 
   }
   
@@ -379,6 +370,14 @@ class KirbySite extends KirbyPage {
   }
 
   /**
+   * Load available parsers
+   */
+  protected function parsers() {
+    require_once(ROOT_KIRBY_PARSERS . DS . 'smartypants.php');
+    require_once(ROOT_KIRBY_PARSERS . DS . r(c::get('markdown.extra'), 'markdown.extra.php', 'markdown.php'));
+  }
+
+  /**
    * Returns the Plugins object with all installed plugins
    * 
    * @return object KirbyPlugins
@@ -394,30 +393,12 @@ class KirbySite extends KirbyPage {
   }
 
   /**
-   * Shortcut for the router plugin instance
-   * 
-   * @return object KirbyRouter
-   */
-  public function router() {
-    return $this->plugins()->router()->instance();
-  }
-
-  /**
    * Shortcut for the visitor plugin instance
    * 
    * @return object KirbyVisitor
    */
   public function visitor() {
     return $this->plugins()->visitor()->instance();
-  }
-
-  /**
-   * Shortcut for the request plugin instance
-   * 
-   * @return object KirbyRequest
-   */
-  public function request() {
-    return $this->plugins()->request()->instance();
   }
 
   /**
@@ -450,11 +431,11 @@ class KirbySite extends KirbyPage {
 
       if(!is_null($this->html)) return $this->html;
 
-      KirbyTemplate::set('site',  $this);
-      KirbyTemplate::set('pages', $this->children());
-      KirbyTemplate::set('page',  $page);
+      tpl::set('site',  $this);
+      tpl::set('pages', $this->children());
+      tpl::set('page',  $page);
 
-      $this->html = KirbyTemplate::load($page->template(), false, true);
+      $this->html = tpl::load($page->template(), false, true);
 
       $cache->set($this->html);
 
@@ -537,8 +518,8 @@ class KirbySite extends KirbyPage {
   protected function configure($params = array()) {
 
     // load custom config files
-    KirbyLoader::file(ROOT_SITE_CONFIG . DS . 'config.php');
-    KirbyLoader::file(ROOT_SITE_CONFIG . DS . 'config.' . server::get('server_name') . '.php');
+    f::load(ROOT_SITE_CONFIG . DS . 'config.php');
+    f::load(ROOT_SITE_CONFIG . DS . 'config.' . server::get('server_name') . '.php');
 
     // get all config options that have been stored so far
     $defaults = c::get();
@@ -565,6 +546,10 @@ class KirbySite extends KirbyPage {
 
     // store the current language code in the config
     if(c::get('lang.support')) c::set('lang.current', $this->language()->code());
+
+    // load all language vars
+    f::load(ROOT_SITE_LANGUAGES . DS . c::get('lang.default') . '.php');
+    f::load(ROOT_SITE_LANGUAGES . DS . c::get('lang.current') . '.php');
 
   } 
 
