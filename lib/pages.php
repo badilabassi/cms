@@ -39,6 +39,7 @@ class KirbyPages extends Collection {
       foreach($input->dir()->children() as $dir) {
         
         $child = new KirbyPage($dir);
+        $child->parent($input);
         $child->uri($uri . '/' . $child->uid());
 
         $this->set($child->uri(), $child);

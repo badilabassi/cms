@@ -550,11 +550,14 @@ class KirbyPage {
 
   /**
    * Returns the parent page object
-   * 
+   *
+   * @param object $parent Setter for the parent page object 
    * @return object KirbyPage
    */
-  public function parent() {
+  public function parent(KirbyPage $parent = null) {
     
+    if(!is_null($parent)) return $this->parent = $parent;
+
     // only fetch the parent object once
     if(!is_null($this->parent)) return $this->parent;
     
