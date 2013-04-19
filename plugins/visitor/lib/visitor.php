@@ -1,4 +1,4 @@
-<?php 
+<?php
 
 // direct access protection
 if(!defined('KIRBY')) die('Direct access is not allowed');
@@ -8,54 +8,10 @@ if(!defined('KIRBY')) die('Direct access is not allowed');
  * 
  * @package Kirby CMS
  */
-class KirbyVisitor {
+class KirbyVisitor extends Visitor {
 
-  // cache for the ip address
-  protected $ip = null;
-  
-  // cache for the user agent string
-  protected $ua = null;
-  
   // cache for the detected language
   protected $language = null;
-
-  /**
-   * Returns the ip address of the current visitor
-   * 
-   * @return string
-   */
-  public function ip() {
-    if(!is_null($this->ip)) return $this->ip;
-    return $this->ip = r::ip();
-  }
-
-  /**
-   * Returns the user agent string of the current visitor
-   * 
-   * @return string
-   */
-  public function ua() {
-    if(!is_null($this->ua)) return $this->ua;
-    return $this->ua = server::get('HTTP_USER_AGENT');
-  }
-
-  /**
-   * A more readable but longer alternative for ua()
-   * 
-   * @return string
-   */
-  public function userAgent() {
-    return $this->ua();
-  }
-
-  /**
-   * Returns the user's accepted language
-   * 
-   * @return string
-   */
-  public function acceptedLanguage() {
-    return server::get('http_accept_language');
-  }
 
   /**
    * Returns the user's accepted language code
@@ -63,11 +19,10 @@ class KirbyVisitor {
    * @return string
    */
   public function acceptedLanguageCode() {
-    $detected = str::split(server::get('http_accept_language'), ',');
-    $detected = a::first($detected);
-    $detected = str::split($detected, '-');
-    $detected = str::lower(a::first($detected));
-    return (empty($detected) || !in_array($detected, c::get('lang.available'))) ? c::get('lang.default') : $detected;    
+    if(!is_null(self::$acceptedLanguageCode)) return self::$acceptedLanguageCode;
+    $detected = parent::acceptedLanguageCode();
+    $detected = (empty($detected) || !in_array($detected, c::get('lang.available'))) ? c::get('lang.default') : $detected;    
+    return self::$acceptedLanguageCode = $detected;
   }
 
   /**
@@ -90,34 +45,6 @@ class KirbyVisitor {
     // store and return
     return $this->language = $language;
   
-  }
-
-  /**
-   * Returns the referrer if available
-   * 
-   * @return string
-   */
-  public function referrer() {
-    return site()->request()->referer();
-  }
-
-  /**
-   * Nobody can remember if it is written with on or two r
-   * 
-   * @return string
-   */
-  public function referer() {
-    return site()->request()->referer();
-  }
-
-  /**
-   * Returns the ip address if the object 
-   * is being converted to a string or echoed
-   *
-   * @return string
-   */
-  public function __toString() {
-    return $this->ip();
   }
 
 }
