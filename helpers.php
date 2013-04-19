@@ -144,7 +144,6 @@ function js($url, $async = false) {
  * @param string $message An error message for the exception
  */
 function raise($message) {
-  require_once('exception.php');
   throw new KirbyException($message);
 }
 
