@@ -105,7 +105,7 @@ class KirbyFile extends Asset {
    * @return string
    */
   public function type($type = null) {
-    
+
     // setter    
     if(!is_null($type)) return $this->type = $type;
 
@@ -117,16 +117,7 @@ class KirbyFile extends Asset {
       return $this->type = 'content';
     }
 
-    // get the matching fileinfo for the extension
-    $info = a::get($this->filetypes(), $this->extension());
-
-    // get the type matching to this extension
-    if($info && isset($info['type'])) {
-      return $this->type = $info['type'];      
-    }
-
-    // unkown file type
-    return $this->type = 'unknown';
+    return parent::type();    
 
   }
 
