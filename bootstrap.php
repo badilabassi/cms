@@ -62,7 +62,7 @@ include(ROOT_KIRBY . DS . 'defaults.php');
 include(ROOT_KIRBY_LEGACY . DS . 'bootstrap.php');
 
 // load all helper functions
-include(ROOT_KIRBY_LIB . DS . 'helpers.php');
+include(ROOT_KIRBY . DS . 'helpers.php');
 
 // load the main site class
 include(ROOT_KIRBY_LIB . DS . 'site.php');
