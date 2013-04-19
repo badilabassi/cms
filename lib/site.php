@@ -420,10 +420,8 @@ class KirbySite extends KirbyPage {
    */
   public function toHtml($echo = false) {
 
-    require_once(ROOT_KIRBY_LIB . DS . 'cache' . DS . 'html.php');
-
     $page  = $this->activePage();
-    $cache = new KirbyHTMLCache($this, $page);
+    $cache = new KirbyCache($this, $page);
 
     if($data = $cache->get()) {
       $this->html = $data;
@@ -529,6 +527,9 @@ class KirbySite extends KirbyPage {
 
     // store them again
     c::set($config);
+
+    // connect the cache 
+    cache::connect('file', array('root' => ROOT_SITE_CACHE));
 
   }
 
