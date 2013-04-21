@@ -55,7 +55,7 @@ class KirbyCache {
    * 
    * @return boolean
    */
-  static function isIgnored() {
+  public function isIgnored() {
 
     $url      = $this->parent->uri();
     $template = $this->parent->template();

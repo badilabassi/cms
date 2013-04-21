@@ -3,13 +3,32 @@
 // direct access protection
 if(!defined('KIRBY')) die('Direct access is not allowed');
 
+/**
+ * Breadcrumb Plugin
+ * 
+ * Initiates the breadcrumb object
+ * and attaches it to site() 
+ * 
+ * @package Kirby CMS
+ */
 class KirbyBreadcrumbPlugin extends KirbyPlugin {
 
+  /**
+   * Calls the crumb method as soon as the
+   * plugin is initiated so it can be accessed with
+   * site()->breadcrumb()
+   */
   public function onInit($arguments = array()) {
     return $this->crumb();
   }
 
-  private function crumb() {
+  /**
+   * The crumb method creates the current 
+   * breadcrumb and returns a new KirbyPages collection
+   * 
+   * @return object KirbyPages
+   */
+  protected function crumb() {
 
     $site  = site();
     $path  = $site->uri()->path()->toArray(); 
