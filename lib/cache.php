@@ -51,19 +51,46 @@ class KirbyCache {
   }
 
   /**
+   * Checks if the url or template should be ignored
    * 
+   * @return boolean
    */
-  public function isIgnored() {
-    return cache::ignored($this->parent->uri(), $this->parent->template());
-  }
+  static function isIgnored() {
 
+    $url      = $this->parent->uri();
+    $template = $this->parent->template();
+
+    // get all templates that shuold be ignored
+    $templates = c::get('cache.ignore.templates');
+
+    // ignore all pages with one of the templates from above
+    if(in_array($template, $templates)) return true;
+
+    // get all urls that shuold be ignored, with a fallback for the old format
+    $urls = c::get('cache.ignore.urls', c::get('cache.ignore'));
+
+    foreach($urls as $pattern) {
+
+      if(($pattern == '/' || $pattern == c::get('home')) && in_array($url, array(c::get('home'), '/', ''))) return true;
+
+      $regex = '!^' . $pattern . '$!i';
+      $regex = str_replace('*', '.*?', $regex);
+
+      if(preg_match($regex, $url)) return true;
+
+    }        
+
+    return false;
+
+  }
+  
   /**
    * Checks if there is a valid cache file available
    * 
    * @return boolean
    */
   public function isAvailable() {
-    return $this->isEnabled() && cache::modified($this->id) >= $this->site->modified() ? true : false;
+    return $this->isEnabled() && cache::created($this->id) >= $this->site->modified() ? true : false;
   }
 
   /**
