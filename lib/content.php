@@ -134,7 +134,11 @@ class KirbyContent extends KirbyFile {
     // getter for the entire data array
     if(!is_null($this->data)) return $this->data;
 
-    $sections = preg_split('![\r\n]+[-]{4,}!i', $this->raw());
+    $raw = $this->raw();
+
+    if(!$raw) return $this->data = array();
+
+    $sections = preg_split('![\r\n]+[-]{4,}!i', $raw);
     $data     = array();
     
     foreach($sections AS $s) {

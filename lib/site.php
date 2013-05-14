@@ -452,6 +452,33 @@ class KirbySite extends KirbyPage {
   }
 
   /**
+   * Checks if this page object is the main site
+   * 
+   * @return true
+   */
+  public function isSite() {
+    return true;
+  }
+
+  /**
+   * Returns the intended template
+   * 
+   * @return string
+   */
+  public function intendedTemplate() {
+    return 'site';
+  }
+
+  /**
+   * Returns the usable template
+   * 
+   * @return string
+   */
+  public function template() {
+    return 'site';    
+  }
+
+  /**
    * The site object has a depth of 0
    * 
    * @return int 0

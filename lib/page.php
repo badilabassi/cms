@@ -901,6 +901,15 @@ class KirbyPage {
   }
 
   /**
+   * Checks if this page object is the main site
+   * 
+   * @return false
+   */
+  public function isSite() {
+    return false;
+  }
+
+  /**
    * Checks if this page is visible
    * A visible page has a prepended number 
    * in its foldername. i.e. 01-projects
