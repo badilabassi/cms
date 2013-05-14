@@ -285,35 +285,3 @@ function gist($url, $file = false) {
     'file' => $file
   ));
 }
-
-/**
- * displays past times in a human readble format (i.e. 2 years ago)
- * 
- * @param mixed $date Either a unix timestamp or KirbyDate object
- * @return string
- */
-function ago($date = null) {
-
-  // transfer timestamps first
-  if(!is_a($date, 'KirbyDate')) $date = new KirbyDate($date);
-  return $date->ago();
-    
-}
-
-
-function objectify($array) {
-
-  $result = new KirbyCollection();
-
-  foreach($array as $key => $value) {
-    if(is_array($value) || is_object($value)) {
-      $result->$key = objectify($value);
-    } else {
-      $result->$key = new KirbyString($value);
-    }
-  }
-
-  return $result;
-
-}
-
