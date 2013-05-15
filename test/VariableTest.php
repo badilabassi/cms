@@ -1,6 +1,6 @@
 <?php
 
-require_once('lib/testing_bootstrap.php');
+require_once('lib/bootstrap.php');
 
 class VariableTest extends PHPUnit_Framework_TestCase {
   public function __construct() {

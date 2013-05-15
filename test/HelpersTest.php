@@ -1,6 +1,6 @@
 <?php
 
-require_once('lib/testing_bootstrap.php');
+require_once('lib/bootstrap.php');
 
 class HelpersTest extends PHPUnit_Framework_TestCase {
   function __construct() {
