@@ -1,6 +1,6 @@
 <phpunit>
   <testsuites>
-    <testsuite name="Kirby_Core">
+    <testsuite name="Kirby_CMS">
       <directory>test</directory>
     </testsuite>
   </testsuites>
