@@ -10,7 +10,7 @@ class MultilangTest extends PHPUnit_Framework_TestCase {
   public function testMultilangSupport() {
     c::set('lang.support', true);
     
-    $this->assertInstanceOf('KirbyLanguage', site()->language());
+    $this->assertInstanceOf('Language', site()->language());
     $this->assertEquals('en', (string)site()->language());
     $this->assertEquals('en', site()->language()->code());
     $this->assertTrue(site()->language()->isDefault());

@@ -6,15 +6,19 @@ if(!defined('KIRBY')) die('Direct access is not allowed');
 /**
  * Image
  * 
- * The KirbyImage object extends the KirbyFile
+ * The Image object extends the File
  * object and is used for all images inside content 
  * folders to provide additional image-related methods.
- * A KirbyImage object can only be constructed by 
- * converting an already existing KirbyFile object.
+ * A Image object can only be constructed by 
+ * converting an already existing File object.
  * 
- * @package Kirby CMS
+ * @package   Kirby CMS
+ * @author    Bastian Allgeier <bastian@getkirby.com>
+ * @link      http://getkirby.com
+ * @copyright Bastian Allgeier
+ * @license   http://getkirby.com/license
  */
-class KirbyImage extends KirbyFile {
+class ImageFile extends File {
 
   // cache for the attached thumb – if available
   protected $thumb = null;
@@ -22,11 +26,11 @@ class KirbyImage extends KirbyFile {
   /**
    * Constructor
    * 
-   * @param object $file A KirbyFile object
+   * @param object $file A File object
    */
-  public function __construct(KirbyFile $file) {
+  public function __construct(File $file) {
 
-    // copy basic parameters from the KirbyFile object
+    // copy basic parameters from the File object
     $this->root      = $file->root();
     $this->parent    = $file->parent();
     $this->filename  = $file->filename();
@@ -74,7 +78,7 @@ class KirbyImage extends KirbyFile {
   /**
    * Returns the attached thumb file object
    * 
-   * @return object KirbyImage
+   * @return object Image
    */
   public function thumb() {
     if(!is_null($this->thumb)) return $this->thumb;

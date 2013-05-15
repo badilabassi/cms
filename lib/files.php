@@ -3,15 +3,23 @@
 // direct access protection
 if(!defined('KIRBY')) die('Direct access is not allowed');
 
+// dependencies
+require_once(KIRBY_CMS_ROOT_LIB . DS . 'file' . DS . 'content.php');
+require_once(KIRBY_CMS_ROOT_LIB . DS . 'file' . DS . 'image.php');
+
 /**
  * Files
  * 
  * This is the main collection object 
- * for a set of KirbyFile objects
+ * for a set of File objects
  * 
- * @package Kirby CMS
+ * @package   Kirby CMS
+ * @author    Bastian Allgeier <bastian@getkirby.com>
+ * @link      http://getkirby.com
+ * @copyright Bastian Allgeier
+ * @license   http://getkirby.com/license
  */
-class KirbyFiles extends Collection {
+class Files extends Collection {
   
   // the parent page object
   protected $page = null;
@@ -46,11 +54,11 @@ class KirbyFiles extends Collection {
   /** 
    * Constructor
    * 
-   * @param object $page The parent KirbyPage object
+   * @param object $page The parent Page object
    */
   public function __construct($input) {
     
-    if(is_a($input, 'KirbyPage')) {
+    if(is_a($input, 'Page')) {
 
       // attach the parent page
       $this->page = $input;
@@ -58,10 +66,10 @@ class KirbyFiles extends Collection {
       foreach($input->dir()->files() as $key => $value) {
 
         // create a new file object
-        $file = new KirbyFile($value, $this);
+        $file = new File($value, $this);
               
         // check for a specific file class
-        $class = 'Kirby' . $file->type();
+        $class = $file->type() . 'File';
 
         if(class_exists($class)) $file = new $class($file);
       
@@ -74,7 +82,7 @@ class KirbyFiles extends Collection {
 
       foreach($input as $file) {  
         
-        if(!is_a($file, 'KirbyFile')) raise('All files in a set of KirbyFiles have to be KirbyFile objects');
+        if(!is_a($file, 'File')) raise('All files in a set of Files have to be File objects');
         
         // add the page to the collection
         $this->_['_' . $file->filename()] = $file;
@@ -82,7 +90,7 @@ class KirbyFiles extends Collection {
       }
 
     } else {
-      raise('KirbyFiles must be constructed with a KirbyPage object or an array of KirbyFiles');
+      raise('Files must be constructed with a Page object or an array of Files');
     }
 
     $contentFileExtension = c::get('content.file.extension', 'txt');
@@ -114,7 +122,7 @@ class KirbyFiles extends Collection {
   /** 
    * Returns the parent page object
    * 
-   * @return object KirbyPage
+   * @return object Page
    */
   public function page() {
     return $this->page;
@@ -122,9 +130,9 @@ class KirbyFiles extends Collection {
 
   /** 
    * Returns a filtered version of this collection
-   * which contains images (KirbyImage objects) only
+   * which contains images (ImageFile objects) only
    * 
-   * @return object A new KirbyFiles collection
+   * @return object A new Files collection
    */
   public function images() {
     if(!is_null($this->images)) return $this->images;
@@ -144,7 +152,7 @@ class KirbyFiles extends Collection {
    * Returns a filtered version of this collection
    * which contains videos only
    * 
-   * @return object A new KirbyFiles collection
+   * @return object A new Files collection
    */
   public function videos() {
     if(!is_null($this->videos)) return $this->videos;
@@ -164,7 +172,7 @@ class KirbyFiles extends Collection {
    * Returns a filtered version of this collection
    * which contains documents only
    * 
-   * @return object A new KirbyFiles collection
+   * @return object A new Files collection
    */
   public function documents() {
     if(!is_null($this->documents)) return $this->documents;
@@ -184,7 +192,7 @@ class KirbyFiles extends Collection {
    * Returns a filtered version of this collection
    * which contains audio files only
    * 
-   * @return object A new KirbyFiles collection
+   * @return object A new Files collection
    */
   public function audio() {
     if(!is_null($this->audio)) return $this->audio;
@@ -222,7 +230,7 @@ class KirbyFiles extends Collection {
    * Returns a filtered version of this collection
    * which contains unknown file types only
    * 
-   * @return object A new KirbyFiles collection
+   * @return object A new Files collection
    */
   public function unknown() {
     if(!is_null($this->unknown)) return $this->unknown;
@@ -260,7 +268,7 @@ class KirbyFiles extends Collection {
    * Returns a filtered version of this collection
    * which contains code only
    * 
-   * @return object A new KirbyFiles collection
+   * @return object A new Files collection
    */
   public function code() {
     if(!is_null($this->code)) return $this->code;
@@ -280,7 +288,7 @@ class KirbyFiles extends Collection {
    * Returns a filtered version of this collection
    * which contains thumb images only
    * 
-   * @return object A new KirbyFiles collection
+   * @return object A new Files collection
    */
   public function thumbs() {
     if(!is_null($this->thumbs)) return $this->thumbs;
@@ -300,7 +308,7 @@ class KirbyFiles extends Collection {
    * Returns a filtered version of this collection
    * which contains meta files only
    * 
-   * @return object A new KirbyFiles collection
+   * @return object A new Files collection
    */
   public function metas() {
     if(!is_null($this->metas)) return $this->metas;
@@ -320,7 +328,7 @@ class KirbyFiles extends Collection {
    * Returns a filtered version of this collection
    * which contains content files only
    * 
-   * @return object A new KirbyFiles collection
+   * @return object A new Files collection
    */
   public function contents() {
     if(!is_null($this->contents)) return $this->contents;    
@@ -342,7 +350,7 @@ class KirbyFiles extends Collection {
    * If you pass multiple filenames as individual arguments, a set of files is returned
    * 
    * @param list Either a single filename or a multiple filenames as list of arguments
-   * @return mixed KirbyFile, KirbyFiles or null
+   * @return mixed File, Files or null
    */
   public function find() {
     
@@ -355,7 +363,7 @@ class KirbyFiles extends Collection {
         $file = $this->find($arg);
         if($file) $result[$file->filename()] = $file;
       }      
-      return (empty($result)) ? null : new KirbyFiles($result, $this->page());
+      return (empty($result)) ? null : new Files($result, $this->page());
     }    
     
     // find a single file
@@ -371,7 +379,7 @@ class KirbyFiles extends Collection {
    * @see filterBy()
    * @param string $key The field/key to search for
    * @param mixed $value Either a single value to search for or an array of values
-   * @return mixed KirbyFile for a single $value or KirbyFiles for an array of values
+   * @return mixed File for a single $value or Files for an array of values
    */
   public function findBy($key, $value) {
 
@@ -394,7 +402,7 @@ class KirbyFiles extends Collection {
    * Find a single or multiple files by extension
    * 
    * @param list Either a single extension or a list of extension as individual arguments
-   * @return mixed KirbyFile for a single extension or KirbyFiles for a list of extensions
+   * @return mixed File for a single extension or Files for a list of extensions
    */
   public function findByExtension() {
     $value = func_get_args();
@@ -405,7 +413,7 @@ class KirbyFiles extends Collection {
    * Find a single or multiple files by type
    * 
    * @param list Either a single type or a list of types as individual arguments
-   * @return mixed KirbyFile for a single type or KirbyFiles for a list of types
+   * @return mixed File for a single type or Files for a list of types
    */
   public function findByType() {
     $value = func_get_args();
@@ -419,7 +427,7 @@ class KirbyFiles extends Collection {
    * @param string $field
    * @param string $direction
    * @param mixed $method
-   * @return object KirbyFiles
+   * @return object Files
    */
   public function sortBy($field, $direction='asc', $method=SORT_REGULAR) {        
     $self    = clone $this;

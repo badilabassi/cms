@@ -4,15 +4,19 @@
 if(!defined('KIRBY')) die('Direct access is not allowed');
 
 /**
- * Dir
+ * PageDir
  *
- * This object represents a content directory. 
- * It's used within the KirbyPage object to provide
- * additional info and methods for a directory of a page
+ * This object represents a content folder. 
+ * It's used within the Page object to provide
+ * additional info and methods for a folder of a page
  * 
- * @package Kirby CMS
+ * @package   Kirby CMS
+ * @author    Bastian Allgeier <bastian@getkirby.com>
+ * @link      http://getkirby.com
+ * @copyright Bastian Allgeier
+ * @license   http://getkirby.com/license
  */
-class KirbyDir {
+class PageDir {
 
   // the full root path of the directory 
   protected $root = null;
@@ -104,10 +108,10 @@ class KirbyDir {
     
     if(!is_null($this->uri)) return $this->uri;
 
-    if(ROOT == DS) {
+    if(KIRBY_INDEX_ROOT == DS) {
       $this->uri = ltrim($this->root, DS);
     } else {
-      $this->uri = ltrim(str_replace(ROOT, '', $this->root), DS);
+      $this->uri = ltrim(str_replace(KIRBY_INDEX_ROOT, '', $this->root), DS);
     }
 
     $this->uri = str_replace(DS, '/', $this->uri);

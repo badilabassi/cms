@@ -12,9 +12,13 @@ if(!defined('KIRBY')) die('Direct access is not allowed');
  * information about each variable value as the parent
  * page and related content file
  * 
- * @package Kirby CMS
+ * @package   Kirby CMS
+ * @author    Bastian Allgeier <bastian@getkirby.com>
+ * @link      http://getkirby.com
+ * @copyright Bastian Allgeier
+ * @license   http://getkirby.com/license
  */
-class KirbyVariable {
+class Variable {
 
   // the key of this variable
   protected $key = null;
@@ -22,10 +26,10 @@ class KirbyVariable {
   // the value of this variable
   protected $value = null;
 
-  // the parent KirbyPage object
+  // the parent Page object
   protected $page = null;
 
-  // the parent KirbyContent file object
+  // the parent ContentFile file object
   protected $file = null;
 
   /**
@@ -33,9 +37,9 @@ class KirbyVariable {
    * 
    * @param string $key The name of the key for this variable
    * @param mixed $value The value for this variable
-   * @param object $file The parent KirbyContent object
+   * @param object $file The parent ContentFile object
    */
-  public function __construct($key, $value, KirbyContent $file = null) {
+  public function __construct($key, $value, ContentFile $file = null) {
     $this->key   = $key;
     $this->value = $value;
     $this->file  = $file;  
@@ -63,7 +67,7 @@ class KirbyVariable {
   /**
    * Returns the parent page
    * 
-   * @return object KirbyPage
+   * @return object Page
    */
   public function page() {
     return $this->file->page();
@@ -72,7 +76,7 @@ class KirbyVariable {
   /**
    * Returns the parent content file
    * 
-   * @return object KirbyContent
+   * @return object Content
    */
   public function file() {
     return $this->file;
@@ -191,12 +195,12 @@ class KirbyVariable {
 
   /**
    * Uses the yaml parser to convert the value to an array first
-   * and converts it to a KirbyCollection object
+   * and converts it to a Collection object
    *
    * @return object
    */
   public function toCollection() {
-    return new KirbyCollection($this->toArray());
+    return new Collection($this->toArray());
   }
 
   /**

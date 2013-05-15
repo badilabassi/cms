@@ -11,7 +11,7 @@ class FileTest extends PHPUnit_Framework_TestCase {
     $root = $this->page->root() . '/document-01.pdf';
     $file = $this->page->files()->find('document-01.pdf');
     
-    $this->assertInstanceOf('KirbyFile', $file);
+    $this->assertInstanceOf('File', $file);
     $this->assertEquals($root, $file->root());
     $this->assertEquals('document', $file->type());
     $this->assertEquals('document-01.pdf', $file->filename());
@@ -28,7 +28,7 @@ class FileTest extends PHPUnit_Framework_TestCase {
     $root = $this->page->root() . '/image-01.jpg';
     $file = $this->page->files()->find('image-01.jpg');
     
-    $this->assertInstanceOf('KirbyFile', $file);
+    $this->assertInstanceOf('File', $file);
     $this->assertEquals($root, $file->root());
     $this->assertEquals('image', $file->type());
     $this->assertEquals('image-01.jpg', $file->filename());
@@ -40,16 +40,16 @@ class FileTest extends PHPUnit_Framework_TestCase {
     $this->assertEquals('433 b', $file->niceSize());
     $this->assertEquals('image/jpeg', $file->mime());
     
-    $this->assertInstanceOf('KirbyImage', $file);
+    $this->assertInstanceOf('ImageFile', $file);
     $this->assertInstanceOf('Dimensions', $file->dimensions());
     $this->assertEquals('image/jpeg', $file->mime());
     $this->assertEquals(100, $file->width());
     $this->assertEquals(100, $file->height());
     
     // test meta information of image files
-    $this->assertInstanceOf('KirbyContent', $file->meta());
+    $this->assertInstanceOf('ContentFile', $file->meta());
     $this->assertTrue($file->hasMeta());
-    $this->assertInstanceOf('KirbyVariable', $file->title());
+    $this->assertInstanceOf('Variable', $file->title());
     $this->assertEquals('Title for image-01', $file->title());
     $this->assertEquals('Caption for image-01', $file->caption());
     $this->assertEquals(array('title', 'caption'), $file->meta()->fields());
@@ -59,7 +59,7 @@ class FileTest extends PHPUnit_Framework_TestCase {
     $p = site()->pages()->find('tests/thumb');
     $image = $p->images()->find('image-01.jpg');
     
-    $this->assertInstanceOf('KirbyImage', $image->thumb());
+    $this->assertInstanceOf('ImageFile', $image->thumb());
     $this->assertEquals('image-01.thumb.jpg', $image->thumb()->filename());
     $this->assertTrue($image->hasThumb());
   }
@@ -69,7 +69,7 @@ class FileTest extends PHPUnit_Framework_TestCase {
     $root = $this->page->root() . '/content.txt';
     $file = $this->page->files()->find('content.txt');
     
-    $this->assertInstanceOf('KirbyFile', $file);
+    $this->assertInstanceOf('File', $file);
     $this->assertEquals($root, $file->root());
     $this->assertEquals('content', $file->type());
     $this->assertEquals('content.txt', $file->filename());
@@ -81,10 +81,10 @@ class FileTest extends PHPUnit_Framework_TestCase {
     $this->assertEquals('61 b', $file->niceSize());
     $this->assertEquals('text/plain', $file->mime());
     
-    $this->assertInstanceOf('KirbyContent', $file);
+    $this->assertInstanceOf('ContentFile', $file);
     $this->assertEquals(f::read($file->root()), $file->raw());
     $this->assertTrue(is_array($file->data()));
-    $this->assertInstanceOf('KirbyVariable', $file->title());
+    $this->assertInstanceOf('Variable', $file->title());
     $this->assertEquals('My content file', $file->title());
     $this->assertEquals(array('title', 'text'), $file->fields());
   }

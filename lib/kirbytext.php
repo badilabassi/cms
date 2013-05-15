@@ -3,6 +3,9 @@
 // direct access protection
 if(!defined('KIRBY')) die('Direct access is not allowed');
 
+// dependencies
+require_once(KIRBY_CMS_ROOT_LIB . DS . 'kirbytext' . DS . 'tag.php');
+
 /**
  * Kirbytext
  *
@@ -10,14 +13,18 @@ if(!defined('KIRBY')) die('Direct access is not allowed');
  * It offers a lot of additional tags to simplify 
  * editing in content file. 
  * 
- * @package Kirby CMS
+ * @package   Kirby CMS
+ * @author    Bastian Allgeier <bastian@getkirby.com>
+ * @link      http://getkirby.com
+ * @copyright Bastian Allgeier
+ * @license   http://getkirby.com/license
  */
-class KirbyText {
+class Kirbytext {
   
   // an array with options
   protected $options = array();
 
-  // the parent KirbyPage object from the KirbyVariable (if available)
+  // the parent Page object from the Variable (if available)
   protected $page = null;
   
   // the text object or string
@@ -26,12 +33,8 @@ class KirbyText {
   /**
    * Constructor
    * 
-   * To initialize the parser, always use the static Kirbytext::instance() method
-   * This will make sure a custom KirbytextExtended class will be used if available
-   * 
-   * @param mixed $text KirbyVariable object or string
-   * @param boolean $mdown true: markdown is enabled, false: markdown is disabled
-   * @param boolean $smartypants true: smartypants is enabled, false: smartypants is disabled
+   * @param mixed $text Variable object or string
+   * @param mixed $params An array with parameters for kirbytext
    */
   public function __construct($text = false, $params = array()) {
     
@@ -56,24 +59,25 @@ class KirbyText {
     $this->options = array_merge($defaults, $params);
           
     // pass the parent page if available
-    if(is_a($this->text, 'KirbyVariable')) $this->page = $this->text->page();
+    if(is_a($this->text, 'Variable')) $this->page = $this->text->page();
 
   }
 
   /**
-   * Returns a Kirbytext instance
+   * Creates a Kirbytext instance
    * 
-   * @param mixed $text KirbyVariable object or string
-   * @param array $options array: array('markdown' => true, 'smartypants' => true, 'widont' => true)
+   * @param mixed $text Variable object or string
+   * @param mixed $params An array with parameters for kirbytext
+   * @return object Kirbytext
    */
-  static public function instance($text = false, $options = array()) {
-    return new self($text, $options);    
+  static public function instance($text = false, $params = array()) {
+    return new self($text, $params);
   }
 
   /**
    * Returns the active page object
    * 
-   * @return object KirbyPage
+   * @return object Page
    */
   public function page() {
     return ($this->page) ? $this->page : site()->activePage();
@@ -165,15 +169,15 @@ class KirbyText {
    * Detects and loads the matching tag class
    * 
    * @param string $name
-   * @return object KirbyTag instance
+   * @return object tag instance
    */
   public function tagclass($name) {
 
-    $file  = ROOT_SITE_TAGS . DS . $name . '.php';
-    $class = 'kirbytext' . $name . 'tag';
+    $file  = KIRBY_PROJECT_ROOT_TAGS . DS . $name . '.php';
+    $class = 'Kirbytext' . $name . 'tag';
 
     if(!file_exists($file)) {
-      $file  = ROOT_KIRBY_TAGS . DS . $name . '.php';
+      $file  = KIRBY_CMS_ROOT_TAGS . DS . $name . '.php';
     }
 
     // return the entire tag if the class is not available

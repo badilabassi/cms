@@ -5,7 +5,7 @@ require_once('lib/testing_bootstrap.php');
 class DirTest extends PHPUnit_Framework_TestCase {
   public function testMainDir() {
     $root = TEST_CONTENT;
-    $dir  = new KirbyDir($root);
+    $dir  = new PageDir($root);
 
     $this->assertEquals($root, $dir->root());
     $this->assertEquals(basename(TEST_CONTENT), $dir->name());
@@ -33,7 +33,7 @@ class DirTest extends PHPUnit_Framework_TestCase {
 
   public function testTestsDir() {
     $root = TEST_CONTENT . '/01-tests';
-    $dir  = new KirbyDir($root);
+    $dir  = new PageDir($root);
 
     $this->assertEquals('01-tests', $dir->name());
     $this->assertEquals('tests', $dir->uid());

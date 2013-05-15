@@ -6,8 +6,14 @@ if(!defined('KIRBY')) die('Direct access is not allowed');
 /**
  * Renders a vimeo tag 
  * ie. (vimeo: http://vimeo.com/52345557)
+ * 
+ * @package   Kirby CMS
+ * @author    Bastian Allgeier <bastian@getkirby.com>
+ * @link      http://getkirby.com
+ * @copyright Bastian Allgeier
+ * @license   http://getkirby.com/license
  */
-class KirbyTextVimeoTag extends KirbyTag {
+class KirbytextVimeoTag extends KirbytextTag {
 
   // a list of allowed attributes for this tag
   protected $attr = array(

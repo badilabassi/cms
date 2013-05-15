@@ -20,13 +20,13 @@ class SiteTest extends PHPUnit_Framework_TestCase {
   }
   
   public function testInitializeSite() { 
-    $this->assertInstanceOf('KirbySite', $this->site);
-    $this->assertTrue($this->site instanceof KirbyPage);
+    $this->assertInstanceOf('Site', $this->site);
+    $this->assertTrue($this->site instanceof Page);
   }
   
   public function testMethods() {
-    $this->assertInstanceOf('KirbyPages', $this->site->children());
-    $this->assertInstanceOf('KirbyPages', $this->site->pages());
+    $this->assertInstanceOf('Pages', $this->site->children());
+    $this->assertInstanceOf('Pages', $this->site->pages());
     $this->assertEquals(3, $this->site->children()->count());
     $this->assertEquals(3, $this->site->pages()->count());
     $this->assertEquals('tests', $this->site->pages()->first()->uid());
@@ -38,12 +38,12 @@ class SiteTest extends PHPUnit_Framework_TestCase {
     $this->assertTrue(in_array($this->site->scheme(), array('http', 'https')));
     $this->assertTrue(is_int($this->site->modified()));
     $this->assertTrue(is_array($this->site->index()));
-    $this->assertInstanceOf('KirbyPage', $this->site->homePage());
+    $this->assertInstanceOf('Page', $this->site->homePage());
     $this->assertEquals(c::get('home'), $this->site->homePage()->uid());
     $this->assertEquals(c::get('error'), $this->site->errorPage()->uid());
-    $this->assertInstanceOf('KirbyPage', $this->site->errorPage());
+    $this->assertInstanceOf('Page', $this->site->errorPage());
     $this->assertEquals('tests', $this->site->activePage()->uid());
-    $this->assertInstanceOf('KirbyPages', $this->site->breadcrumb());
+    $this->assertInstanceOf('Pages', $this->site->breadcrumb());
     //$this->assertFalse($this->site->hasPlugins('testplugin'));
   }
   

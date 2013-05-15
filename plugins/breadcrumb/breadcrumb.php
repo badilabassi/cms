@@ -9,9 +9,13 @@ if(!defined('KIRBY')) die('Direct access is not allowed');
  * Initiates the breadcrumb object
  * and attaches it to site() 
  * 
- * @package Kirby CMS
+ * @package   Kirby CMS
+ * @author    Bastian Allgeier <bastian@getkirby.com>
+ * @link      http://getkirby.com
+ * @copyright Bastian Allgeier
+ * @license   http://getkirby.com/license
  */
-class KirbyBreadcrumbPlugin extends KirbyPlugin {
+class BreadcrumbPlugin extends Plugin {
 
   /**
    * Calls the crumb method as soon as the
@@ -24,9 +28,9 @@ class KirbyBreadcrumbPlugin extends KirbyPlugin {
 
   /**
    * The crumb method creates the current 
-   * breadcrumb and returns a new KirbyPages collection
+   * breadcrumb and returns a new Pages collection
    * 
-   * @return object KirbyPages
+   * @return object Pages
    */
   protected function crumb() {
 
@@ -59,7 +63,7 @@ class KirbyBreadcrumbPlugin extends KirbyPlugin {
     
     // make it a pages object so we can handle it
     // like we handle all pages on the site  
-    return new KirbyPages($crumb);
+    return new Pages($crumb);
 
   }
 

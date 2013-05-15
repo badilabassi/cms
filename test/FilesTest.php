@@ -4,37 +4,37 @@ require_once('lib/testing_bootstrap.php');
 
 class FilesTest extends PHPUnit_Framework_TestCase {
   public function __construct() {
-    $this->page  = new KirbyPage(TEST_CONTENT . '/01-tests/files');
+    $this->page  = new Page(TEST_CONTENT . '/01-tests/files');
     $this->files = $this->page->files(); 
   }
   
   public function testGlobalMethods() {
-    $this->assertInstanceOf('KirbyPage', $this->files->page());
+    $this->assertInstanceOf('Page', $this->files->page());
     $this->assertTrue($this->files->page()->equals($this->page));
   }
   
   public function testTypeFilters() {
-    $this->assertInstanceOf('KirbyFiles', $this->files->images());
+    $this->assertInstanceOf('Files', $this->files->images());
     $this->assertTrue($this->files->hasImages());
     
-    $this->assertInstanceOf('KirbyFiles', $this->files->videos());
+    $this->assertInstanceOf('Files', $this->files->videos());
     $this->assertFalse($this->files->hasVideos());
     
-    $this->assertInstanceOf('KirbyFiles', $this->files->documents());
+    $this->assertInstanceOf('Files', $this->files->documents());
     $this->assertTrue($this->files->hasDocuments());
     
-    $this->assertInstanceOf('KirbyFiles', $this->files->sounds());
+    $this->assertInstanceOf('Files', $this->files->sounds());
     $this->assertFalse($this->files->hasSounds());
     
-    $this->assertInstanceOf('KirbyFiles', $this->files->code());
+    $this->assertInstanceOf('Files', $this->files->code());
     $this->assertTrue($this->files->hasCode());
     $this->assertEquals(2, $this->files->code()->count());
     
-    $this->assertInstanceOf('KirbyFiles', $this->files->metas());
+    $this->assertInstanceOf('Files', $this->files->metas());
     $this->assertTrue($this->files->hasMetas());
     $this->assertEquals(3, $this->files->metas()->count());
     
-    $this->assertInstanceOf('KirbyFiles', $this->files->contents());
+    $this->assertInstanceOf('Files', $this->files->contents());
     $this->assertTrue($this->files->hasContents());
     $this->assertEquals(1, $this->files->contents()->count());
   }
@@ -54,7 +54,7 @@ class FilesTest extends PHPUnit_Framework_TestCase {
     $this->assertNull($this->files->find('not-existing.css'));
     
     // multiple finds
-    $this->assertInstanceOf('KirbyFiles', $this->files->find('content.txt', 'image-01.jpg', 'other-01.css'));
+    $this->assertInstanceOf('Files', $this->files->find('content.txt', 'image-01.jpg', 'other-01.css'));
     $this->assertEquals(3, $this->files->find('content.txt', 'image-01.jpg', 'other-01.css')->count());
     
     $this->assertEquals(5, $this->files->findBy('extension', array('txt', 'jpg'))->count());

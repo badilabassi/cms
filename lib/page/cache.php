@@ -4,39 +4,39 @@
 if(!defined('KIRBY')) die('Direct access is not allowed');
 
 /**
- * HTML Cache
+ * Page Cache
  * Caches the full rendered HTML of a page
  * 
- * @package Kirby CMS
+ * @package   Kirby CMS
+ * @author    Bastian Allgeier <bastian@getkirby.com>
+ * @link      http://getkirby.com
+ * @copyright Bastian Allgeier
+ * @license   http://getkirby.com/license
  */
-class KirbyCache {
+class PageCache {
+
+  // The cached Page object
+  protected $page = null;
 
   // The cache file id  
   protected $id = null;
   
   // The cache data if available
   protected $data = null;
-  
-  // The cached KirbyPage object
-  protected $parent = null;
-  
-  // The KirbySite object
-  protected $site = null;
-
+    
   // Is the data cache enabled at all?
   protected $enabled = null;
 
   /**
    * Constructor
    * 
-   * @param object KirbySite
-   * @param object KirbyPage
+   * @param object Site
+   * @param object Page
    */
-  public function __construct(KirbySite $site, KirbyPage $parent) {
+  public function __construct(Page $page) {
   
-    $this->site    = $site;  
-    $this->parent  = $parent;
-    $this->id      = 'html' . DS . $this->parent->dir()->hash();
+    $this->page    = $page;
+    $this->id      = 'html' . DS . $this->page->dir()->hash();
     $this->enabled = (c::get('cache') && c::get('cache.html')) ? true : false;
 
   }
@@ -57,8 +57,8 @@ class KirbyCache {
    */
   public function isIgnored() {
 
-    $url      = $this->parent->uri();
-    $template = $this->parent->template();
+    $url      = $this->page->uri();
+    $template = $this->page->template();
 
     // get all templates that shuold be ignored
     $templates = c::get('cache.ignore.templates');
@@ -90,7 +90,7 @@ class KirbyCache {
    * @return boolean
    */
   public function isAvailable() {
-    return $this->isEnabled() && cache::created($this->id) >= $this->site->modified() ? true : false;
+    return $this->isEnabled() && cache::created($this->id) >= site()->modified() ? true : false;
   }
 
   /**
@@ -125,7 +125,7 @@ class KirbyCache {
     if($this->isEnabled() && !$this->isIgnored()) {
 
       // make sure the directory is there
-      dir::make(ROOT_SITE_CACHE . DS . 'html', $recursive = true);
+      dir::make(KIRBY_PROJECT_ROOT_CACHE . DS . 'html', $recursive = true);
 
       // store the cache file 
       cache::set($this->id, $this->data);

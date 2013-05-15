@@ -13,11 +13,11 @@ class PagesTest extends PHPUnit_Framework_TestCase {
       site()->pages()->find('tests/page/visible-subpage-2'),
       site()->pages()->find('tests/page/visible-subpage-3'),
     );
-    $this->pages = new KirbyPages($pages);
+    $this->pages = new Pages($pages);
   }
 
   public function testMethods() {
-    $this->assertInstanceOf('KirbyPages', $this->pages);
+    $this->assertInstanceOf('Pages', $this->pages);
     
     $this->assertEquals(6, $this->pages->count());
     $this->assertEquals('subpage-1', $this->pages->first()->uid());
@@ -41,7 +41,7 @@ class PagesTest extends PHPUnit_Framework_TestCase {
     $this->assertEquals(3, $this->pages->invisible()->count());
     $this->assertEquals($this->pages->countInvisible(), $this->pages->invisible()->count());
     
-    $this->assertInstanceOf('KirbyPages', $this->pages->children());
+    $this->assertInstanceOf('Pages', $this->pages->children());
     $this->assertEquals(1, $this->pages->children()->count());
     $this->assertEquals($this->pages->countChildren(), $this->pages->children()->count());
     
@@ -51,7 +51,7 @@ class PagesTest extends PHPUnit_Framework_TestCase {
     $this->assertEquals(null, $this->pages->find('not-existing'));
     
     // multiple finds
-    $this->assertInstanceOf('KirbyPages', $this->pages->find('subpage-1', 'visible-subpage-2', 'visible-subpage-3'));
+    $this->assertInstanceOf('Pages', $this->pages->find('subpage-1', 'visible-subpage-2', 'visible-subpage-3'));
     $this->assertEquals(3, $this->pages->find('subpage-1', 'visible-subpage-2', 'visible-subpage-3')->count());
     
     // find by uid

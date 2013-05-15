@@ -3,36 +3,23 @@
 // direct access protection
 if(!defined('KIRBY')) die('Direct access is not allowed');
 
-/** 
- * Singleton handler for the site object
- * Always use this to initiate the site!
- * 
- * You can reinitiate the site by passing 
- * the $params argument. 
- * 
- * @param array $params Additional params to overwrite/set config vars
- * @return object KirbySite
- */
-function site($params = array()) {
-  $site = g::get('site');
-  if(!$site || !empty($params)) {
-    $site = new KirbySite($params);
-    g::set('site', $site);
-  }
-  return $site;
-}
-
 /**
  * Site
  *
+ * ATTENTION: use the site() helper function to get access to the site singleton
+ * 
  * This is the main site object
  * Everything else is dependent on this
  * The site object is also used with the site() 
  * singleton function to initiate a Kirby site.
  * 
- * @package Kirby CMS
+ * @package   Kirby CMS
+ * @author    Bastian Allgeier <bastian@getkirby.com>
+ * @link      http://getkirby.com
+ * @copyright Bastian Allgeier
+ * @license   http://getkirby.com/license
  */
-class KirbySite extends KirbyPage {
+class Site extends Page {
 
   // cache for the uri object
   protected $uri = null;
@@ -86,7 +73,7 @@ class KirbySite extends KirbyPage {
     $this->configure($params);
 
     // initiate the page object with the given root    
-    parent::__construct(ROOT_CONTENT);
+    parent::__construct(KIRBY_CONTENT_ROOT);
 
     if(c::get('debug')) {
       // switch on all errors
@@ -126,7 +113,7 @@ class KirbySite extends KirbyPage {
     
     if(!c::get('troubleshoot')) return false;
 
-    require(ROOT_KIRBY_MODALS . DS . 'troubleshoot.php');
+    require(KIRBY_CMS_ROOT_MODALS . DS . 'troubleshoot.php');
     exit();
   
   }
@@ -255,7 +242,7 @@ class KirbySite extends KirbyPage {
    * Returns the first set of pages/children in the content directory (the main pages of your site)
    * You can also use $site->children() to get the same collection
    * 
-   * @return object KirbyPages
+   * @return object Pages
    */
   public function pages() {
     return $this->children();
@@ -274,7 +261,7 @@ class KirbySite extends KirbyPage {
   /**
    * Returns the home page of the site
    * 
-   * @return object KirbyPage
+   * @return object Page
    */
   public function homePage() {
     if(!is_null($this->homePage)) return $this->homePage;
@@ -287,7 +274,7 @@ class KirbySite extends KirbyPage {
   /**
    * Returns the error page of the site
    * 
-   * @return object KirbyPage
+   * @return object Page
    */
   public function errorPage() {
     if(!is_null($this->errorPage)) return $this->errorPage;
@@ -300,7 +287,7 @@ class KirbySite extends KirbyPage {
   /**
    * Returns the currently active page of the site
    * 
-   * @return object KirbyPage
+   * @return object Page
    */
   public function activePage() {
 
@@ -337,11 +324,11 @@ class KirbySite extends KirbyPage {
   /**
    * Returns all available languages for this site
    * 
-   * @return object KirbyLanguages
+   * @return object Languages
    */
   public function languages() {
     if(!is_null($this->languages)) return $this->languages;
-    return $this->languages = new KirbyLanguages();
+    return $this->languages = new Languages();
   }
 
   /**
@@ -349,7 +336,7 @@ class KirbySite extends KirbyPage {
    * if a language code is passed as argument
    * 
    * @param string $code An optional language code to return any available language
-   * @return object KirbyLanguage
+   * @return object Language
    */
   public function language($code = null) {
 
@@ -373,19 +360,19 @@ class KirbySite extends KirbyPage {
    * Load available parsers
    */
   protected function parsers() {
-    require_once(ROOT_KIRBY_PARSERS . DS . 'smartypants.php');
-    require_once(ROOT_KIRBY_PARSERS . DS . r(c::get('markdown.extra'), 'markdown.extra.php', 'markdown.php'));
+    require_once(KIRBY_CMS_ROOT_PARSERS . DS . 'smartypants.php');
+    require_once(KIRBY_CMS_ROOT_PARSERS . DS . r(c::get('markdown.extra'), 'markdown.extra.php', 'markdown.php'));
   }
 
   /**
    * Returns the Plugins object with all installed plugins
    * 
-   * @return object KirbyPlugins
+   * @return object Plugins
    */
   public function plugins() {
     if(!is_null($this->plugins)) return $this->plugins;
     
-    $this->plugins = new KirbyPlugins();
+    $this->plugins = new Plugins();
     $this->plugins->load();
 
     return $this->plugins;
@@ -395,7 +382,7 @@ class KirbySite extends KirbyPage {
   /**
    * Shortcut for the visitor plugin instance
    * 
-   * @return object KirbyVisitor
+   * @return object Visitor
    */
   public function visitor() {
     return $this->plugins()->visitor()->instance();
@@ -405,7 +392,7 @@ class KirbySite extends KirbyPage {
    * Returns a collection of pages, which are currently open
    * This is perfect to create a breadcrumb navigation
    * 
-   * @return object KirbyPages
+   * @return object Pages
    */
   public function breadcrumb() {
     return $this->plugins()->breadcrumb()->instance();
@@ -420,24 +407,7 @@ class KirbySite extends KirbyPage {
    */
   public function toHtml($echo = false) {
 
-    $page  = $this->activePage();
-    $cache = new KirbyCache($this, $page);
-
-    if($data = $cache->get()) {
-      $this->html = $data;
-    } else {
-
-      if(!is_null($this->html)) return $this->html;
-
-      tpl::set('site',  $this);
-      tpl::set('pages', $this->children());
-      tpl::set('page',  $page);
-
-      $this->html = tpl::load($page->template(), false, true);
-
-      $cache->set($this->html);
-
-    }
+    $this->html = $this->activePage()->toHtml();
 
     if($echo) echo($this->html);
     return $this->html;
@@ -543,8 +513,8 @@ class KirbySite extends KirbyPage {
   protected function configure($params = array()) {
 
     // load custom config files
-    f::load(ROOT_SITE_CONFIG . DS . 'config.php');
-    f::load(ROOT_SITE_CONFIG . DS . 'config.' . server::get('server_name') . '.php');
+    f::load(KIRBY_PROJECT_ROOT_CONFIG . DS . 'config.php');
+    f::load(KIRBY_PROJECT_ROOT_CONFIG . DS . 'config.' . server::get('server_name') . '.php');
 
     // get all config options that have been stored so far
     $defaults = c::get();
@@ -556,7 +526,7 @@ class KirbySite extends KirbyPage {
     c::set($config);
 
     // connect the cache 
-    cache::connect('file', array('root' => ROOT_SITE_CACHE));
+    cache::connect('file', array('root' => KIRBY_PROJECT_ROOT_CACHE));
 
   }
 
@@ -576,8 +546,8 @@ class KirbySite extends KirbyPage {
     if(c::get('lang.support')) c::set('lang.current', $this->language()->code());
 
     // load all language vars
-    f::load(ROOT_SITE_LANGUAGES . DS . c::get('lang.default') . '.php');
-    f::load(ROOT_SITE_LANGUAGES . DS . c::get('lang.current') . '.php');
+    f::load(KIRBY_PROJECT_ROOT_LANGUAGES . DS . c::get('lang.default') . '.php');
+    f::load(KIRBY_PROJECT_ROOT_LANGUAGES . DS . c::get('lang.current') . '.php');
 
   } 
 
@@ -590,7 +560,7 @@ class KirbySite extends KirbyPage {
     if(!is_dir($this->root)) raise('The content directory is not readable');
 
     // check for an existing site directory
-    if(!is_dir(ROOT_SITE)) raise('The site directory is not readable');
+    if(!is_dir(KIRBY_PROJECT_ROOT)) raise('The site directory is not readable');
 
     // check for a proper phpversion
     if(floatval(phpversion()) < 5.2) raise('Please upgrade to PHP 5.2 or higher');

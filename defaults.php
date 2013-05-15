@@ -15,6 +15,12 @@ if(!defined('KIRBY')) die('Direct access is not allowed');
  * Changing stuff in this file might break 
  * your Kirby installation, since those are the 
  * fallback values!
+ * 
+ * @package   Kirby CMS
+ * @author    Bastian Allgeier <bastian@getkirby.com>
+ * @link      http://getkirby.com
+ * @copyright Bastian Allgeier
+ * @license   http://getkirby.com/license
  */
 c::set(array(
   
@@ -32,6 +38,11 @@ c::set(array(
     * Required panel version
     */ 
   'panel.min.version' => 2.0,
+
+  /**
+   * Make sure the toolkit is up to date
+   */
+  'toolkit.min.version' => 2.0,
 
   /**
     * The base url
@@ -121,7 +132,7 @@ c::set(array(
   /**
    * Default location for templates
    */
-  'tpl.root' => ROOT_SITE_TEMPLATES,
+  'tpl.root' => KIRBY_PROJECT_ROOT_TEMPLATES,
 
   /**
    * Show/hide PHP errors

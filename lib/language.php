@@ -6,9 +6,13 @@ if(!defined('KIRBY')) die('Direct access is not allowed');
 /**
  * Language
  * 
- * @package Kirby CMS
+ * @package   Kirby CMS
+ * @author    Bastian Allgeier <bastian@getkirby.com>
+ * @link      http://getkirby.com
+ * @copyright Bastian Allgeier
+ * @license   http://getkirby.com/license
  */
-class KirbyLanguage {
+class Language {
 
   protected $code = null;
 
@@ -75,7 +79,7 @@ class KirbyLanguage {
    * The user agent string will be 
    * checked to guess the preferred language
    * 
-   * @see KirbyVisitor
+   * @see Visitor
    * @return boolean
    */
   public function isPreferred() {

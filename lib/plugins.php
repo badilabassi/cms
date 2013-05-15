@@ -1,14 +1,21 @@
 <?php 
 
+// direct access protection
+if(!defined('KIRBY')) die('Direct access is not allowed');
+
 /**
  * Plugins
  * 
- * The KirbyPlugins class provides a list of all installed
+ * The Plugins class provides a list of all installed
  * plugins and is also responsible to load and install them. 
  * 
- * @package Kirby CMS
+ * @package   Kirby CMS
+ * @author    Bastian Allgeier <bastian@getkirby.com>
+ * @link      http://getkirby.com
+ * @copyright Bastian Allgeier
+ * @license   http://getkirby.com/license
  */
-class KirbyPlugins {
+class Plugins {
 
   // a list of all installed plugins
   protected $plugins = array();
@@ -23,19 +30,18 @@ class KirbyPlugins {
     // load a specific plugin
     if(is_null($id)) {
 
-      $dirs = array_merge(dir::read(ROOT_KIRBY_PLUGINS), dir::read(ROOT_SITE_PLUGINS));
+      $dirs = array_merge(dir::read(KIRBY_CMS_ROOT_PLUGINS), dir::read(KIRBY_PROJECT_ROOT_PLUGINS));
 
       foreach($dirs as $id) $this->load($id);
       return true;
 
     }
 
-    $root = ROOT_SITE_PLUGINS . DS . $id;
+    $root = KIRBY_PROJECT_ROOT_PLUGINS . DS . $id;
 
-    if(!file_exists($root)) {
-      $root = ROOT_KIRBY_PLUGINS . DS . $id;
-    }
-
+    // fall back to core plugins
+    if(!file_exists($root)) $root = KIRBY_CMS_ROOT_PLUGINS . DS . $id;
+    
     if(!is_dir($root)) return false;
     
     $this->install($id, $root);
@@ -52,7 +58,7 @@ class KirbyPlugins {
 
     if(isset($this->plugins[$id])) return false;
     
-    $this->plugins[$id] = KirbyPlugin::install($id, $root);
+    $this->plugins[$id] = Plugin::install($id, $root);
 
   }
 
@@ -72,7 +78,7 @@ class KirbyPlugins {
    * 
    * @param string $id id/folder name of a plugin
    * @param array $arguments Additional arguments to pass to the plugin (optional)
-   * @return object Returns the KirbyPlugin object if such a plugin is installed
+   * @return object Returns the Plugin object if such a plugin is installed
    */
   public function __call($id, $arguments = null) {
 

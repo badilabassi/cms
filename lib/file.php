@@ -6,16 +6,20 @@ if(!defined('KIRBY')) die('Direct access is not allowed');
 /**
  * File
  * 
- * The KirbyFile object is used for all files
+ * The File object is used for all files
  * in any subfolder of the content directory. 
  * It's the base file class, which can be converted
- * to KirbyImage or KirbyContent classes if appropriate
+ * to ImageFile or ContentFile classes if appropriate
  * 
- * @package Kirby CMS
+ * @package   Kirby CMS
+ * @author    Bastian Allgeier <bastian@getkirby.com>
+ * @link      http://getkirby.com
+ * @copyright Bastian Allgeier
+ * @license   http://getkirby.com/license
  */
-class KirbyFile extends Asset {
+class File extends Asset {
 
-  // the parent KirbyFiles object
+  // the parent Files object
   protected $parent = null;
   
   // the uri (url relative to the content directory)
@@ -40,30 +44,30 @@ class KirbyFile extends Asset {
    * Constructor
    * 
    * @param string $root The full root/path of the file
-   * @param object $parent The parent KirbyFiles object
+   * @param object $parent The parent Files object
    */
-  public function __construct($root, KirbyFiles $parent = null) {
+  public function __construct($root, Files $parent = null) {
     $this->root   = realpath($root);
     $this->parent = $parent;
   } 
 
   /**
-   * Setter and getter for the parent KirbyFiles object
-   * Pass a KirbyFiles object to use this as setter
+   * Setter and getter for the parent Files object
+   * Pass a Files object to use this as setter
    * Without a passed argument this will return the parent object
    * 
-   * @param object $parent The parent KirbyFiles object 
-   * @return object KirbyFiles
+   * @param object $parent The parent Files object 
+   * @return object Files
    */
-  public function parent(KirbyFiles $parent = null) {
+  public function parent(Files $parent = null) {
     if(!is_null($parent)) return $this->parent = $parent;
     return $this->parent;
   }
 
   /**
-   * Returns the parent KirbyPage object
+   * Returns the parent Page object
    * 
-   * @return object KirbyPage
+   * @return object Page
    */
   public function page() {
     return $this->parent()->page();
@@ -125,9 +129,9 @@ class KirbyFile extends Asset {
 
   /**
    * Returns all siblings of this file 
-   * in a KirbyFiles collection
+   * in a Files collection
    * 
-   * @return object KirbyFiles   
+   * @return object Files   
    */
   public function siblings() {
     return $this->parent()->not($this->filename());
@@ -136,7 +140,7 @@ class KirbyFile extends Asset {
   /**
    * Returns the previous file
    * 
-   * @return object KirbyFile   
+   * @return object File   
    */
   public function prev() {
 
@@ -161,7 +165,7 @@ class KirbyFile extends Asset {
   /**
    * Returns the next file
    * 
-   * @return object KirbyFile   
+   * @return object File   
    */
   public function next() {
 
@@ -197,7 +201,7 @@ class KirbyFile extends Asset {
   /**
    * Returns all available meta files for this file
    * 
-   * @return object KirbyFiles
+   * @return object Files
    */
   public function metas() {
 
@@ -218,7 +222,7 @@ class KirbyFile extends Asset {
    * Returns the meta info object
    * which will be used to fetch custom variables for the file
    * 
-   * @return object KirbyContent
+   * @return object Content
    */
   public function meta($lang = null) {
 
@@ -264,7 +268,7 @@ class KirbyFile extends Asset {
    * Returns the default meta info object 
    * for multi-language support
    * 
-   * @return object KirbyContent
+   * @return object Content
    */
   public function defaultMeta() {
     if(!is_null($this->defaultMeta)) return $this->defaultMeta;

@@ -4,13 +4,17 @@
 if(!defined('KIRBY')) die('Direct access is not allowed');
 
 /**
- * The mother class for all KirbyText tags
- * Extend this to build a new Kirbytag. 
+ * The mother class for all Kirbytext tags
+ * Extend this to build a new KirbytextTag. 
  * Kirbytags are located in kirby/tags or site/kirbytags
  * 
- * @package Kirby CMS
+ * @package   Kirby CMS
+ * @author    Bastian Allgeier <bastian@getkirby.com>
+ * @link      http://getkirby.com
+ * @copyright Bastian Allgeier
+ * @license   http://getkirby.com/license
  */
-class KirbyTag {
+class KirbytextTag {
 
   // the parent kirbytext object
   protected $kirbytext = null;
@@ -79,7 +83,7 @@ class KirbyTag {
   /**
    * Returns the parent kirbytext object
    * 
-   * @return object KirbyText
+   * @return object Kirbytext
    */
   protected function kirbytext() {
     return $this->kirbytext;
@@ -88,7 +92,7 @@ class KirbyTag {
   /**
    * Returns the parent active page
    * 
-   * @return object KirbyPage
+   * @return object Page
    */
   protected function page() {
     return $this->kirbytext->page();
@@ -115,7 +119,7 @@ class KirbyTag {
   /**
    * Tries to find all related files for the current page
    * 
-   * @return object KirbyFiles
+   * @return object Files
    */
   protected function files() {
     return ($this->page()) ? $this->page()->files() : null;
@@ -125,7 +129,7 @@ class KirbyTag {
    * Tries to find a file for the given url/uri
    * 
    * @param string $url a full path to a file or just a filename for files form the current active page
-   * @return object KirbyFile
+   * @return object File
    */
   protected function file($url) {
     

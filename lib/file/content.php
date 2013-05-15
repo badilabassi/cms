@@ -6,29 +6,33 @@ if(!defined('KIRBY')) die('Direct access is not allowed');
 /**
  * Content
  * 
- * The content object is an extended KirbyFile
+ * The content object is an extended File
  * object which is used for all content text files. 
  * 
  * Content objects are used for the main content, site info and 
  * meta information for other files. 
  * 
- * KirbyPage objects access their main content object
+ * Page objects access their main content object
  * to return custom field data. 
  * 
  * i.e. $page->title() is the same as $page->content()->title()
  * 
- * Content objects have many child KirbyVariable objects
+ * Content objects have many child Variable objects
  * for each parsed field in the text file. 
- * So all custom field contents are KirbyVariable objects. 
+ * So all custom field contents are Variable objects. 
  * 
- * @package Kirby CMS
+ * @package   Kirby CMS
+ * @author    Bastian Allgeier <bastian@getkirby.com>
+ * @link      http://getkirby.com
+ * @copyright Bastian Allgeier
+ * @license   http://getkirby.com/license
  */
-class KirbyContent extends KirbyFile {
+class ContentFile extends File {
 
   // cache for the raw content of the file
   protected $raw = null;
 
-  // the data array with all fields/KirbyVariables
+  // the data array with all fields/Variables
   protected $data = null;
 
   // cache for the detected language code
@@ -37,9 +41,9 @@ class KirbyContent extends KirbyFile {
   /**
    * Constructor
    * 
-   * @param object $file The parent KirbyFile object
+   * @param object $file The parent File object
    */
-  public function __construct(KirbyFile $file) {
+  public function __construct(File $file) {
 
     $this->root      = $file->root();
     $this->parent    = $file->parent();
@@ -102,7 +106,7 @@ class KirbyContent extends KirbyFile {
   }
 
   /**
-   * Returns an array with all keys and values/KirbyVariables
+   * Returns an array with all keys and values/Variables
    * 
    * @param string $key Optional key to get a single item from the data array
    * @param mixed $default Optional default value if the item is not in the array
@@ -151,7 +155,7 @@ class KirbyContent extends KirbyFile {
       $value = trim(implode(':', array_slice($parts, 1)));
 
       // store the key and value in the data array
-      $this->data[$key] = new KirbyVariable($key, $value, $this);
+      $this->data[$key] = new Variable($key, $value, $this);
     
     }
 
@@ -184,7 +188,7 @@ class KirbyContent extends KirbyFile {
   }
 
   /**
-   * Magic getter for KirbyVariables
+   * Magic getter for Variables
    * i.e. $this->title()
    * 
    * @param string $key This is auto filled by PHP with the called method name

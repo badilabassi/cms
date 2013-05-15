@@ -6,8 +6,14 @@ if(!defined('KIRBY')) die('Direct access is not allowed');
 /**
  * Renders a youtube tag 
  * ie. (youtube: http://www.youtube.com/watch?v=_9tHtxOCvy4)
+ * 
+ * @package   Kirby CMS
+ * @author    Bastian Allgeier <bastian@getkirby.com>
+ * @link      http://getkirby.com
+ * @copyright Bastian Allgeier
+ * @license   http://getkirby.com/license
  */
-class KirbyTextYoutubeTag extends KirbyTag {
+class KirbytextYoutubeTag extends KirbytextTag {
 
   // a list of allowed attributes for this tag
   protected $attr = array(

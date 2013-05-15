@@ -5,10 +5,10 @@ if(!defined('TEST_SITE')) define('TEST_SITE', realpath(dirname(__FILE__) . '/../
 if(!defined('TEST_KIRBY_CORE')) define('TEST_KIRBY_CORE', realpath(dirname(__FILE__) . '/../..'));
 if(!defined('TEST_KIRBY_LIB')) define('TEST_KIRBY_LIB', TEST_KIRBY_CORE . '/lib');
 
-define('ROOT',         realpath(dirname(__FILE__) . '/../../..'));
-define('ROOT_KIRBY',   realpath(dirname(__FILE__) . '/../..')); 
-define('ROOT_SITE',    TEST_SITE);
-define('ROOT_CONTENT', TEST_CONTENT);  
+define('KIRBY_INDEX_ROOT',   realpath(dirname(__FILE__) . '/../../..'));
+define('KIRBY_CMS_ROOT',     realpath(dirname(__FILE__) . '/../..'));
+define('KIRBY_PROJECT_ROOT', TEST_SITE);
+define('KIRBY_CONTENT_ROOT', TEST_CONTENT);
 
 // include the kirby bootstrapper file
 require_once(TEST_KIRBY_CORE . '/bootstrap.php');

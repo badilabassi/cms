@@ -6,8 +6,14 @@ if(!defined('KIRBY')) die('Direct access is not allowed');
 /**
  * Renders a flash tag 
  * ie. (flash: http://superurl.com/myflash.flv)
+ * 
+ * @package   Kirby CMS
+ * @author    Bastian Allgeier <bastian@getkirby.com>
+ * @link      http://getkirby.com
+ * @copyright Bastian Allgeier
+ * @license   http://getkirby.com/license
  */
-class KirbyTextFlashTag extends KirbyTag {
+class KirbytextFlashTag extends KirbytextTag {
 
   // a list of allowed attributes for this tag
   protected $attr = array(

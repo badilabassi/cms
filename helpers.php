@@ -3,6 +3,25 @@
 // direct access protection
 if(!defined('KIRBY')) die('Direct access is not allowed');
 
+/** 
+ * Singleton handler for the site object
+ * Always use this to initiate the site!
+ * 
+ * You can reinitiate the site by passing 
+ * the $params argument. 
+ * 
+ * @param array $params Additional params to overwrite/set config vars
+ * @return object Site
+ */
+function site($params = array()) {
+  $site = g::get('site');
+  if(!$site || !empty($params)) {
+    $site = new Site($params);
+    g::set('site', $site);
+  }
+  return $site;
+}
+
 /**
  * Main URL builder
  * 
@@ -29,7 +48,7 @@ function url($uri = false, $lang = false, $params = array(), $query = array()) {
   // url() can also be used to link to css, img or js files
   // so we need to make sure that this is not a link to a real
   // file. Otherwise it will be broken by the rest of the code. 
-  if($uri && is_file(ROOT . DS . str_replace('/', DS, $uri))) {
+  if($uri && is_file(KIRBY_INDEX_ROOT . DS . str_replace('/', DS, $uri))) {
     return $baseurl . '/' . $uri;          
   }
 
@@ -112,7 +131,7 @@ function notFound() {
  * @return string
  */ 
 function snippet($snippet, $data=array(), $return=false) {
-  return tpl::loadFile(ROOT_SITE_SNIPPETS . DS . $snippet . '.php', $data, $return);
+  return tpl::loadFile(KIRBY_PROJECT_ROOT_SNIPPETS . DS . $snippet . '.php', $data, $return);
 }
 
 /**
@@ -138,35 +157,25 @@ function js($url, $async = false) {
 }
 
 /**
- * Raises a Kirby Exception
+ * Shortcut for parsing a text with the Kirbytext parser
  * 
- * @see KirbyException
- * @param string $message An error message for the exception
+ * @param mixed $text Variable object or string
+ * @param array $params an array of options for kirbytext: array('markdown' => true, 'smartypants' => true)
+ * @return string parsed text
  */
-function raise($message) {
-  throw new KirbyException($message);
+function kirbytext($text, $params = array()) {
+  return Kirbytext::instance($text, $params)->get();
 }
 
 /**
  * Shortcut for parsing a text with the Kirbytext parser
  * 
- * @param mixed $text KirbyVariable object or string
- * @param array $options an array of options for kirbytext: array('markdown' => true, 'smartypants' => true)
+ * @param mixed $text Variable object or string
+ * @param array $params an array of options for kirbytext: array('markdown' => true, 'smartypants' => true)
  * @return string parsed text
  */
-function kirbytext($text, $options = array()) {
-  return Kirbytext::instance($text, $options)->get();
-}
-
-/**
- * Shortcut for parsing a text with the Kirbytext parser
- * 
- * @param mixed $text KirbyVariable object or string
- * @param array $options an array of options for kirbytext: array('markdown' => true, 'smartypants' => true)
- * @return string parsed text
- */
-function kt($text, $options = array()) {
-  return Kirbytext::instance($text, $options)->get();
+function kt($text, $params = array()) {
+  return Kirbytext::instance($text, $params)->get();
 }
 
 /**
@@ -187,7 +196,7 @@ function md($text) {
  */
 if(!function_exists('yaml')) {
 
-  require_once(ROOT_KIRBY_PARSERS . DS . 'yaml.php');
+  require_once(KIRBY_CMS_ROOT_PARSERS . DS . 'yaml.php');
 
   function yaml($string) {
     return spyc_load(trim($string));
@@ -198,13 +207,13 @@ if(!function_exists('yaml')) {
 /**
  * Creates an excerpt without html and kirbytext
  * 
- * @param mixed $text KirbyVariable object or string
+ * @param mixed $text Variable object or string
  * @param int $length The number of characters which should be included in the excerpt
- * @param array $options an array of options for kirbytext: array('markdown' => true, 'smartypants' => true)
+ * @param array $params an array of options for kirbytext: array('markdown' => true, 'smartypants' => true)
  * @return string The shortened text
  */
-function excerpt($text, $length = 140, $options = array()) {
-  return str::excerpt(Kirbytext::instance($text, $options)->get(), $length);
+function excerpt($text, $length = 140, $params = array()) {
+  return str::excerpt(Kirbytext::instance($text, $params)->get(), $length);
 }
 
 /**

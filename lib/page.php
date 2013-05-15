@@ -3,6 +3,10 @@
 // direct access protection
 if(!defined('KIRBY')) die('Direct access is not allowed');
 
+// dependencies
+require_once(KIRBY_CMS_ROOT_LIB . DS . 'page' . DS . 'dir.php');
+require_once(KIRBY_CMS_ROOT_LIB . DS . 'page' . DS . 'cache.php');
+
 /**
  * Page
  *
@@ -13,9 +17,13 @@ if(!defined('KIRBY')) die('Direct access is not allowed');
  * and attached media files. Its custom data is fetched from
  * a text file with separated fields.  
  * 
- * @package Kirby CMS
+ * @package   Kirby CMS
+ * @author    Bastian Allgeier <bastian@getkirby.com>
+ * @link      http://getkirby.com
+ * @copyright Bastian Allgeier
+ * @license   http://getkirby.com/license
  */
-class KirbyPage {
+class Page {
 
   // the full root of the directory of this page
   protected $root = null;
@@ -29,7 +37,7 @@ class KirbyPage {
   // cache for all found siblings
   protected $siblings = null;
 
-  // cache for the parent KirbyPage object
+  // cache for the parent Page object
   protected $parent = null;
   
   // the relative url 
@@ -47,7 +55,7 @@ class KirbyPage {
   // cache for the intended template
   protected $intendedTemplate = null;
   
-  // cache for the KirbyFiles collection
+  // cache for the Files collection
   protected $files = null;
   
   // cache for the active state of this page
@@ -83,13 +91,13 @@ class KirbyPage {
   }
 
   /** 
-   * Returns a directory object with all info 
-   * about the related content directory
+   * Returns a dir object with all info 
+   * about the related content dir
    * 
-   * @return object KirbyDir
+   * @return object PageDir
    */  
   public function dir() {
-    return (!is_null($this->dir)) ? $this->dir : new KirbyDir($this->root());                
+    return (!is_null($this->dir)) ? $this->dir : new PageDir($this->root());                
   }      
 
   /** 
@@ -258,7 +266,7 @@ class KirbyPage {
    */
   public function depth() {
     $parent = $this->parent();
-    return ($parent && !is_a($parent, 'KirbySite')) ? ($parent->depth() + 1) : 1;
+    return ($parent && !is_a($parent, 'Site')) ? ($parent->depth() + 1) : 1;
   }
 
   // template stuff
@@ -280,7 +288,7 @@ class KirbyPage {
     if(!is_null($this->template)) return $this->template;
 
     $templateName = $this->intendedTemplate();
-    $templateFile = ROOT_SITE_TEMPLATES . DS . $templateName . '.php';
+    $templateFile = KIRBY_PROJECT_ROOT_TEMPLATES . DS . $templateName . '.php';
 
     return $this->template = (file_exists($templateFile)) ? $templateName : c::get('tpl.default');
   
@@ -292,7 +300,7 @@ class KirbyPage {
    * @return string
    */
   public function templateFile() {
-    return ROOT_SITE_TEMPLATES . DS . $this->template() . '.php';
+    return KIRBY_PROJECT_ROOT_TEMPLATES . DS . $this->template() . '.php';
   }
 
   /**
@@ -330,7 +338,7 @@ class KirbyPage {
    * @return string
    */
   public function intendedTemplateFile() {
-    return ROOT_SITE_TEMPLATES . DS . $this->intendedTemplate() . '.php';
+    return KIRBY_PROJECT_ROOT_TEMPLATES . DS . $this->intendedTemplate() . '.php';
   }
 
   /**
@@ -346,14 +354,14 @@ class KirbyPage {
   // attachments 
 
   /**
-   * Returns the KirbyFiles collection object
+   * Returns the Files collection object
    * with all files stored with the current page.
    * 
-   * @return object KirbyFiles 
+   * @return object Files 
    */
   public function files() {
     //if(!is_null($this->files)) return $this->files;    
-    return $this->files = new KirbyFiles($this);
+    return $this->files = new Files($this);
   }
 
   /**
@@ -368,7 +376,7 @@ class KirbyPage {
   /**
    * Only returns images stored with this page
    * 
-   * @return object KirbyFiles
+   * @return object Files
    */
   public function images() {
     return $this->files()->images();
@@ -386,7 +394,7 @@ class KirbyPage {
   /**
    * Only returns videos stored with this page
    * 
-   * @return object KirbyFiles
+   * @return object Files
    */
   public function videos() {
     return $this->files()->videos();
@@ -404,7 +412,7 @@ class KirbyPage {
   /**
    * Only returns documents stored with this page
    * 
-   * @return object KirbyFiles
+   * @return object Files
    */
   public function documents() {
     return $this->files()->documents();
@@ -422,7 +430,7 @@ class KirbyPage {
   /**
    * Only returns sound files stored with this page
    * 
-   * @return object KirbyFiles
+   * @return object Files
    */
   public function sounds() {
     return $this->files()->sounds();
@@ -440,7 +448,7 @@ class KirbyPage {
   /**
    * Returns all other files stored with this page
    * 
-   * @return object KirbyFiles
+   * @return object Files
    */
   public function others() {
     return $this->files()->others();
@@ -460,7 +468,7 @@ class KirbyPage {
    * Meta files are text files connected to images, videos, etc. 
    * to provide meta data for those files. 
    * 
-   * @return object KirbyFiles
+   * @return object Files
    */
   public function metas() {
     return $this->files()->metas();
@@ -481,7 +489,7 @@ class KirbyPage {
    * There can be a single content file for single language websites, 
    * or multiple content text files for multi-language sites.
    * 
-   * @return object KirbyFiles
+   * @return object Files
    */
   public function contents() {
     return $this->files()->contents();
@@ -502,7 +510,7 @@ class KirbyPage {
    * Returns the main content file
    * which will be used to fetch custom variables for the page.
    * 
-   * @return object KirbyContent
+   * @return object Content
    */
   public function content($lang = null) {
 
@@ -539,7 +547,7 @@ class KirbyPage {
    * Returns the default content 
    * for multi-language support
    * 
-   * @return object KirbyContent
+   * @return object Content
    */
   public function defaultContent() {
     if(!is_null($this->defaultContent)) return $this->defaultContent;
@@ -552,9 +560,9 @@ class KirbyPage {
    * Returns the parent page object
    *
    * @param object $parent Setter for the parent page object 
-   * @return object KirbyPage
+   * @return object Page
    */
-  public function parent(KirbyPage $parent = null) {
+  public function parent(Page $parent = null) {
     
     if(!is_null($parent)) return $this->parent = $parent;
 
@@ -570,10 +578,10 @@ class KirbyPage {
   }
 
   /**
-   * Returns a KirbyPages collection with all 
+   * Returns a Pages collection with all 
    * parents of this page until the first level of pages.
    * 
-   * @return object KirbyPages
+   * @return object Pages
    */
   public function parents() {
 
@@ -585,17 +593,17 @@ class KirbyPage {
       $next = $next->parent();
     }
 
-    return new KirbyPages($parents);
+    return new Pages($parents);
 
   }
 
   /**
    * Checks if the page is a child of the given page
    * 
-   * @param object KirbyPage the page object to check
+   * @param object Page the page object to check
    * @return boolean
    */
-  public function isChildOf(KirbyPage $page) {
+  public function isChildOf(Page $page) {
     if($this->equals($page)) return false;
     return ($this->parent()->equals($page));
   }
@@ -603,10 +611,10 @@ class KirbyPage {
   /**
    * Checks if the page is a descendant of the given page
    * 
-   * @param object KirbyPage the page object to check
+   * @param object Page the page object to check
    * @return boolean
    */
-  public function isDescendantOf(KirbyPage $page) {
+  public function isDescendantOf(Page $page) {
     
     if($this->equals($page)) return false;
 
@@ -634,7 +642,7 @@ class KirbyPage {
   /**
    * Checks if the page is an ancestor of the given page
    * 
-   * @param object KirbyPage the page object to check
+   * @param object Page the page object to check
    * @return boolean
    */
   public function isAncestorOf($page) {
@@ -644,7 +652,7 @@ class KirbyPage {
   /**
    * Returns all subpages/children for the page
    * 
-   * @return object KirbyPages
+   * @return object Pages
    */
   public function children() {
     
@@ -652,7 +660,7 @@ class KirbyPage {
     if(!is_null($this->children)) return $this->children;
     
     // fetch all children for this page
-    return $this->children = new KirbyPages($this);
+    return $this->children = new Pages($this);
     
   }
 
@@ -695,7 +703,7 @@ class KirbyPage {
   /**
    * Returns all siblings of this page
    * 
-   * @return object KirbyPages 
+   * @return object Pages 
    */
   public function siblings() {
     // cache the set of siblings
@@ -726,12 +734,12 @@ class KirbyPage {
   /**
    * Internal method to return the next page
    * 
-   * @param object $siblings KirbyPages A collection of siblings to search in
+   * @param object $siblings Pages A collection of siblings to search in
    * @param string $sort An optional sort field for the siblings
    * @param string $direction An optional sort direction  
-   * @return mixed KirbyPage or null
+   * @return mixed Page or null
    */
-  protected function _next(KirbyPages $siblings, $sort = false, $direction = 'asc') {
+  protected function _next(Pages $siblings, $sort = false, $direction = 'asc') {
     if($sort) $siblings = $siblings->sortBy($sort, $direction);
     $index = $siblings->indexOf($this);
     if($index === false) return false;
@@ -743,12 +751,12 @@ class KirbyPage {
   /**
    * Internal method to return the previous page
    * 
-   * @param object $siblings KirbyPages A collection of siblings to search in
+   * @param object $siblings Pages A collection of siblings to search in
    * @param string $sort An optional sort field for the siblings
    * @param string $direction An optional sort direction  
-   * @return mixed KirbyPage or null
+   * @return mixed Page or null
    */
-  protected function _prev(KirbyPages $siblings, $sort = false, $direction = 'asc') {
+  protected function _prev(Pages $siblings, $sort = false, $direction = 'asc') {
     if($sort) $siblings = $siblings->sortBy($sort, $direction);
     $index = $siblings->indexOf($this);
     if($index === false) return false;
@@ -762,7 +770,7 @@ class KirbyPage {
    * 
    * @param string $sort An optional sort field for the siblings
    * @param string $direction An optional sort direction  
-   * @return mixed KirbyPage or null  
+   * @return mixed Page or null  
    */
   public function next($sort = false, $direction = 'asc') {
     return $this->_next($this->siblings(), $sort, $direction);
@@ -773,7 +781,7 @@ class KirbyPage {
    * 
    * @param string $sort An optional sort field for the siblings
    * @param string $direction An optional sort direction  
-   * @return mixed KirbyPage or null  
+   * @return mixed Page or null  
    */
   public function nextVisible($sort = false, $direction = 'asc') {
     return $this->_next($this->siblings()->visible(), $sort, $direction);    
@@ -784,7 +792,7 @@ class KirbyPage {
    * 
    * @param string $sort An optional sort field for the siblings
    * @param string $direction An optional sort direction  
-   * @return mixed KirbyPage or null  
+   * @return mixed Page or null  
    */
   public function nextInvisible($sort = false, $direction = 'asc') {
     return $this->_next($this->siblings()->invisible(), $sort, $direction);    
@@ -828,7 +836,7 @@ class KirbyPage {
    * 
    * @param string $sort An optional sort field for the siblings
    * @param string $direction An optional sort direction  
-   * @return mixed KirbyPage or null  
+   * @return mixed Page or null  
    */
   public function prev($sort = false, $direction = 'asc') {
     return $this->_prev($this->siblings(), $sort, $direction);
@@ -839,7 +847,7 @@ class KirbyPage {
    * 
    * @param string $sort An optional sort field for the siblings
    * @param string $direction An optional sort direction  
-   * @return mixed KirbyPage or null  
+   * @return mixed Page or null  
    */
   public function prevVisible($sort = false, $direction = 'asc') {
     return $this->_prev($this->siblings()->visible(), $sort, $direction);
@@ -850,7 +858,7 @@ class KirbyPage {
    * 
    * @param string $sort An optional sort field for the siblings
    * @param string $direction An optional sort direction  
-   * @return mixed KirbyPage or null  
+   * @return mixed Page or null  
    */
   public function prevInvisible($sort = false, $direction = 'asc') {
     return $this->_prev($this->siblings()->invisible(), $sort, $direction);
@@ -958,11 +966,18 @@ class KirbyPage {
   /**
    * Compares this page with a given page object
    * 
-   * @param object $page A KirbyPage object to compare
+   * @param object $page A Page object to compare
    * @return boolean
    */
-  public function equals(KirbyPage $page) {
+  public function equals(Page $page) {
     return ($page === $this) ? true : false;
+  }
+
+  /**
+   * Alternative for $this->equals()
+   */
+  public function is(Page $page) {
+    return $this->equals($page);
   }
 
   /**
@@ -1058,6 +1073,37 @@ class KirbyPage {
       return $content;
     
     }
+
+  }
+
+  /**
+   * Returns the html for the current page
+   * 
+   * @return string
+   */
+  public function toHtml() {
+
+    $cache = new PageCache($this);
+
+    if($html = $cache->get()) {
+      // $html is already set
+    } else {
+
+      $site = site();
+
+      tpl::set(array(
+        'site'  => $site,
+        'pages' => $site->children(),
+        'page'  => $this 
+      ));
+
+      $html = tpl::load($this->template(), false, true);
+
+      $cache->set($html);
+
+    }
+
+    return $html;
 
   }
 

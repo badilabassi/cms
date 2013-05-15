@@ -9,8 +9,14 @@ if(!defined('KIRBY')) die('Direct access is not allowed');
  * 
  * You can use the year keyword to get the current year
  * or php date format strings to get whatever date you need
+ * 
+ * @package   Kirby CMS
+ * @author    Bastian Allgeier <bastian@getkirby.com>
+ * @link      http://getkirby.com
+ * @copyright Bastian Allgeier
+ * @license   http://getkirby.com/license
  */
-class KirbyTextDateTag extends KirbyTag {
+class KirbytextDateTag extends KirbytextTag {
 
   // a list of allowed attributes for this tag
   protected $attr = array();

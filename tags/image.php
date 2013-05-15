@@ -6,8 +6,14 @@ if(!defined('KIRBY')) die('Direct access is not allowed');
 /**
  * Renders an image tag 
  * ie. (image: myimage.jpg)
+ * 
+ * @package   Kirby CMS
+ * @author    Bastian Allgeier <bastian@getkirby.com>
+ * @link      http://getkirby.com
+ * @copyright Bastian Allgeier
+ * @license   http://getkirby.com/license
  */
-class KirbyTextImageTag extends KirbyTag {
+class KirbytextImageTag extends KirbytextTag {
 
   // a list of allowed attributes for this tag
   protected $attr = array(

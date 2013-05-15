@@ -6,9 +6,13 @@ if(!defined('KIRBY')) die('Direct access is not allowed');
 /**
  * Languages
  * 
- * @package Kirby CMS
+ * @package   Kirby CMS
+ * @author    Bastian Allgeier <bastian@getkirby.com>
+ * @link      http://getkirby.com
+ * @copyright Bastian Allgeier
+ * @license   http://getkirby.com/license
  */
-class KirbyLanguages extends Collection {
+class Languages extends Collection {
 
   /**
    * Constructor
@@ -31,7 +35,7 @@ class KirbyLanguages extends Collection {
 
     // attach all languages
     foreach($codes as $lang) {
-      $this->set($lang, new KirbyLanguage($lang, $lang == $active));
+      $this->set($lang, new Language($lang, $lang == $active));
     }
 
   }  
@@ -39,7 +43,7 @@ class KirbyLanguages extends Collection {
   /**
    * Returns the currently active language
    * 
-   * @return object KirbyLanguage
+   * @return object Language
    */
   public function findActive() {
     foreach($this->_ as $lang) {
@@ -50,7 +54,7 @@ class KirbyLanguages extends Collection {
   /**
    * Returns the default language
    * 
-   * @return object KirbyLanguage
+   * @return object Language
    */
   public function findDefault() {
     foreach($this->_ as $lang) {
@@ -61,7 +65,7 @@ class KirbyLanguages extends Collection {
   /**
    * Returns the user's preferred language
    * 
-   * @return object KirbyLanguage
+   * @return object Language
    */
   public function findPreferred() {
     foreach($this->_ as $lang) {

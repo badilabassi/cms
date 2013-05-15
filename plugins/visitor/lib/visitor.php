@@ -6,9 +6,13 @@ if(!defined('KIRBY')) die('Direct access is not allowed');
 /**
  * Visitor
  * 
- * @package Kirby CMS
+ * @package   Kirby CMS
+ * @author    Bastian Allgeier <bastian@getkirby.com>
+ * @link      http://getkirby.com
+ * @copyright Bastian Allgeier
+ * @license   http://getkirby.com/license
  */
-class KirbyVisitor extends Visitor {
+class SiteVisitor extends Visitor {
 
   // cache for the detected language
   static protected $language = null;

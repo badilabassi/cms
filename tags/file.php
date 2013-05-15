@@ -6,8 +6,14 @@ if(!defined('KIRBY')) die('Direct access is not allowed');
 /**
  * Renders an file tag 
  * ie. (file: myfile.pdf)
+ * 
+ * @package   Kirby CMS
+ * @author    Bastian Allgeier <bastian@getkirby.com>
+ * @link      http://getkirby.com
+ * @copyright Bastian Allgeier
+ * @license   http://getkirby.com/license
  */
-class KirbyTextFileTag extends KirbyTag {
+class KirbytextFileTag extends KirbytextTag {
 
   // a list of allowed attributes for this tag
   protected $attr = array(

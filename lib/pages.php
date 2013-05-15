@@ -7,11 +7,15 @@ if(!defined('KIRBY')) die('Direct access is not allowed');
  * Pages
  * 
  * This is the main collection object 
- * for a set of KirbyPage objects
+ * for a set of Page objects
  * 
- * @package Kirby CMS
+ * @package   Kirby CMS
+ * @author    Bastian Allgeier <bastian@getkirby.com>
+ * @link      http://getkirby.com
+ * @copyright Bastian Allgeier
+ * @license   http://getkirby.com/license
  */
-class KirbyPages extends Collection {
+class Pages extends Collection {
 
   // cache for all visible pages in this collection
   protected $visible = null;
@@ -28,17 +32,17 @@ class KirbyPages extends Collection {
   /**
    * Constructor
    * 
-   * @param mixed $input Can either be a KirbyPage object (All children will be auto-added) or an array of KirbyPage objects
+   * @param mixed $input Can either be a Page object (All children will be auto-added) or an array of Page objects
    */
   public function __construct($input = array()) {
 
-    if(is_a($input, 'KirbyPage')) {
+    if(is_a($input, 'Page')) {
 
-      $uri = is_a($input, 'KirbySite')  ? '' : $input->uri();
+      $uri = is_a($input, 'Site')  ? '' : $input->uri();
 
       foreach($input->dir()->children() as $dir) {
         
-        $child = new KirbyPage($dir);
+        $child = new Page($dir);
         $child->parent($input);
         $child->uri($uri . '/' . $child->uid());
 
@@ -50,7 +54,7 @@ class KirbyPages extends Collection {
 
       foreach($input as $page) {  
         
-        if(!is_a($page, 'KirbyPage')) raise('All pages in a set of KirbyPages have to be KirbyPage objects');
+        if(!is_a($page, 'Page')) raise('All pages in a set of Pages have to be Page objects');
         
         // add the page to the collection
         $this->_['_' . $page->uri()] = $page;
@@ -58,7 +62,7 @@ class KirbyPages extends Collection {
       }
 
     } else {
-      raise('KirbyPages must be constructed with a KirbyPage object or an array of KirbyPages');
+      raise('Pages must be constructed with a Page object or an array of Pages');
     }
 
   }
@@ -67,10 +71,10 @@ class KirbyPages extends Collection {
    * Creates a clean one-level array with all 
    * pages, subpages, subsubpages, etc.
    *
-   * @param object KirbyPages object for recursive indexing
+   * @param object Pages object for recursive indexing
    * @return array
    */
-  public function index(KirbyPages $obj=null) {
+  public function index(Pages $obj=null) {
     
     if(is_null($obj)) {
       if(!is_null($this->index)) return $this->index;
@@ -89,7 +93,7 @@ class KirbyPages extends Collection {
   /**
    * Merges all children of all pages
    *
-   * @return object KirbyPages
+   * @return object Pages
    */
   public function children() {
 
@@ -103,7 +107,7 @@ class KirbyPages extends Collection {
       }      
     }
 
-    return $this->children = new KirbyPages($children);
+    return $this->children = new Pages($children);
 
   }
 
@@ -119,7 +123,7 @@ class KirbyPages extends Collection {
   /**
    * Returns the active page in the collection
    *
-   * @return object KirbyPage
+   * @return object Page
    */
   public function active() {
     return site()->activePage();
@@ -137,10 +141,10 @@ class KirbyPages extends Collection {
    * 
    * i.e. $pages->find('page-1', 'page-1/subpage-1', 'page-2');
    * 
-   * In this case a KirbyPages object will be returned
+   * In this case a Pages object will be returned
    *
    * @param list Either a single URI as first argument or multiple URIs as a list of arguments. 
-   * @return mixed Either a KirbyPage object, a KirbyPages object for multiple pages or null if nothing could be found
+   * @return mixed Either a Page object, a Pages object for multiple pages or null if nothing could be found
    */
   public function find() {
     
@@ -152,7 +156,7 @@ class KirbyPages extends Collection {
       foreach($args as $arg) {
         if($page = $this->find($arg)) $result[$page->uri()] = $page;
       }      
-      return (empty($result)) ? false : new KirbyPages($result);
+      return (empty($result)) ? false : new Pages($result);
     }    
     
     // find a single page
@@ -181,9 +185,9 @@ class KirbyPages extends Collection {
    * Finds a single element in a set of pages by a given key and value
    * 
    * @param string $key The name of the key/field to search for
-   * @param mixed $value The value to match against. Array: the method will search for multiple values and return a KirbyPages collection of results. 
+   * @param mixed $value The value to match against. Array: the method will search for multiple values and return a Pages collection of results. 
    * @param boolean $deep true: the method will search all children, grantchildren, etc., false: the method will only search the current set
-   * @return mixed KirbyPage if a single page is found, KirbyPages if multiple values have been passed and multiple pages are found or null if nothing could be found
+   * @return mixed Page if a single page is found, Pages if multiple values have been passed and multiple pages are found or null if nothing could be found
    */
   public function findBy($key, $value, $deep = true) {
 
@@ -193,7 +197,7 @@ class KirbyPages extends Collection {
       foreach($value as $arg) {
         if($page = $this->findBy($key, $arg)) $result[$page->uri()] = $page;
       }      
-      return (empty($result)) ? null : new KirbyPages($result);
+      return (empty($result)) ? null : new Pages($result);
     } else if(is_array($value)) {
       // reduce the array of values to a single value
       $value = $value[0];
@@ -230,7 +234,7 @@ class KirbyPages extends Collection {
   /**
    * Finds the currently open page in this collection if available
    * 
-   * @return mixed KirbyPage or null
+   * @return mixed Page or null
    */
   public function findOpen() {
     return $this->findBy('isOpen', true, false);
@@ -238,10 +242,10 @@ class KirbyPages extends Collection {
 
   /**
    * Finds a single page by its UID
-   * Pass multiple UIDs as separate arguments to get a KirbyPages collection with all matches
+   * Pass multiple UIDs as separate arguments to get a Pages collection with all matches
    *
    * @param list Either a single UID or multiple UIDs as a list of arguments
-   * @return mixed KirbyPage, KirbyPages or null
+   * @return mixed Page, Pages or null
    */
   public function findByUID() {
     $value = func_get_args();
@@ -250,10 +254,10 @@ class KirbyPages extends Collection {
 
   /**
    * Finds a single page by its dirname
-   * Pass multiple dirnames as separate arguments to get a KirbyPages collection with all matches
+   * Pass multiple dirnames as separate arguments to get a Pages collection with all matches
    *
    * @param list Either a single dirname or multiple dirnames as a list of arguments
-   * @return mixed KirbyPage, KirbyPages or null
+   * @return mixed Page, Pages or null
    */
   public function findByDirname() {
     $value = func_get_args();
@@ -262,10 +266,10 @@ class KirbyPages extends Collection {
   
   /**
    * Finds a single page by its title
-   * Pass multiple titles as separate arguments to get a KirbyPages collection with all matches
+   * Pass multiple titles as separate arguments to get a Pages collection with all matches
    *
    * @param list Either a single title or multiple titles as a list of arguments
-   * @return mixed KirbyPage, KirbyPages or null
+   * @return mixed Page, Pages or null
    */
   public function findByTitle() {
     $value = func_get_args();
@@ -274,10 +278,10 @@ class KirbyPages extends Collection {
 
   /**
    * Finds a single page by its hash
-   * Pass multiple hashes as separate arguments to get a KirbyPages collection with all matches
+   * Pass multiple hashes as separate arguments to get a Pages collection with all matches
    *
    * @param list Either a single hash or multiple hashes as a list of arguments
-   * @return mixed KirbyPage, KirbyPages or null
+   * @return mixed Page, Pages or null
    */
   public function findByHash() {
     $value = func_get_args();
@@ -287,7 +291,7 @@ class KirbyPages extends Collection {
   /**
    * Returns only visible pages from this set of pages
    *
-   * @return object KirbyPages
+   * @return object Pages
    */
   public function visible() {
     if(!is_null($this->visible)) return $this->visible;
@@ -306,7 +310,7 @@ class KirbyPages extends Collection {
   /**
    * Returns only invisible pages from this set of pages
    *
-   * @return object KirbyPages
+   * @return object Pages
    */
   public function invisible() {
     if(!is_null($this->invisible)) return $this->invisible;
@@ -328,15 +332,15 @@ class KirbyPages extends Collection {
    * @param string $field
    * @param string $direction
    * @param mixed $method
-   * @return object KirbyPages
+   * @return object Pages
    */
-  public function sortBy($field, $direction='asc', $method=SORT_REGULAR) {
+  public function sortBy($field, $direction = 'asc', $method = SORT_REGULAR) {
 
     if($field == 'dirname') $method = 'natural';
         
     $pages = a::sort($this->_, $field, $direction, $method);
     
-    return new KirbyPages($pages);
+    return new Pages($pages);
 
   }
 

@@ -10,7 +10,7 @@ class PageTest extends PHPUnit_Framework_TestCase {
   }
   
   public function testGetters() {
-    $this->assertInstanceOf('KirbyPage', $this->page);
+    $this->assertInstanceOf('Page', $this->page);
     
     $this->assertTrue(method_exists($this->page, 'children'));
     $this->assertTrue(method_exists($this->page, 'parent'));
@@ -31,10 +31,10 @@ class PageTest extends PHPUnit_Framework_TestCase {
     $this->assertEquals(filectime($this->root), is_int($this->page->modified()) && $this->page->modified() > 0 && $this->page->modified());
     
     // check for the scanned inventory
-    $this->assertInstanceOf('KirbyDir', $this->page->dir());
+    $this->assertInstanceOf('PageDir', $this->page->dir());
     
     // check for children
-    $this->assertInstanceOf('KirbyPages', $this->page->children());
+    $this->assertInstanceOf('Pages', $this->page->children());
     
     // check if this is a child of
     $this->assertTrue($this->page->isChildOf($this->page->parent()));
@@ -55,7 +55,7 @@ class PageTest extends PHPUnit_Framework_TestCase {
     $this->assertTrue($this->page->hasChildren());
     
     // check for siblings
-    $this->assertInstanceOf('KirbyPages', $this->page->siblings());
+    $this->assertInstanceOf('Pages', $this->page->siblings());
     
     // count siblings
     $this->assertTrue($this->page->countSiblings() > 0);
@@ -68,6 +68,11 @@ class PageTest extends PHPUnit_Framework_TestCase {
     
     // is this page invisible => should be true
     $this->assertTrue($this->page->isInvisible());
+
+    $this->assertEquals('default', $this->page->intendedTemplate());
+    $this->assertEquals('default', $this->page->template());
+    $this->assertEquals(KIRBY_PROJECT_ROOT_TEMPLATES . DS . 'default.php', $this->page->templateFile());
+
   }
   
   public function testRootIsSet() {
