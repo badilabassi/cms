@@ -701,16 +701,14 @@ class Page {
   }
 
   /**
-   * Returns all siblings of this page
+   * Returns all siblings of this page including the current page
    * 
    * @return object Pages 
    */
   public function siblings() {
     // cache the set of siblings
-    if(!is_null($this->siblings)) return $this->siblings;
-    
-    // TODO: replace this->root by this->uri
-    return $this->siblings = $this->parent()->children()->not($this->root());
+    if(!is_null($this->siblings)) return $this->siblings;    
+    return $this->siblings = $this->parent()->children();
   }
 
   /**

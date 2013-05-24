@@ -25,18 +25,18 @@ if(!defined('KIRBY')) die('Direct access is not allowed');
 c::set(array(
   
   /**
-    * Human-readable version
-    */ 
+   * Human-readable version
+   */ 
   'cms.version.string' => '2.0',
   
   /**
-    * Machine-readable version 
-    */
+   * Machine-readable version 
+   */
   'cms.version.number' => 2.0,
 
   /**
-    * Required panel version
-    */ 
+   * Required panel version
+   */ 
   'panel.min.version' => 2.0,
 
   /**

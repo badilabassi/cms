@@ -100,21 +100,22 @@ class KirbytextTest extends PHPUnit_Framework_TestCase {
     
     $tag = kirbytext('(image: myimage.jpg title: Super title class: classy target: _parent link: http://google.com)');
     
-    $expected = '<a href="http://google.com" class="classy" title="Super title" target="_parent"><img src="' . $this->url . '/myimage.jpg" class="classy" title="Super title" /></a>';
+    $expected = '<a href="http://google.com" title="Super title" target="_parent"><img src="' . $this->url . '/myimage.jpg" class="classy" title="Super title" /></a>';
     $this->assertEquals($expected, $image);
     $this->assertEquals($expected, $tag);
     
     // e
     $image = $this->kt->tag('image', 'myimage.jpg', array(
-      'title'  => 'Super title', 
-      'class'  => 'classy', 
-      'target' => '_parent',
-      'link'   => 'self'
+      'title'     => 'Super title', 
+      'class'     => 'classy', 
+      'linkclass' => 'linkclassy',
+      'target'    => '_parent',
+      'link'      => 'self'
     ));
     
-    $tag = kirbytext('(image: myimage.jpg title: Super title class: classy target: _parent link: self)');
+    $tag = kirbytext('(image: myimage.jpg title: Super title class: classy linkclass: linkclassy target: _parent link: self)');
     
-    $expected = '<a href="' . $this->url . '/myimage.jpg" class="classy" title="Super title" target="_parent"><img src="' . $this->url . '/myimage.jpg" class="classy" title="Super title" /></a>';
+    $expected = '<a href="' . $this->url . '/myimage.jpg" class="linkclassy" title="Super title" target="_parent"><img src="' . $this->url . '/myimage.jpg" class="classy" title="Super title" /></a>';
     $this->assertEquals($expected, $image);
     $this->assertEquals($expected, $tag);
   }

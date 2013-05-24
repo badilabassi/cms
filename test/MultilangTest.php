@@ -37,7 +37,7 @@ class MultilangTest extends PHPUnit_Framework_TestCase {
       'lang.support' => true,
       'lang.current' => 'de'
     ));
-                
+    
     $this->assertEquals('My german content file', (string)$p->content()->title());
     $this->assertEquals('This is a german text', (string)$p->content()->text());
     $this->assertEquals('This is a german text', (string)$p->text());

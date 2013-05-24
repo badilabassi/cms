@@ -6,6 +6,8 @@ if(!defined('KIRBY')) die('Direct access is not allowed');
 /**
  * Language
  * 
+ * Represents a single available language for multi-language sites
+ * 
  * @package   Kirby CMS
  * @author    Bastian Allgeier <bastian@getkirby.com>
  * @link      http://getkirby.com

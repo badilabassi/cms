@@ -6,6 +6,8 @@ if(!defined('KIRBY')) die('Direct access is not allowed');
 /**
  * Languages
  * 
+ * A collection of all available languages for multi-language sites.
+ * 
  * @package   Kirby CMS
  * @author    Bastian Allgeier <bastian@getkirby.com>
  * @link      http://getkirby.com
@@ -46,7 +48,7 @@ class Languages extends Collection {
    * @return object Language
    */
   public function findActive() {
-    foreach($this->_ as $lang) {
+    foreach($this->data as $lang) {
       if($lang->isActive()) return $lang;
     }
   }
@@ -57,7 +59,7 @@ class Languages extends Collection {
    * @return object Language
    */
   public function findDefault() {
-    foreach($this->_ as $lang) {
+    foreach($this->data as $lang) {
       if($lang->isDefault()) return $lang;
     }
   }
@@ -68,7 +70,7 @@ class Languages extends Collection {
    * @return object Language
    */
   public function findPreferred() {
-    foreach($this->_ as $lang) {
+    foreach($this->data as $lang) {
       if($lang->isPreferred()) return $lang;
     }
     return $this->findDefault();

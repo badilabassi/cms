@@ -85,7 +85,7 @@ class Files extends Collection {
         if(!is_a($file, 'File')) raise('All files in a set of Files have to be File objects');
         
         // add the page to the collection
-        $this->_['_' . $file->filename()] = $file;
+        $this->data['_' . $file->filename()] = $file;
       
       }
 
@@ -96,7 +96,7 @@ class Files extends Collection {
     $contentFileExtension = c::get('content.file.extension', 'txt');
 
     // detect all meta and thumb files
-    foreach($this->_ as $key => $file) {
+    foreach($this->data as $key => $file) {
 
       if($file->type() == 'content') {
 
@@ -385,8 +385,8 @@ class Files extends Collection {
 
     if(is_array($value) && count($value) > 1) {
       $result = clone $this;
-      foreach($result->_ as $index => $file) {
-        if(!in_array($file->$key(), $value)) unset($result->_[$index]);
+      foreach($result->data as $index => $file) {
+        if(!in_array($file->$key(), $value)) unset($result->data[$index]);
       }
       return $result;
     } 
@@ -430,8 +430,8 @@ class Files extends Collection {
    * @return object Files
    */
   public function sortBy($field, $direction='asc', $method=SORT_REGULAR) {        
-    $self    = clone $this;
-    $self->_ = a::sort($self->_, $field, $direction, $method);
+    $self       = clone $this;
+    $self->data = a::sort($self->data, $field, $direction, $method);
     return $self;
   }
 

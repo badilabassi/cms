@@ -57,7 +57,7 @@ class Pages extends Collection {
         if(!is_a($page, 'Page')) raise('All pages in a set of Pages have to be Page objects');
         
         // add the page to the collection
-        $this->_['_' . $page->uri()] = $page;
+        $this->data['_' . $page->uri()] = $page;
       
       }
 
@@ -127,6 +127,25 @@ class Pages extends Collection {
    */
   public function active() {
     return site()->activePage();
+  }
+
+  /**
+   * Returns a new collection of pages without the given pages
+   * 
+   * @param args any number of uris or page elements, passed as individual arguments
+   * @return object a new collection without the pages
+   */      
+  public function not() {
+    $args = func_get_args();
+    $self = clone $this;
+    foreach($args as $kill) {
+      if(is_a($kill, 'Page')) {
+        unset($self->data['_' . $kill->uri()]);
+      } else {
+        unset($self->data['_' . $kill]);
+      }
+    }
+    return $self;
   }
 
   /**
@@ -216,7 +235,7 @@ class Pages extends Collection {
         // if a result has been found, return that result
         if($item->$key() == $value) return $item;
         // otherwise collect all children 
-        $next = array_merge($next, $item->children()->_);
+        $next = array_merge($next, $item->children()->data);
       }
 
       if(!$deep || empty($next)) return false;
@@ -338,7 +357,7 @@ class Pages extends Collection {
 
     if($field == 'dirname') $method = 'natural';
         
-    $pages = a::sort($this->_, $field, $direction, $method);
+    $pages = a::sort($this->data, $field, $direction, $method);
     
     return new Pages($pages);
 

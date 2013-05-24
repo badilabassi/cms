@@ -23,6 +23,7 @@ class KirbytextImageTag extends KirbytextTag {
     'text',
     'title',
     'class',
+    'linkclass',
     'link',
     'target',
     'rel'
@@ -75,7 +76,7 @@ class KirbytextImageTag extends KirbytextTag {
     
     return Html::a($href, $image, array(
       'rel'    => $this->attr('rel'), 
-      'class'  => $this->attr('class'), 
+      'class'  => $this->attr('linkclass'), 
       'title'  => html($this->attr('title')), 
       'target' => $this->target()
     ));
