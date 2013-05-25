@@ -514,6 +514,7 @@ class Site extends Page {
 
     // load custom config files
     f::load(KIRBY_PROJECT_ROOT_CONFIG . DS . 'config.php');
+    f::load(KIRBY_PROJECT_ROOT_CONFIG . DS . 'config.' . server::get('server_addr') . '.php');
     f::load(KIRBY_PROJECT_ROOT_CONFIG . DS . 'config.' . server::get('server_name') . '.php');
 
     // get all config options that have been stored so far
