@@ -209,17 +209,21 @@ class Kirbytext {
     $code  = trim($code);
 
     if(function_exists('highlight')) {
-      $result  = '<pre class="highlight ' . $first . '">';
+      $result  = '<figure class="code">';
+      $result .= '<pre class="highlight ' . $first . '">';
       $result .= '<code>';
       $result .= highlight($code, (empty($first)) ? 'php-html' : $first);
       $result .= '</code>';
       $result .= '</pre>';
+      $result .= '</figure>';
     } else {
-      $result  = '<pre class="' . $first . '">';
+      $result  = '<figure class="code">';
+      $result .= '<pre class="' . $first . '">';
       $result .= '<code>';
       $result .= htmlspecialchars($code);
       $result .= '</code>';
       $result .= '</pre>';
+      $result .= '</figure>';
     }
     
     return $result;

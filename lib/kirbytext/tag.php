@@ -4,6 +4,8 @@
 if(!defined('KIRBY')) die('Direct access is not allowed');
 
 /**
+ * Kirbytext Tag
+ * 
  * The mother class for all Kirbytext tags
  * Extend this to build a new KirbytextTag. 
  * Kirbytags are located in kirby/tags or site/kirbytags

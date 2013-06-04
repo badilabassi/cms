@@ -130,7 +130,7 @@ function notFound() {
  * @param boolean $return false: the snippet content will be echoed, true: the snippet content will be returned
  * @return string
  */ 
-function snippet($snippet, $data=array(), $return=false) {
+function snippet($snippet, $data = array(), $return = false) {
   return tpl::loadFile(KIRBY_PROJECT_ROOT_SNIPPETS . DS . $snippet . '.php', $data, $return);
 }
 

@@ -5,7 +5,7 @@ if(!defined('KIRBY')) die('Direct access is not allowed');
 
 /**
    * Spyc -- A Simple PHP YAML Class
-   * @version 0.5
+   * @version 0.5.1
    * @author Vlad Andersen <vlad.andersen@gmail.com>
    * @author Chris Wanstrath <chris@ozmm.org>
    * @link http://code.google.com/p/spyc/
@@ -655,7 +655,8 @@ class Spyc {
 
     } while (strpos ($inline, '[') !== false || strpos ($inline, '{') !== false);
 
-    $explode = explode(', ',$inline);
+    $explode = explode(',',$inline);
+    $explode = array_map('trim', $explode);
     $stringi = 0; $i = 0;
 
     while (1) {
@@ -1036,13 +1037,10 @@ class Spyc {
 // Enable use of Spyc from command line
 // The syntax is the following: php Spyc.php spyc.yaml
 
-define ('SPYC_FROM_COMMAND_LINE', false);
-
 do {
-  if (!SPYC_FROM_COMMAND_LINE) break;
+  if (PHP_SAPI != 'cli') break;
   if (empty ($_SERVER['argc']) || $_SERVER['argc'] < 2) break;
-  if (empty ($_SERVER['PHP_SELF']) || $_SERVER['PHP_SELF'] != 'Spyc.php') break;
+  if (empty ($_SERVER['PHP_SELF']) || FALSE === strpos ($_SERVER['PHP_SELF'], 'Spyc.php') ) break;
   $file = $argv[1];
-  printf ("Spyc loading file: %s\n", $file);
-  print_r (spyc_load_file ($file));
+  echo json_encode (spyc_load_file ($file));
 } while (0);

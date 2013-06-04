@@ -49,7 +49,6 @@ if(!defined('KIRBY_PROJECT_ROOT')) define('KIRBY_PROJECT_ROOT', KIRBY_INDEX_ROOT
 
 // cms internals
 define('KIRBY_CMS_ROOT_LIB',     KIRBY_CMS_ROOT . DS . 'lib');
-define('KIRBY_CMS_ROOT_LEGACY',  KIRBY_CMS_ROOT . DS . 'legacy');
 define('KIRBY_CMS_ROOT_TAGS',    KIRBY_CMS_ROOT . DS . 'tags');
 define('KIRBY_CMS_ROOT_PARSERS', KIRBY_CMS_ROOT . DS . 'parsers');
 define('KIRBY_CMS_ROOT_PLUGINS', KIRBY_CMS_ROOT . DS . 'plugins');
