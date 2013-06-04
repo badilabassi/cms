@@ -1,5 +1,11 @@
 <?php
 
+namespace Kirby\CMS\Kirbytext\Tag;
+
+use Kirby\CMS\Kirbytext\Tag;
+use Kirby\Toolkit\HTML;
+use Kirby\Toolkit\F;
+
 // direct access protection
 if(!defined('KIRBY')) die('Direct access is not allowed');
 
@@ -13,7 +19,7 @@ if(!defined('KIRBY')) die('Direct access is not allowed');
  * @copyright Bastian Allgeier
  * @license   http://getkirby.com/license
  */
-class KirbytextFileTag extends KirbytextTag {
+class File extends Tag {
 
   // a list of allowed attributes for this tag
   protected $attr = array(
@@ -40,7 +46,7 @@ class KirbytextFileTag extends KirbytextTag {
     // ignore markdown italic underscores in filenames
     if(empty($text)) $text = str_replace('_', '\_', f::filename($url)); 
 
-    return Html::a($url, html($text), array(
+    return html::a($url, html($text), array(
       'class'  => $this->attr('class'), 
       'title'  => html($this->attr('title')),
       'rel'    => $this->attr('rel'), 

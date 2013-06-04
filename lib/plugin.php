@@ -1,5 +1,7 @@
 <?php 
 
+namespace Kirby\CMS;
+
 // direct access protection
 if(!defined('KIRBY')) die('Direct access is not allowed');
 

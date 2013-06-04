@@ -1,5 +1,10 @@
 <?php
 
+namespace Kirby\CMS\Kirbytext\Tag;
+
+use Kirby\CMS\Kirbytext\Tag;
+use Kirby\Toolkit\HTML;
+
 // direct access protection
 if(!defined('KIRBY')) die('Direct access is not allowed');
 
@@ -13,7 +18,7 @@ if(!defined('KIRBY')) die('Direct access is not allowed');
  * @copyright Bastian Allgeier
  * @license   http://getkirby.com/license
  */
-class KirbytextTwitterTag extends KirbytextTag {
+class Twitter extends Tag {
   
   // a list of allowed attributes for this tag
   protected $attr = array(
@@ -42,7 +47,7 @@ class KirbytextTwitterTag extends KirbytextTag {
     $text = $this->attr('text', '@' . $username);
 
     // build the final link
-    return Html::a($url, $text, array(
+    return html::a($url, $text, array(
       'class'  => $this->attr('class'), 
       'title'  => $this->attr('title'),
       'rel'    => $this->attr('rel'), 

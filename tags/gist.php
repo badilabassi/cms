@@ -1,5 +1,10 @@
 <?php
 
+namespace Kirby\CMS\Kirbytext\Tag;
+
+use Kirby\CMS\Kirbytext\Tag;
+use Kirby\Toolkit\Embed;
+
 // direct access protection
 if(!defined('KIRBY')) die('Direct access is not allowed');
 
@@ -13,7 +18,7 @@ if(!defined('KIRBY')) die('Direct access is not allowed');
  * @copyright Bastian Allgeier
  * @license   http://getkirby.com/license
  */
-class KirbytextGistTag extends KirbytextTag {
+class Gist extends Tag {
 
   // a list of allowed attributes for this tag
   protected $attr = array(
@@ -26,7 +31,7 @@ class KirbytextGistTag extends KirbytextTag {
    * @return string
    */
   public function html() {
-    return Embed::gist($this->value(), $this->attr('file'));  
+    return embed::gist($this->value(), $this->attr('file'));  
   }
 
 }

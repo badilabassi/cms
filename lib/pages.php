@@ -1,5 +1,12 @@
 <?php 
 
+namespace Kirby\CMS;
+
+use Kirby\Toolkit\A;
+use Kirby\Toolkit\C;
+use Kirby\Toolkit\Collection;
+use Kirby\Toolkit\Str;
+
 // direct access protection
 if(!defined('KIRBY')) die('Direct access is not allowed');
 
@@ -36,9 +43,9 @@ class Pages extends Collection {
    */
   public function __construct($input = array()) {
 
-    if(is_a($input, 'Page')) {
+    if(is_a($input, 'Kirby\\CMS\\Page')) {
 
-      $uri = is_a($input, 'Site')  ? '' : $input->uri();
+      $uri = is_a($input, 'Kirby\\CMS\\Site')  ? '' : $input->uri();
 
       foreach($input->dir()->children() as $dir) {
         
@@ -54,7 +61,7 @@ class Pages extends Collection {
 
       foreach($input as $page) {  
         
-        if(!is_a($page, 'Page')) raise('All pages in a set of Pages have to be Page objects');
+        if(!is_a($page, 'Kirby\\CMS\\Page')) raise('All pages in a set of Pages have to be Page objects');
         
         // add the page to the collection
         $this->data['_' . $page->uri()] = $page;

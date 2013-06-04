@@ -1,5 +1,10 @@
 <?php
 
+namespace Kirby\CMS\Kirbytext;
+
+use Kirby\Toolkit\A;
+use Kirby\Toolkit\C;
+
 // direct access protection
 if(!defined('KIRBY')) die('Direct access is not allowed');
 
@@ -16,7 +21,7 @@ if(!defined('KIRBY')) die('Direct access is not allowed');
  * @copyright Bastian Allgeier
  * @license   http://getkirby.com/license
  */
-class KirbytextTag {
+class Tag {
 
   // the parent kirbytext object
   protected $kirbytext = null;

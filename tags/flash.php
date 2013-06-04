@@ -1,5 +1,11 @@
 <?php
 
+namespace Kirby\CMS\Kirbytext\Tag;
+
+use Kirby\CMS\Kirbytext\Tag;
+use Kirby\Toolkit\C;
+use Kirby\Toolkit\Embed;
+
 // direct access protection
 if(!defined('KIRBY')) die('Direct access is not allowed');
 
@@ -13,7 +19,7 @@ if(!defined('KIRBY')) die('Direct access is not allowed');
  * @copyright Bastian Allgeier
  * @license   http://getkirby.com/license
  */
-class KirbytextFlashTag extends KirbytextTag {
+class Flash extends Tag {
 
   // a list of allowed attributes for this tag
   protected $attr = array(
@@ -31,7 +37,7 @@ class KirbytextFlashTag extends KirbytextTag {
     $width  = $this->attr('width', c::get('kirbytext.video.width'));
     $height = $this->attr('height', c::get('kirbytext.video.height'));
 
-    return '<div class="video">' . Embed::flash($this->value(), $width, $height) . '</div>';
+    return '<div class="video">' . embed::flash($this->value(), $width, $height) . '</div>';
   
   }
 

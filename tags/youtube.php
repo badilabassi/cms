@@ -1,5 +1,11 @@
 <?php
 
+namespace Kirby\CMS\Kirbytext\Tag;
+
+use Kirby\CMS\Kirbytext\Tag;
+use Kirby\Toolkit\C;
+use Kirby\Toolkit\Embed;
+
 // direct access protection
 if(!defined('KIRBY')) die('Direct access is not allowed');
 
@@ -13,7 +19,7 @@ if(!defined('KIRBY')) die('Direct access is not allowed');
  * @copyright Bastian Allgeier
  * @license   http://getkirby.com/license
  */
-class KirbytextYoutubeTag extends KirbytextTag {
+class Youtube extends Tag {
 
   // a list of allowed attributes for this tag
   protected $attr = array(
@@ -29,7 +35,7 @@ class KirbytextYoutubeTag extends KirbytextTag {
    */
   public function html() {
   
-    return Embed::youtube($this->value(), array(
+    return embed::youtube($this->value(), array(
       'width'  => $this->attr('width', c::get('kirbytext.video.width')), 
       'height' => $this->attr('height', c::get('kirbytext.video.height')), 
       'class'  => $this->attr('class')

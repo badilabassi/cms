@@ -66,14 +66,33 @@ define('KIRBY_PROJECT_ROOT_TAGS',      KIRBY_PROJECT_ROOT . DS . 'tags');
 // load the toolkit
 require_once(KIRBY_CMS_ROOT_TOOLKIT . DS . 'bootstrap.php');
 
-// autoloader for all classes in the lib
-function libLoader($class) {  
-  // library stuff
-  f::load(KIRBY_CMS_ROOT_LIB . DS . strtolower($class) . '.php');
-}
 
-// register the autoloader function
-spl_autoload_register('libLoader');
+// load the autoloader
+require_once(KIRBY_TOOLKIT_ROOT_LIB . DS . 'autoloader.php');
+
+// initialize the autoloader
+$autoloader = new Kirby\Toolkit\Autoloader();
+
+// set the base root where all classes are located
+$autoloader->root = KIRBY_CMS_ROOT_LIB;
+
+// set the global namespace for all classes
+$autoloader->namespace = 'Kirby\\CMS';
+
+// add all needed aliases
+$autoloader->aliases = array(
+  'file'      => 'Kirby\\CMS\\File',
+  'files'     => 'Kirby\\CMS\\Files',
+  'kirbytext' => 'Kirby\\CMS\\Kirbytext',
+  'page'      => 'Kirby\\CMS\\Page',
+  'pages'     => 'Kirby\\CMS\\Pages',
+  'plugin'    => 'Kirby\\CMS\\Plugin',
+  'site'      => 'Kirby\\CMS\\Site',
+  'variable'  => 'Kirby\\CMS\\Variable',
+);
+
+// start autoloading
+$autoloader->start();
 
 // load all default config values
 include(KIRBY_CMS_ROOT . DS . 'defaults.php');

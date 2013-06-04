@@ -1,5 +1,11 @@
 <?php 
 
+namespace Kirby\CMS;
+
+use Kirby\Toolkit\Asset;
+use Kirby\Toolkit\C;
+use Kirby\Toolkit\F;
+
 // direct access protection
 if(!defined('KIRBY')) die('Direct access is not allowed');
 

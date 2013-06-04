@@ -1,5 +1,9 @@
 <?php 
 
+namespace Kirby\CMS\File;
+
+use Kirby\CMS\File;
+
 // direct access protection
 if(!defined('KIRBY')) die('Direct access is not allowed');
 
@@ -18,7 +22,7 @@ if(!defined('KIRBY')) die('Direct access is not allowed');
  * @copyright Bastian Allgeier
  * @license   http://getkirby.com/license
  */
-class ImageFile extends File {
+class Image extends File {
 
   // cache for the attached thumb – if available
   protected $thumb = null;

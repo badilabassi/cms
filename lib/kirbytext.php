@@ -1,10 +1,14 @@
 <?php
 
+namespace Kirby\CMS;
+
+use Kirby\Toolkit\A;
+use Kirby\Toolkit\C;
+use Kirby\CMS\Variable;
+use Kirby\CMS\Kirbytext\Tag;
+
 // direct access protection
 if(!defined('KIRBY')) die('Direct access is not allowed');
-
-// dependencies
-require_once(KIRBY_CMS_ROOT_LIB . DS . 'kirbytext' . DS . 'tag.php');
 
 /**
  * Kirbytext
@@ -59,7 +63,7 @@ class Kirbytext {
     $this->options = array_merge($defaults, $params);
           
     // pass the parent page if available
-    if(is_a($this->text, 'Variable')) $this->page = $this->text->page();
+    if(is_a($this->text, 'Kirby\\CMS\\Variable')) $this->page = $this->text->page();
 
   }
 
@@ -174,7 +178,7 @@ class Kirbytext {
   public function tagclass($name) {
 
     $file  = KIRBY_PROJECT_ROOT_TAGS . DS . $name . '.php';
-    $class = 'Kirbytext' . $name . 'tag';
+    $class = 'Kirby\\CMS\\Kirbytext\\Tag\\' . $name;
 
     if(!file_exists($file)) {
       $file  = KIRBY_CMS_ROOT_TAGS . DS . $name . '.php';

@@ -1,5 +1,9 @@
 <?php 
 
+namespace Kirby\CMS;
+
+use Kirby\CMS\File\Content;
+
 // direct access protection
 if(!defined('KIRBY')) die('Direct access is not allowed');
 
@@ -39,7 +43,7 @@ class Variable {
    * @param mixed $value The value for this variable
    * @param object $file The parent ContentFile object
    */
-  public function __construct($key, $value, ContentFile $file = null) {
+  public function __construct($key, $value, Content $file = null) {
     $this->key   = $key;
     $this->value = $value;
     $this->file  = $file;  

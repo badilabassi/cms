@@ -1,5 +1,10 @@
 <?php
 
+namespace Kirby\CMS\Kirbytext\Tag;
+
+use Kirby\CMS\Kirbytext\Tag;
+use Kirby\Toolkit\HTML;
+
 // direct access protection
 if(!defined('KIRBY')) die('Direct access is not allowed');
 
@@ -13,7 +18,7 @@ if(!defined('KIRBY')) die('Direct access is not allowed');
  * @copyright Bastian Allgeier
  * @license   http://getkirby.com/license
  */
-class KirbytextEmailTag extends KirbytextTag {
+class Email extends Tag {
 
   // a list of allowed attributes for this tag
   protected $attr = array(
@@ -29,7 +34,7 @@ class KirbytextEmailTag extends KirbytextTag {
    */
   public function html() {
  
-    return Html::email($this->value(), html($this->attr('text')), array(
+    return html::email($this->value(), html($this->attr('text')), array(
       'class' => $this->attr('class'),
       'title' => $this->attr('title'),      
       'rel'   => $this->attr('rel'),      

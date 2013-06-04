@@ -1,5 +1,7 @@
 <?php
 
+namespace Kirby\CMS\Page;
+
 // direct access protection
 if(!defined('KIRBY')) die('Direct access is not allowed');
 
@@ -13,7 +15,7 @@ if(!defined('KIRBY')) die('Direct access is not allowed');
  * @copyright Bastian Allgeier
  * @license   http://getkirby.com/license
  */
-class PageCache {
+class Cache {
 
   // The cached Page object
   protected $page = null;

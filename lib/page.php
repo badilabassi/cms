@@ -1,11 +1,14 @@
 <?php
 
+namespace Kirby\CMS;
+
+use Kirby\Toolkit\A;
+use Kirby\Toolkit\C;
+use Kirby\CMS\Page\Dir;
+use Kirby\CMS\Page\Cache;
+
 // direct access protection
 if(!defined('KIRBY')) die('Direct access is not allowed');
-
-// dependencies
-require_once(KIRBY_CMS_ROOT_LIB . DS . 'page' . DS . 'dir.php');
-require_once(KIRBY_CMS_ROOT_LIB . DS . 'page' . DS . 'cache.php');
 
 /**
  * Page
@@ -97,7 +100,7 @@ class Page {
    * @return object PageDir
    */  
   public function dir() {
-    return (!is_null($this->dir)) ? $this->dir : new PageDir($this->root());                
+    return (!is_null($this->dir)) ? $this->dir : new Dir($this->root());                
   }      
 
   /** 
@@ -1081,7 +1084,7 @@ class Page {
    */
   public function toHtml() {
 
-    $cache = new PageCache($this);
+    $cache = new Cache($this);
 
     if($html = $cache->get()) {
       // $html is already set

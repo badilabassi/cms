@@ -1,11 +1,13 @@
 <?php
 
+use Kirby\CMS\Page\Dir;
+
 require_once('lib/bootstrap.php');
 
 class DirTest extends PHPUnit_Framework_TestCase {
   public function testMainDir() {
     $root = TEST_CONTENT;
-    $dir  = new PageDir($root);
+    $dir  = new Dir($root);
 
     $this->assertEquals($root, $dir->root());
     $this->assertEquals(basename(TEST_CONTENT), $dir->name());
@@ -33,7 +35,7 @@ class DirTest extends PHPUnit_Framework_TestCase {
 
   public function testTestsDir() {
     $root = TEST_CONTENT . '/01-tests';
-    $dir  = new PageDir($root);
+    $dir  = new Dir($root);
 
     $this->assertEquals('01-tests', $dir->name());
     $this->assertEquals('tests', $dir->uid());

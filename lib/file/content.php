@@ -1,5 +1,14 @@
 <?php 
 
+namespace Kirby\CMS\File;
+
+use Kirby\Toolkit\A;
+use Kirby\Toolkit\C;
+use Kirby\Toolkit\F;
+use Kirby\Toolkit\Str;
+use Kirby\CMS\File;
+use Kirby\CMS\Variable;
+
 // direct access protection
 if(!defined('KIRBY')) die('Direct access is not allowed');
 
@@ -27,7 +36,7 @@ if(!defined('KIRBY')) die('Direct access is not allowed');
  * @copyright Bastian Allgeier
  * @license   http://getkirby.com/license
  */
-class ContentFile extends File {
+class Content extends File {
 
   // cache for the raw content of the file
   protected $raw = null;

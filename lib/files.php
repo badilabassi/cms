@@ -1,11 +1,14 @@
 <?php 
 
+namespace Kirby\CMS;
+
+use Kirby\Toolkit\A;
+use Kirby\Toolkit\C;
+use Kirby\Toolkit\Collection;
+use Kirby\Toolkit\F;
+
 // direct access protection
 if(!defined('KIRBY')) die('Direct access is not allowed');
-
-// dependencies
-require_once(KIRBY_CMS_ROOT_LIB . DS . 'file' . DS . 'content.php');
-require_once(KIRBY_CMS_ROOT_LIB . DS . 'file' . DS . 'image.php');
 
 /**
  * Files
@@ -58,7 +61,7 @@ class Files extends Collection {
    */
   public function __construct($input) {
     
-    if(is_a($input, 'Page')) {
+    if(is_a($input, 'Kirby\\CMS\\Page')) {
 
       // attach the parent page
       $this->page = $input;
@@ -69,7 +72,7 @@ class Files extends Collection {
         $file = new File($value, $this);
               
         // check for a specific file class
-        $class = $file->type() . 'File';
+        $class = 'Kirby\\CMS\\File\\' . $file->type();
 
         if(class_exists($class)) $file = new $class($file);
       
@@ -82,7 +85,7 @@ class Files extends Collection {
 
       foreach($input as $file) {  
         
-        if(!is_a($file, 'File')) raise('All files in a set of Files have to be File objects');
+        if(!is_a($file, 'Kirby\\CMS\\File')) raise('All files in a set of Files have to be File objects');
         
         // add the page to the collection
         $this->data['_' . $file->filename()] = $file;

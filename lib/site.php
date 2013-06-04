@@ -1,5 +1,16 @@
 <?php
 
+namespace Kirby\CMS;
+
+use Kirby\Toolkit\C;
+use Kirby\Toolkit\Cache;
+use Kirby\Toolkit\Dir;
+use Kirby\Toolkit\F;
+use Kirby\Toolkit\G;
+use Kirby\Toolkit\Router;
+use Kirby\Toolkit\Server;
+use Kirby\Toolkit\URI;
+
 // direct access protection
 if(!defined('KIRBY')) die('Direct access is not allowed');
 

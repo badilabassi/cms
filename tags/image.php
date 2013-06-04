@@ -1,5 +1,10 @@
 <?php
 
+namespace Kirby\CMS\Kirbytext\Tag;
+
+use Kirby\CMS\Kirbytext\Tag;
+use Kirby\Toolkit\HTML;
+
 // direct access protection
 if(!defined('KIRBY')) die('Direct access is not allowed');
 
@@ -13,7 +18,7 @@ if(!defined('KIRBY')) die('Direct access is not allowed');
  * @copyright Bastian Allgeier
  * @license   http://getkirby.com/license
  */
-class KirbytextImageTag extends KirbytextTag {
+class Image extends Tag {
 
   // a list of allowed attributes for this tag
   protected $attr = array(
@@ -61,7 +66,7 @@ class KirbytextImageTag extends KirbytextTag {
 
     }
             
-    $image = Html::img($url, array(
+    $image = html::img($url, array(
       'width'  => $this->attr('width'), 
       'height' => $this->attr('height'), 
       'class'  => $this->attr('class'), 
@@ -74,7 +79,7 @@ class KirbytextImageTag extends KirbytextTag {
     // build the href for the link
     $href = ($link == 'self') ? $url : $link;
     
-    return Html::a($href, $image, array(
+    return html::a($href, $image, array(
       'rel'    => $this->attr('rel'), 
       'class'  => $this->attr('linkclass'), 
       'title'  => html($this->attr('title')), 

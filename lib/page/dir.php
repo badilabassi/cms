@@ -1,5 +1,9 @@
 <?php 
 
+namespace Kirby\CMS\Page;
+
+use Kirby\Toolkit\C;
+
 // direct access protection
 if(!defined('KIRBY')) die('Direct access is not allowed');
 
@@ -16,7 +20,7 @@ if(!defined('KIRBY')) die('Direct access is not allowed');
  * @copyright Bastian Allgeier
  * @license   http://getkirby.com/license
  */
-class PageDir {
+class Dir {
 
   // the full root path of the directory 
   protected $root = null;
