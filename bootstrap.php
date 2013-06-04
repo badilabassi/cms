@@ -66,10 +66,6 @@ define('KIRBY_PROJECT_ROOT_TAGS',      KIRBY_PROJECT_ROOT . DS . 'tags');
 // load the toolkit
 require_once(KIRBY_CMS_ROOT_TOOLKIT . DS . 'bootstrap.php');
 
-
-// load the autoloader
-require_once(KIRBY_TOOLKIT_ROOT_LIB . DS . 'autoloader.php');
-
 // initialize the autoloader
 $autoloader = new Kirby\Toolkit\Autoloader();
 
