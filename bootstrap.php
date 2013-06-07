@@ -28,7 +28,7 @@ if(!defined('MB_STRING')) define('MB_STRING', (int)function_exists('mb_get_info'
  */
 
 // location of the kirby cms system directory
-if(!defined('KIRBY_CMS_ROOT')) define('KIRBY_CMS_ROOT', dirname(__FILE__));
+if(!defined('KIRBY_CMS_ROOT')) define('KIRBY_CMS_ROOT', __DIR__);
 
 // location of the kirby toolkit, which should be used for the cms
 if(!defined('KIRBY_CMS_ROOT_TOOLKIT')) define('KIRBY_CMS_ROOT_TOOLKIT', KIRBY_CMS_ROOT . DS . 'toolkit');

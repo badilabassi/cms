@@ -34,7 +34,10 @@ if(!defined('KIRBY_INDEX_ROOT')) {
 require(KIRBY_CMS_ROOT . DIRECTORY_SEPARATOR . 'bootstrap.php');
 
 // handle thrown exceptions and display a nice error page
-set_exception_handler(create_function('$exception', 'require(KIRBY_CMS_ROOT_MODALS . DS . "exception.php"); exit();'));
+set_exception_handler(function($exception) {
+  require(KIRBY_CMS_ROOT_MODALS . DS . 'exception.php'); 
+  exit();
+});
 
 // initialize the site for the first time
 $site = site();
