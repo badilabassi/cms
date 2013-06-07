@@ -2,6 +2,9 @@
 
 namespace Kirby\CMS\Page;
 
+use Kirby\Toolkit\C;
+use Kirby\CMS\Page;
+
 // direct access protection
 if(!defined('KIRBY')) die('Direct access is not allowed');
 

@@ -4,6 +4,8 @@ namespace Kirby\CMS;
 
 use Kirby\Toolkit\A;
 use Kirby\Toolkit\C;
+use Kirby\Toolkit\Str;
+use Kirby\Toolkit\Tpl;
 use Kirby\CMS\Page\Dir;
 use Kirby\CMS\Page\Cache;
 
