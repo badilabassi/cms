@@ -141,8 +141,21 @@ function snippet($snippet, $data = array(), $return = false) {
  * @param string $media An additional media type (i.e. screen, print, etc.)
  * @return string
  */ 
-function css($url, $media=false) {
+function css($url, $media = false) {
+
+  // auto-loading for template specific css files
+  if($url == '@auto') {
+  
+    $file = site()->pages()->active()->template() . '.css';
+    $root = c::get('css.auto.root') . DS . $file;
+    $url  = c::get('css.auto.url') . '/' . $file;
+    
+    if(!file_exists($root)) return false;
+
+  }
+
   return '<link rel="stylesheet"' . r(!empty($media), ' media="' . $media . '"') . ' href="' . url($url, false) . '" />' . "\n";
+
 }
 
 /**
@@ -153,6 +166,18 @@ function css($url, $media=false) {
  * @return string
  */ 
 function js($url, $async = false) {
+
+  // auto-loading for template specific js files
+  if($url == '@auto') {
+  
+    $file = site()->pages()->active()->template() . '.js';
+    $root = c::get('js.auto.root') . DS . $file;
+    $url  = c::get('js.auto.url') . '/' . $file;
+
+    if(!file_exists($root)) return false;
+
+  }
+
   return '<script' . r($async, ' async') . ' src="' . url($url, false) . '"></script>' . "\n";
 }
 

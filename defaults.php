@@ -339,6 +339,34 @@ c::set(array(
   'lang.locales' => array(),
 
   /**
+   * Define the root for the folder
+   * where auto-loadable css files should be located
+   * Auto-loadable files have to be named as the template
+   * they are loaded for. 
+   */
+  'css.auto.root' => KIRBY_INDEX_ROOT . DS . 'assets' . DS . 'css' . DS . 'templates',
+
+  /**
+   * Define the url for the folder
+   * where auto-loadable css files should be located.
+   */
+  'css.auto.url'  => 'assets' . DS . 'css' . DS . 'templates',
+
+  /**
+   * Define the root for the folder
+   * where auto-loadable js files should be located
+   * Auto-loadable files have to be named as the template
+   * they are loaded for. 
+   */
+  'js.auto.root' => KIRBY_INDEX_ROOT . DS . 'assets' . DS . 'js' . DS . 'templates',
+
+  /**
+   * Define the url for the folder
+   * where auto-loadable js files should be located.
+   */
+  'js.auto.url'  => 'assets' . DS . 'js' . DS . 'templates',
+
+  /**
    * This array will define how files are 
    * organized. You can extend this to improve Kirby's 
    * file type and mime type detection

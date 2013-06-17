@@ -59,7 +59,7 @@ class BreadcrumbPlugin extends Plugin {
     $crumb = array_reverse($crumb);   
 
     // add the homepage to the beginning of the crumb array
-    array_unshift($crumb, $site->homePage());
+    if(c::get('breadcrumb.home') !== false) array_unshift($crumb, $site->homePage());
     
     // make it a pages object so we can handle it
     // like we handle all pages on the site  
