@@ -103,6 +103,7 @@ class Kirbytext {
     $text = ($this->options['markdown'])    ? markdown($text)    : $text;
     $text = ($this->options['smartypants']) ? smartypants($text) : $text;
 
+
     // unwrap single images, which are wrapped with p elements
     if(c::get('kirbytext.unwrapImages')) $text = preg_replace('!\<p>(<img.*?\/>)<\/p>!', '$1', $text);
 
@@ -205,11 +206,11 @@ class Kirbytext {
    * @return string parsed text
    */
   protected function code($code) {
-    
-    $code = @$code[1];
-    $lines = explode("\n", $code);
+
+    $code  = @$code[1];
+    $lines = explode(PHP_EOL, $code);
     $first = trim(array_shift($lines));
-    $code  = implode("\n", $lines);
+    $code  = implode(PHP_EOL, $lines);
     $code  = trim($code);
 
     if(function_exists('highlight')) {

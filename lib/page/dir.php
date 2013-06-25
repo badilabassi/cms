@@ -2,6 +2,7 @@
 
 namespace Kirby\CMS\Page;
 
+use Kirby\Toolkit\A;
 use Kirby\Toolkit\C;
 
 // direct access protection
@@ -136,6 +137,9 @@ class Dir {
     $ignore = array_merge($ignore, (array)c::get('content.file.ignore', array()));
     $all    = array_diff(scandir($this->root), $ignore);
 
+    // sort all files naturally first
+    natsort($all);
+
     foreach($all as $file) {
       $item = $this->root . DS . $file;
 
@@ -146,6 +150,7 @@ class Dir {
       }
 
     }
+
 
   }
 

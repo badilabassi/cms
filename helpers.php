@@ -23,6 +23,25 @@ function site($params = array()) {
 }
 
 /**
+ * Shortcut to get a page by uid
+ * 
+ * @param string $uid
+ * @return object
+ */
+function page($uid = null) {
+  return (is_null($uid)) ? site()->activePage() : site()->pages()->find($uid);
+}
+
+/**
+ * Shortcut to get the $pages object
+ * 
+ * @return object Pages
+ */
+function pages() {
+  return site()->pages();
+}
+
+/**
  * Main URL builder
  * 
  * Use this in all your templates to make
@@ -283,7 +302,7 @@ function vimeo($url, $width = false, $height = false, $class = false) {
  * @param int $height 
  * @return string
  */
-function flash($url, $width = false, $height = false) {
+function flash($url, $width = null, $height = null) {
   return Kirbytext::instance()->tag('flash', $url, array(
     'width'  => $width, 
     'height' => $height
@@ -299,7 +318,7 @@ function flash($url, $width = false, $height = false) {
  * @param string $class Optional class selector for the a tag
  * @return string twitter link
  */
-function twitter($username, $text = false, $title = false, $class = false) {
+function twitter($username, $text = null, $title = null, $class = null) {
   return Kirbytext::instance()->tag('twitter', $username, array(
     'text'    => $text,
     'title'   => $title,
@@ -314,7 +333,7 @@ function twitter($username, $text = false, $title = false, $class = false) {
  * @param string $file The name of a particular file from the gist, which should displayed only. 
  * @return string
  */
-function gist($url, $file = false) {
+function gist($url, $file = null) {
   return Kirbytext::instance()->tag('gist', $url, array(
     'file' => $file
   ));
