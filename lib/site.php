@@ -317,7 +317,7 @@ class Site extends Page {
     // check if the active page is valid    
     if($activePage && $activePage->translatedURI() == $uri) {      
       return $this->activePage = $activePage;    
-    } else if($route = router::match($this->uri())) {
+    } else if($route = router::match($this->uri()->path())) {
 
       // path to an existing page
       $uri = $route->action();      
