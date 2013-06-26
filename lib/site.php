@@ -538,7 +538,7 @@ class Site extends Page {
     c::set($config);
 
     // connect the cache 
-    cache::connect('file', array('root' => KIRBY_PROJECT_ROOT_CACHE));
+    if(c::get('cache')) cache::connect('file', array('root' => KIRBY_PROJECT_ROOT_CACHE));
 
   }
 
