@@ -190,7 +190,7 @@ class Pages extends Collection {
     $array = str::split($path, '/');
     $obj   = $this;
     $page  = false;
-    $lang  = c::get('lang.support');
+    $lang  = site::$multilang;
 
     foreach($array as $p) {    
 

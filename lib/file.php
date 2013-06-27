@@ -233,7 +233,7 @@ class File extends Asset {
   public function meta($lang = null) {
 
     // multi-language handling
-    if(c::get('lang.support')) {
+    if(site::$multilang) {
 
       // initiate the cache if not done yet
       if(is_null($this->meta) || !is_array($this->meta)) $this->meta = array();

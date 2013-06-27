@@ -71,6 +71,9 @@ class Site extends Page {
   // cache for added plugins
   protected $plugins = null;
 
+  // returns true for multilanguage websites
+  static public $multilang = false;
+
   /**
    * Constructor
    * 
@@ -133,15 +136,27 @@ class Site extends Page {
    * Returns the uri object, which can be used
    * to inspect and work with the current URL/URI
    * 
+   * @param string $uri This is only to comply with strict mode, because the page::uri method has a uri argument. It's not going to be used here. 
    * @return object uri
    */
   public function uri($uri = null) {
 
+    // check for a cached uri object
     if(!is_null($this->uri)) return $this->uri;
 
+    // subfolder setup
+    $subfolder = $this->subfolder();
+
+    // add the language code as subfolder 
+    // for multi language websites
+    if(static::$multilang) {
+      $subfolder .= '/' . $this->language()->code();
+    }
+
+    // init the uri object with the correct setup
     return $this->uri = new uri(array(
-      // attach the language code to the subfolder if multi-lang support is activated
-      'subfolder' => (!c::get('lang.support')) ? $this->subfolder() : $this->subfolder() . '/' . $this->language()->code(),
+      // define the subfolder so we only get the relevant part of the path
+      'subfolder' => $subfolder,
       // set a current URL if available in options
       'url' => c::get('currentURL', null)
     ));
@@ -213,27 +228,33 @@ class Site extends Page {
    */
   public function url($lang = false) {
 
-    if(is_null($this->url)) {
+    if(static::$multilang && $lang) {
+
+      // return the specific language url
+      return $this->language($lang)->url();
+
+    } else {
+
+      // look for a cached url
+      if(!is_null($this->url)) return $this->url;
 
       // auto-detect the url if it is not set
       $url = (c::get('url') === false) ? $this->scheme() . '://' . $this->uri()->host() : rtrim(c::get('url'), '/');
 
+      // handle subfolders
       if($subfolder = $this->subfolder()) {
         // check if the url already contains the subfolder      
         // so it's not included twice
         if(!preg_match('!' . preg_quote($subfolder) . '$!i', $url)) $url .= '/' . $subfolder;      
       }
-                    
+      
+      // store the final url in the config               
       c::set('url', $url);  
-      $this->url = $url;
+      
+      // cache and return the final url
+      return $this->url = $url;
 
     }
-
-    if(c::get('lang.support') && $lang) {
-      return $this->language($lang)->url();
-    }
-
-    return $this->url;
 
   }
 
@@ -489,7 +510,7 @@ class Site extends Page {
 
     // in case the url has no language code yet redirect 
     // to the default language home page i.e. from / to /en
-    if(c::get('lang.support') && $this->uri() == $this->subfolder()) {
+    if(static::$multilang && $this->uri() == $this->subfolder()) {
       go($this->language()->url());
     }
 
@@ -540,6 +561,9 @@ class Site extends Page {
     // connect the cache 
     if(c::get('cache')) cache::connect('file', array('root' => KIRBY_PROJECT_ROOT_CACHE));
 
+    // check for multilang support
+    if(c::get('lang.support')) static::$multilang = true;
+
   }
 
   /**
@@ -555,7 +579,7 @@ class Site extends Page {
     if(c::get('lang.locale')) setlocale(LC_ALL, c::get('lang.locale'));
 
     // store the current language code in the config
-    if(c::get('lang.support')) c::set('lang.current', $this->language()->code());
+    if(static::$multilang) c::set('lang.current', $this->language()->code());
 
     // load all language vars
     f::load(KIRBY_PROJECT_ROOT_LANGUAGES . DS . c::get('lang.default') . '.php');

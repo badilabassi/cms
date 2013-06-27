@@ -6,6 +6,7 @@ use Kirby\Toolkit\A;
 use Kirby\Toolkit\C;
 use Kirby\Toolkit\F;
 use Kirby\Toolkit\Str;
+use Kirby\CMS\Site;
 use Kirby\CMS\File;
 use Kirby\CMS\Variable;
 
@@ -106,7 +107,7 @@ class Content extends File {
   
     // if language support is switched off or this is the default language
     // file, simply return an array of array keys of the data array    
-    if(!c::get('lang.support') || $this->isDefaultContent()) return array_keys($this->data());
+    if(!site::$multilang or $this->isDefaultContent()) return array_keys($this->data());
 
     // when language support is switched on, always look for 
     // the right fields in the default language content file
@@ -128,7 +129,7 @@ class Content extends File {
 
       // if language support is switched off, or this is the default
       // language file, a fallback for missing/untranslated fields is not needed
-      if(!c::get('lang.support') || $this->isDefaultContent()) {
+      if(!site::$multilang or $this->isDefaultContent()) {
         return a::get($this->data(), $key, $default);
       }
 

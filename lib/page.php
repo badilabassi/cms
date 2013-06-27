@@ -161,23 +161,43 @@ class Page {
   /** 
    * Returns the full url for the page
    * 
+   * @param string $lang Optional language code to get the URL for that specific language on multilang sites
    * @return string
    */
-  public function url() {
+  public function url($lang = null) {
 
-    // Kirby is trying to remove the home folder name from the url
-    // unless you set the home.keepurl option to true. 
-    if($this->isHomePage() && !c::get('home.keepurl')) {
-      return url();                    
-    } else if(c::get('lang.support')) {
+    if(site::$multilang) {
 
-      // return the translated URL if language support is available
-      return $this->translatedURL();
+      if(!is_null($lang)) {      
+        // by default use the page's uid for the url
+        $uid = $this->uid();
+        // search for content in the specified language
+        if($content = $this->content($lang)) {            
+          // search for a translated url_key in that language
+          if($translatedUID = $content->url_key()) {
+            // if available, use the translated url key as UID
+            $uid = $translatedUID;
+          }
+        } 
+        // build the translated URL with the particular UID
+        return $this->parent()->url($lang) . '/' . $uid;
+      } else {
+        // return the translated URL if language support is available
+        return $this->translatedURL();              
+      }
 
     } else {
-      return url($this->uri());
+      // Kirby is trying to remove the home folder name from the url
+      // unless you set the home.keepurl option to true. 
+      if($this->isHomePage() && !c::get('home.keepurl')) {
+        // return the base url
+        return url();                    
+      } else {
+        // return the default URL if language support is disabled
+        return url($this->uri());
+      }
     }
-  
+
   }
 
   /** 
@@ -212,8 +232,12 @@ class Page {
    * @return string
    */
   public function translatedUID() {
-    $key = (string)$this->url_key();
-    return (empty($key)) ? $this->uid() : $key;
+    if(site::$multilang) {
+      $key = (string)$this->url_key();
+      return (empty($key)) ? $this->uid() : $key;      
+    } else {
+      return $this->uid();
+    }
   }
 
   /**
@@ -222,7 +246,11 @@ class Page {
    * @return string
    */
   public function translatedURI() {
-    return trim($this->parent()->translatedURI() . '/' . $this->translatedUID(), '/');
+    if(site::$multilang) {
+      return trim($this->parent()->translatedURI() . '/' . $this->translatedUID(), '/');
+    } else {
+      return $this->uri();      
+    }
   }
 
   /**
@@ -231,7 +259,19 @@ class Page {
    * @return string
    */
   public function translatedURL() {
-    return url($this->translatedURI());
+    if(site::$multilang) {
+      // Kirby is trying to remove the home folder name from the url
+      // unless you set the home.keepurl option to true. 
+      if($this->isHomePage() && !c::get('home.keepurl')) {
+        // return the base url
+        return url();                    
+      } else {
+        // return the full translated URL
+        return url($this->translatedURI());              
+      }
+    } else {
+      return $this->url();
+    } 
   }
 
   // Getters
@@ -321,7 +361,7 @@ class Page {
     // with language support on, filenames need some extra
     // treatment since the language codes in the content filenames 
     // can mess up the intended template. 
-    if(c::get('lang.support')) {
+    if(site::$multilang) {
       
       if($content = $this->defaultContent()) {
         return $this->intendedTemplate = preg_replace('!\.(' . implode('|', c::get('lang.available')) . ')$!i', '', $content->name());
@@ -520,7 +560,7 @@ class Page {
   public function content($lang = null) {
 
     // multi-language handling
-    if(c::get('lang.support')) {
+    if(site::$multilang) {
 
       // initiate the cache if not done yet
       if(is_null($this->content) || !is_array($this->content)) $this->content = array();
@@ -1008,10 +1048,10 @@ class Page {
     if($this->isActive()) return true;
 
     $u = array_values(site()->uri()->path()->toArray());
-    $p = str::split($this->uri(), '/');
+    $p = str::split($this->translatedURI(), '/');
     // TODO: translatedURI
 
-    for($x=0; $x<count($p); $x++) {
+    for($x = 0; $x < count($p); $x++) {
       if(a::get($p, $x) != a::get($u, $x)) return $this->isOpen = false;
     }
 

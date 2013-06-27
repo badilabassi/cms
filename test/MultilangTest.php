@@ -3,12 +3,18 @@
 require_once('lib/bootstrap.php');
 
 class MultilangTest extends PHPUnit_Framework_TestCase {
+
   public function __construct() {
     $this->url = 'http://superurl.com';
   }
   
   public function testMultilangSupport() {
-    c::set('lang.support', true);
+    
+    site(array(
+      'url'          => $this->url,
+      'lang.support' => true,
+      'lang.current' => 'en'
+    ));
     
     $this->assertInstanceOf('Kirby\\CMS\\Language', site()->language());
     $this->assertEquals('en', (string)site()->language());
@@ -32,8 +38,7 @@ class MultilangTest extends PHPUnit_Framework_TestCase {
     $p = site()->pages()->find('tests/multilang');
     
     site(array(
-      'url' => $this->url,
-      'root.content' => TEST_CONTENT,
+      'url'          => $this->url,
       'lang.support' => true,
       'lang.current' => 'de'
     ));
@@ -81,7 +86,8 @@ class MultilangTest extends PHPUnit_Framework_TestCase {
     $this->assertEquals('Title for an english image-01', $image->meta('en')->title());
     
     site(array(
-      'lang.support' => false
+      'lang.support' => false,
+      'lang.current' => false
     ));
     
   }
