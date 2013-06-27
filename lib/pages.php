@@ -384,4 +384,34 @@ class Pages extends Collection {
     return implode(PHP_EOL, $output);
   }
 
+  /**
+   * Merges multiple collections of pages
+   * 
+   * <code>
+   * 
+   * $articles = page('blog')->children();
+   * $news     = page('news')->children();
+   * $merged   = pages::merge($articles, $news);
+   * // $merged is now a new collection with all children from news and blog
+   * 
+   * </code>
+   * 
+   * @param args n sets of pages
+   * @return object A new pages Collection 
+   */
+  static function merge() {
+    
+    $objs   = func_get_args();
+    $result = array();
+    
+    foreach($objs as $obj) {    
+      foreach($obj as $key => $page) {
+        $result[$key] = $page;
+      }
+    }
+
+    return new Pages($result);    
+      
+  }
+
 }
