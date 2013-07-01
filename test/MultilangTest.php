@@ -55,6 +55,7 @@ class MultilangTest extends PHPUnit_Framework_TestCase {
     $this->assertEquals('mehrsprachig', $p->translatedUID());
     $this->assertEquals('tests/mehrsprachig', $p->translatedURI());
     $this->assertEquals($this->url . '/de/tests/mehrsprachig', $p->url());
+    $this->assertEquals($this->url . '/en/tests/multilang', $p->url('en'));
 
     site(array(
       'lang.current' => 'en'
