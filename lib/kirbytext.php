@@ -24,12 +24,12 @@ if(!defined('KIRBY')) die('Direct access is not allowed');
  * @license   http://getkirby.com/license
  */
 class Kirbytext {
-  
-  // an array with options
-  protected $options = array();
 
   // the parent Page object from the Variable (if available)
   protected $page = null;
+  
+  // an array with options
+  protected $options = array();
   
   // the text object or string
   protected $text = null;
@@ -75,16 +75,21 @@ class Kirbytext {
    * @return object Kirbytext
    */
   static public function instance($text = false, $params = array()) {
-    return new self($text, $params);
+    return new static($text, $params);
   }
 
   /**
    * Returns the active page object
-   * 
+   *
+   * @param object $page Optional param to use this method as setter to custom set the page object 
    * @return object Page
    */
-  public function page() {
-    return ($this->page) ? $this->page : site()->activePage();
+  public function page(\Kirby\CMS\Page $page = null) {
+    if(!is_null($page)) {
+      return $this->page = $page;
+    } else {
+      return ($this->page) ? $this->page : site()->activePage();
+    }
   }
   
   /**
@@ -97,12 +102,14 @@ class Kirbytext {
    */
   public function get() {
 
+    // kirbytext tags
     $text = preg_replace_callback('!(?=[^\]])\([a-z0-9]+:.*?\)!i', array($this, 'parse'), (string)$this->text);
+    
+    // github style code blocks
     $text = preg_replace_callback('!```(.*?)```!is', array($this, 'code'), $text);
 
     $text = ($this->options['markdown'])    ? markdown($text)    : $text;
     $text = ($this->options['smartypants']) ? smartypants($text) : $text;
-
 
     // unwrap single images, which are wrapped with p elements
     if(c::get('kirbytext.unwrapImages')) $text = preg_replace('!\<p>(<img.*?\/>)<\/p>!', '$1', $text);
@@ -233,6 +240,16 @@ class Kirbytext {
     
     return $result;
     
+  }
+
+  /**
+   * Makes it possible to echo the entire Kirbytext object and get 
+   * the parsed text back as string
+   * 
+   * @return string
+   */
+  public function __toString() {
+    return $this->get();
   }
   
 }
