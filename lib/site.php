@@ -564,6 +564,18 @@ class Site extends Page {
     // check for multilang support
     if(c::get('lang.support')) static::$multilang = true;
 
+    // store all important roots in the config array
+    c::set(array(
+      'root'           => KIRBY_INDEX_ROOT,
+      'root.content'   => KIRBY_CONTENT_ROOT,
+      'root.kirby'     => KIRBY_CMS_ROOT,
+      'root.site'      => KIRBY_PROJECT_ROOT, 
+      'root.templates' => KIRBY_PROJECT_ROOT_TEMPLATES,
+      'root.snippets'  => KIRBY_PROJECT_ROOT_SNIPPETS,      
+      'root.plugins'   => KIRBY_PROJECT_ROOT_PLUGINS,      
+      'root.cache'     => KIRBY_PROJECT_ROOT_CACHE,      
+    ));
+
   }
 
   /**

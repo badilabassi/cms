@@ -83,14 +83,16 @@ class MultilangTest extends PHPUnit_Framework_TestCase {
     $kirbytext = new Kirbytext('(image: image-01.jpg)', false);
     $kirbytext->page($p);
 
-    $expected = '<img src="http://superurl.com/kirby/test/etc/testContent/01-tests/multilang/image-01.jpg" title="Title for an english image-01" />';
+    $dir = basename(KIRBY_CMS_ROOT);
+
+    $expected = '<img src="http://superurl.com/' . $dir . '/test/etc/testContent/01-tests/multilang/image-01.jpg" title="Title for an english image-01" />';
     $this->assertEquals($expected, (string)$kirbytext);
 
     // check kirbytext file links
     $kirbytext = new Kirbytext('(file: image-01.jpg)', false);
     $kirbytext->page($p);
 
-    $expected = '<a href="http://superurl.com/kirby/test/etc/testContent/01-tests/multilang/image-01.jpg">image-01.jpg</a>';
+    $expected = '<a href="http://superurl.com/' . $dir . '/test/etc/testContent/01-tests/multilang/image-01.jpg">image-01.jpg</a>';
     $this->assertEquals($expected, (string)$kirbytext);
 
     site(array(
