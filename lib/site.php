@@ -172,24 +172,6 @@ class Site extends Page {
   }
 
   /**
-   * The site doesn't have a translated uid
-   * 
-   * @return null
-   */
-  public function translatedUID() {
-    return null;
-  }
-
-  /**
-   * The site doesn't have a translated uri
-   * 
-   * @return null
-   */
-  public function translatedURI() {
-    return null;
-  }
-
-  /**
    * Returns the subfolder(s)
    * A subfolder will be auto-detected or can be set in the config file
    * If you run the site under its own domain, the subfolder will be empty
@@ -526,6 +508,9 @@ class Site extends Page {
     if(static::$multilang && $this->uri() == $this->subfolder()) {
       go($this->language()->url());
     }
+
+    // try to resolve tiny urls if enabled and available
+    if($url = tinyurl::resolve($this->uri()->toURL())) go($url);
 
   }
 

@@ -287,8 +287,8 @@ class Page {
    * 
    * @return string i.e. http://yourdomain.com/x/abcd
    */
-  public function tinyurl() {
-    return (c::get('tinyurl.enabled')) ? url(c::get('tinyurl.folder') . '/' . $this->hash()) : $this->url(false);    
+  public function tinyurl() {    
+    return tinyurl::create($this);
   }
 
   // Getters
@@ -316,7 +316,7 @@ class Page {
     if(!is_null($this->hash)) return $this->hash;
 
     // add a unique hash
-    $checksum = sprintf('%u', crc32($this->uri()));
+    $checksum = sprintf('%u', crc32($this->uri(c::get('lang.default'))));
     return $this->hash = base_convert($checksum, 10, 36);
   }
 
