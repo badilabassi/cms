@@ -76,8 +76,8 @@ class Language {
    * 
    * @return string
    */
-  public function url() {
-    return url(false, $this->code);
+  public function url() {    
+    return $this->isDefault() && c::get('lang.default.longurl') == false ? site()->url() : site()->url() . '/' . $this->code();
   }
 
   /**

@@ -55,57 +55,43 @@ function pages() {
  */
 function url($uri = false, $lang = false, $params = array(), $query = array()) {
   
-  // get the site object. we will need it more than once
-  $site = site();
-
   // make sure to not convert absolute urls  
-  if(preg_match('!^(http|https)!i', $uri)) return $uri;
+  if(preg_match('!^(http|https)!i', $uri)) {
+    return $uri;
 
-  // get the base url of the site
-  $baseurl = $site->url();
+  // return the url for the home page
+  } else if(!$uri or $uri == '/') {
+    $url = site()->url($lang);
 
-  // url() can also be used to link to css, img or js files
-  // so we need to make sure that this is not a link to a real
-  // file. Otherwise it will be broken by the rest of the code. 
-  if($uri && is_file(KIRBY_INDEX_ROOT . DS . str_replace('/', DS, $uri))) {
-    return $baseurl . '/' . $uri;          
+    // make sure to strip the index.php for the base url
+    // we don't want http://yourdomain.com/index.php
+    if(!c::get('rewrite')) $url = rtrim($url, '/index.php');
+
+  // search for a page this url could be for
+  } else if($page = site()->children()->find($uri)) {
+    $url = $page->url($lang);
+
+  // simply attach the uri to the base url, so links to assets and other stuff will work
+  } else {
+    $url = site()->url() . '/' . trim($uri, '/');            
   }
 
-  // remove all slashes at the beginning or the end of the uri
-  $uri = trim($uri, '/');
-
-  // prepare the lang variable for later
-  if(c::get('lang.support')) {
-    // get the applicable language code
-    $lang = ($lang) ? $lang : $site->language()->code();
-    
-    // prepend the language code to the uri
-    $uri = trim($lang . '/' . $uri, '/');
-  } 
-
-  // if rewrite is deactivated
-  // index.php needs to be prepended
-  // so urls will still work
-  if(!c::get('rewrite') && $uri) $uri = 'index.php/' . $uri;
+  // make sure to remove the trailing slash
+  $url = trim($url, '/');
 
   // add an additional set of parameters to the url  
   if(!empty($params)) {
     foreach($params as $key => $value) {
-      $uri .= '/' . $key . ':' . $value;
+      $url .= '/' . $key . ':' . $value;
     }
   }
 
   // add a query string to the url
   if(!empty($query)) {
-    $uri .= '?' . http_build_query($query);
+    $url .= '?' . http_build_query($query);
   }
 
-  // If there's no URI avoid an additional slash
-  // by simply returning the baseurl
-  if(empty($uri)) return $baseurl;
-
-  // return the final url and make sure 
-  return $baseurl . '/' . $uri;
+  return $url;
 
 }
 

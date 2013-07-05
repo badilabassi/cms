@@ -42,7 +42,8 @@ class MultilangTest extends PHPUnit_Framework_TestCase {
       'lang.support' => true,
       'lang.current' => 'de'
     ));
-    
+
+
     $this->assertEquals('My german content file', (string)$p->content()->title());
     $this->assertEquals('This is a german text', (string)$p->content()->text());
     $this->assertEquals('This is a german text', (string)$p->text());
@@ -52,8 +53,11 @@ class MultilangTest extends PHPUnit_Framework_TestCase {
     
     $this->assertEquals('en', $p->defaultContent()->languageCode());
 
-    $this->assertEquals('mehrsprachig', $p->translatedUID());
-    $this->assertEquals('tests/mehrsprachig', $p->translatedURI());
+    $this->assertEquals('mehrsprachig', $p->slug());
+    $this->assertEquals('multilang', $p->slug('en'));
+
+    $this->assertEquals('tests/mehrsprachig', $p->uri());
+
     $this->assertEquals($this->url . '/de/tests/mehrsprachig', $p->url());
     $this->assertEquals($this->url . '/en/tests/multilang', $p->url('en'));
 
@@ -61,8 +65,8 @@ class MultilangTest extends PHPUnit_Framework_TestCase {
       'lang.current' => 'en'
     ));
 
-    $this->assertEquals('multilang', $p->translatedUID());
-    $this->assertEquals('tests/multilang', $p->translatedURI());
+    $this->assertEquals('multilang', $p->slug());
+    $this->assertEquals('tests/multilang', $p->uri());
     $this->assertEquals($this->url . '/en/tests/multilang', $p->url());
     
     $this->assertEquals('My english content file', (string)$p->content()->title());
@@ -102,6 +106,15 @@ class MultilangTest extends PHPUnit_Framework_TestCase {
     $this->assertEquals('Title for a german image-01', $image->title());
     $this->assertEquals('Title for an english image-01', $image->meta('en')->title());
     
+
+    // test urls for default language without language code
+    site(array(
+      'lang.default.longurl' => false,
+    ));
+
+    $this->assertEquals($this->url . '/de/tests/mehrsprachig', $p->url());
+    $this->assertEquals($this->url . '/tests/multilang', $p->url('en'));
+        
     site(array(
       'lang.support' => false,
       'lang.current' => false

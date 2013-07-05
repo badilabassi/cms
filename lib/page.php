@@ -45,8 +45,8 @@ class Page {
   // cache for the parent Page object
   protected $parent = null;
   
-  // the relative url 
-  protected $uri = null;
+  // the unique id for each page 
+  protected $id = null;
 
   // cache for the title of this page
   protected $title = null;
@@ -82,9 +82,21 @@ class Page {
    */
   public function __construct($root) {
     $this->root = realpath($root);
+    $this->id   = md5($this->root);  
   } 
   
   // directory related methods
+
+  /**
+   * The unique id for this page
+   * This is generated on construction by 
+   * md5-ing the root of the page
+   * 
+   * @return string
+   */
+  public function id() {
+    return $this->id;
+  }
 
   /**
    * Returns the full directory path
@@ -159,6 +171,64 @@ class Page {
   // URL methods
 
   /** 
+   * Returns the slug for the page
+   * The slug is the last part of the URL path
+   * For multilang sites this can be translated with a URL-Key field 
+   * in the text file for this page. 
+   * 
+   * @param string $lang Optional language code to get the translated slug
+   * @return string i.e. 01-projects returns projects
+   */
+  public function slug($lang = null) {
+
+    // get the slug for a different language code 
+    // than the currently active language
+    if(site::$multilang) {      
+
+      $curr = c::get('lang.current');
+
+      if(is_null($lang)) $lang = $curr;
+
+      // get the slug for the default language
+      if($lang == c::get('lang.default')) {
+        return $this->dir()->uid();        
+
+      // get the slug for the current language
+      } else if($lang == $curr) {
+
+        // try to find a translation for the slug
+        $key = (string)$this->url_key();
+        
+        // return the translated slug or otherwise the uid
+        return (empty($key)) ? $this->dir()->uid() : $key;              
+      
+      // get the translated slug
+      } else {
+
+        // search for content in the specified language
+        if($content = $this->content($lang)) {            
+          // search for a translated url_key in that language
+          if($slug = $content->url_key()) {
+            // if available, use the translated url key as slug
+            return $slug;
+          }
+        } 
+
+        // use the uid if no translation could be found
+        return $this->dir()->uid();
+
+      }
+
+    } else {
+
+      // simply return the uid of the directory and use that as slug
+      return $this->dir()->uid();
+
+    }
+
+  }
+  
+  /** 
    * Returns the full url for the page
    * 
    * @param string $lang Optional language code to get the URL for that specific language on multilang sites
@@ -166,36 +236,22 @@ class Page {
    */
   public function url($lang = null) {
 
-    if(site::$multilang) {
+    // for multi language sites every url needs
+    // to be treated specially to make sure each uid is translated properly
+    // and language codes are prepended if needed
+    if(site::$multilang && is_null($lang)) {
+      // get the current language
+      $lang = site()->language()->code();
+    } 
 
-      if(!is_null($lang)) {      
-        // by default use the page's uid for the url
-        $uid = $this->uid();
-        // search for content in the specified language
-        if($content = $this->content($lang)) {            
-          // search for a translated url_key in that language
-          if($translatedUID = $content->url_key()) {
-            // if available, use the translated url key as UID
-            $uid = $translatedUID;
-          }
-        } 
-        // build the translated URL with the particular UID
-        return $this->parent()->url($lang) . '/' . $uid;
-      } else {
-        // return the translated URL if language support is available
-        return $this->translatedURL();              
-      }
-
+    // Kirby is trying to remove the home folder name from the url
+    // unless you set the home.keepurl option to true. 
+    if($this->isHomePage() && !c::get('home.keepurl')) {
+      // return the base url
+      return site()->url($lang);                    
     } else {
-      // Kirby is trying to remove the home folder name from the url
-      // unless you set the home.keepurl option to true. 
-      if($this->isHomePage() && !c::get('home.keepurl')) {
-        // return the base url
-        return url();                    
-      } else {
-        // return the default URL if language support is disabled
-        return url($this->uri());
-      }
+      // return the default URL if language support is disabled
+      return $this->parent()->url($lang) . '/' . $this->slug($lang);
     }
 
   }
@@ -204,12 +260,24 @@ class Page {
    * Setter and getter for the uri
    * The uri is the page's url path without the base url
    * 
-   * @param  string $uri this is used to set the uri in context with other pages
+   * @param string $lang Optional language code to get the URI in other languages
    * @return string i.e. projects/web/project-a
    */
-  public function uri($uri = null) {
-    if(!is_null($uri)) return $this->uri = ltrim($uri, '/');
-    return (empty($this->uri)) ? $this->uid() : $this->uri;
+  public function uri($lang = null) {
+
+    // get the parent page object
+    $parent = $this->parent();
+
+    if($parent->isSite()) {
+      // if the parent page is the site object
+      // only use the slug without the site's uri, since that is the entire uri object
+      // and not a simple string like on subpages
+      return $this->slug($lang);
+    } else {
+      // build the page's uri with the parent uri and the page's slug
+      return $parent->uri($lang) . '/' . $this->slug($lang);
+    }
+
   }
 
   /** 
@@ -221,57 +289,6 @@ class Page {
    */
   public function tinyurl() {
     return (c::get('tinyurl.enabled')) ? url(c::get('tinyurl.folder') . '/' . $this->hash()) : $this->url(false);    
-  }
-
-  // Translated Stuff
-
-  /**
-   * Returns the translated UID if set in the content file (with URL-key)
-   * Otherwise returns the default UID
-   * 
-   * @return string
-   */
-  public function translatedUID() {
-    if(site::$multilang) {
-      $key = (string)$this->url_key();
-      return (empty($key)) ? $this->uid() : $key;      
-    } else {
-      return $this->uid();
-    }
-  }
-
-  /**
-   * Returns the translated URI
-   * 
-   * @return string
-   */
-  public function translatedURI() {
-    if(site::$multilang) {
-      return trim($this->parent()->translatedURI() . '/' . $this->translatedUID(), '/');
-    } else {
-      return $this->uri();      
-    }
-  }
-
-  /**
-   * Returns the full translated URL
-   * 
-   * @return string
-   */
-  public function translatedURL() {
-    if(site::$multilang) {
-      // Kirby is trying to remove the home folder name from the url
-      // unless you set the home.keepurl option to true. 
-      if($this->isHomePage() && !c::get('home.keepurl')) {
-        // return the base url
-        return url();                    
-      } else {
-        // return the full translated URL
-        return url($this->translatedURI());              
-      }
-    } else {
-      return $this->url();
-    } 
   }
 
   // Getters
@@ -1044,12 +1061,12 @@ class Page {
   public function isOpen() {
 
     if(!is_null($this->isOpen)) return $this->isOpen;
-    
+
+    // the active page is of course automatically open as well
     if($this->isActive()) return true;
 
     $u = array_values(site()->uri()->path()->toArray());
-    $p = str::split($this->translatedURI(), '/');
-    // TODO: translatedURI
+    $p = str::split($this->uri(), '/');
 
     for($x = 0; $x < count($p); $x++) {
       if(a::get($p, $x) != a::get($u, $x)) return $this->isOpen = false;
@@ -1094,6 +1111,7 @@ class Page {
       'dir',
       'uri',
       'uid',
+      'slug',
       'title',
       'hash',
       'template',

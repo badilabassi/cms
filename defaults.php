@@ -310,6 +310,13 @@ c::set(array(
   'lang.default' => 'en',
 
   /**
+   * If set to true, all urls for default language pages
+   * will always contain the language code. If set to 
+   * false you get shorter and cleaner urls for the default language
+   */
+  'lang.default.longurl' => true,
+
+  /**
    * Set the codes of all available languages
    */
   'lang.available' => array('en', 'de'),

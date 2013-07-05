@@ -150,7 +150,9 @@ class Site extends Page {
     // add the language code as subfolder 
     // for multi language websites
     if(static::$multilang) {
-      $subfolder .= '/' . $this->language()->code();
+      if(c::get('lang.default.longurl') == true or !$this->language()->isDefault()) {
+        $subfolder .= '/' . $this->language()->code();
+      }
     }
 
     // init the uri object with the correct setup
@@ -247,6 +249,11 @@ class Site extends Page {
         // so it's not included twice
         if(!preg_match('!' . preg_quote($subfolder) . '$!i', $url)) $url .= '/' . $subfolder;      
       }
+
+      // if rewrite is deactivated
+      // index.php needs to be prepended
+      // so urls will still work
+      if(!c::get('rewrite')) $url .= '/index.php';
       
       // store the final url in the config               
       c::set('url', $url);  
@@ -333,10 +340,10 @@ class Site extends Page {
     if(empty($uri) || $uri == $this->subfolder()) $uri = c::get('home', 'home');
 
     // try to find an active page by the given uri
-    $activePage = $this->children()->find($uri);
+    $activePage = $this->children()->findByURI($uri, static::$multilang ? 'slug' : 'uid');
 
     // check if the active page is valid    
-    if($activePage && $activePage->translatedURI() == $uri) {      
+    if($activePage && $activePage->uri() == $uri) {      
       return $this->activePage = $activePage;    
     } else if($route = router::match($this->uri()->path())) {
 
@@ -562,7 +569,7 @@ class Site extends Page {
     if(c::get('cache')) cache::connect('file', array('root' => KIRBY_PROJECT_ROOT_CACHE));
 
     // check for multilang support
-    if(c::get('lang.support')) static::$multilang = true;
+    static::$multilang = c::get('lang.support');
 
     // store all important roots in the config array
     c::set(array(

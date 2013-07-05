@@ -51,9 +51,8 @@ class Pages extends Collection {
         
         $child = new Page($dir);
         $child->parent($input);
-        $child->uri($uri . '/' . $child->uid());
-
-        $this->set($child->uri(), $child);
+        
+        $this->set($child->id(), $child);
       
       }
 
@@ -89,7 +88,7 @@ class Pages extends Collection {
     }
 
     foreach($obj->toArray() as $key => $page) {
-      $this->index[$page->uri()] = $page;
+      $this->index[$page->id()] = $page;
       $this->index($page->children());
     }
     
@@ -173,38 +172,50 @@ class Pages extends Collection {
    * @return mixed Either a Page object, a Pages object for multiple pages or null if nothing could be found
    */
   public function find() {
-    
     $args = func_get_args();
-  
-    // find multiple pages
-    if(count($args) > 1) {
+    return $this->findByURI($args, 'uid');  
+  }
+
+  /**
+   * Finds pages by it's unique URI
+   *
+   * @param mixed $uri Either a single URI string or an array of URIs 
+   * @param string $use The field, which should be used (uid or slug)
+   * @return mixed Either a Page object, a Pages object for multiple pages or null if nothing could be found
+   */
+  public function findByURI($uri, $use = 'uid') {
+
+    // find multiple pages by uri 
+    if(is_array($uri) && count($uri) > 1) {
       $result = array();
-      foreach($args as $arg) {
-        if($page = $this->find($arg)) $result[$page->uri()] = $page;
+      foreach($uri as $u) {
+        if($page = $this->findByURI($u)) $result[$page->id()] = $page;
       }      
-      return (empty($result)) ? false : new Pages($result);
-    }    
-    
-    // find a single page
-    $path  = a::first($args);      
-    $array = str::split($path, '/');
+      return (empty($result)) ? null : new Pages($result);
+    } else if(is_array($uri)) {
+      // reduce the array of values to a single value
+      $uri = a::first($uri);
+    }
+
+    // find a single page by uri
+    $path  = $uri;      
+    $array = str::split($uri, '/');
     $obj   = $this;
     $page  = false;
-    $lang  = site::$multilang;
 
     foreach($array as $p) {    
 
-      $by   = ($lang) ? 'translatedUID' : 'uid';
-      $next = $obj->findBy($by, $p, false);
+      $next = $obj->findBy($use, $p, false);
 
       if(!$next) return $page;
 
       $page = $next;
       $obj  = $next->children();
+
     }
     
     return $page;    
-  
+
   }
 
   /**
@@ -221,12 +232,12 @@ class Pages extends Collection {
     if(is_array($value) && count($value) > 1) {
       $result = array();
       foreach($value as $arg) {
-        if($page = $this->findBy($key, $arg)) $result[$page->uri()] = $page;
+        if($page = $this->findBy($key, $arg)) $result[$page->id()] = $page;
       }      
       return (empty($result)) ? null : new Pages($result);
     } else if(is_array($value)) {
       // reduce the array of values to a single value
-      $value = $value[0];
+      $value = a::first($value);
     }
         
     $found      = false;
