@@ -132,7 +132,7 @@ class Pages extends Collection {
    * @return object Page
    */
   public function active() {
-    return site()->activePage();
+    return site::instance()->activePage();
   }
 
   /**

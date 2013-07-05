@@ -99,7 +99,7 @@ class File extends Asset {
    */
   public function url() {
     if(!is_null($this->url)) return $this->url;
-    return $this->url = site()->url() . '/' . $this->uri();
+    return $this->url = site::instance()->url() . '/' . $this->uri();
   }
 
   /**

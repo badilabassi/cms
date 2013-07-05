@@ -41,7 +41,7 @@ class Cache {
   public function __construct(Page $page) {
   
     $this->page    = $page;
-    $this->id      = 'html' . DS . $this->page->dir()->hash();
+    $this->id      = 'html' . DS . $this->page->id();
     $this->enabled = (c::get('cache') && c::get('cache.html')) ? true : false;
 
   }
@@ -95,7 +95,7 @@ class Cache {
    * @return boolean
    */
   public function isAvailable() {
-    return $this->isEnabled() && cache::created($this->id) >= site()->modified() ? true : false;
+    return $this->isEnabled() && cache::created($this->id) >= site::instance()->modified() ? true : false;
   }
 
   /**

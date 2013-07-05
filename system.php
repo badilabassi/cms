@@ -40,7 +40,18 @@ set_exception_handler(function($exception) {
 });
 
 // initialize the site for the first time
-$site = site();
+$site = site::instance();
+
+// handle debugging
+if(c::get('debug')) {
+  // switch on all errors
+  error_reporting(E_ALL);
+  ini_set('display_errors', 1);
+} else {
+  // switch off all errors
+  error_reporting(0);
+  ini_set('display_errors', 0);
+}
 
 // enable rewriting of unwanted URLs
 $site->rewrite();

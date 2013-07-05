@@ -14,12 +14,7 @@ if(!defined('KIRBY')) die('Direct access is not allowed');
  * @return object Site
  */
 function site($params = array()) {
-  $site = g::get('site');
-  if(!$site || !empty($params)) {
-    $site = new Site($params);
-    g::set('site', $site);
-  }
-  return $site;
+  return site::instance($params);
 }
 
 /**
@@ -29,7 +24,7 @@ function site($params = array()) {
  * @return object
  */
 function page($uid = null) {
-  return (is_null($uid)) ? site()->activePage() : site()->pages()->find($uid);
+  return (is_null($uid)) ? site::instance()->activePage() : site::instance()->pages()->find($uid);
 }
 
 /**
@@ -38,7 +33,7 @@ function page($uid = null) {
  * @return object Pages
  */
 function pages() {
-  return site()->pages();
+  return site::instance()->pages();
 }
 
 /**
@@ -61,19 +56,19 @@ function url($uri = false, $lang = false, $params = array(), $query = array()) {
 
   // return the url for the home page
   } else if(!$uri or $uri == '/') {
-    $url = site()->url($lang);
+    $url = site::instance()->url($lang);
 
     // make sure to strip the index.php for the base url
     // we don't want http://yourdomain.com/index.php
     if(!c::get('rewrite')) $url = rtrim($url, '/index.php');
 
   // search for a page this url could be for
-  } else if($page = site()->children()->find($uri)) {
+  } else if($page = site::instance()->children()->find($uri)) {
     $url = $page->url($lang);
 
   // simply attach the uri to the base url, so links to assets and other stuff will work
   } else {
-    $url = site()->url() . '/' . trim($uri, '/');            
+    $url = site::instance()->url() . '/' . trim($uri, '/');            
   }
 
   // make sure to remove the trailing slash
@@ -110,7 +105,7 @@ function u($uri=false, $lang=false) {
  * @return string
  */ 
 function thisURL() {
-  return site()->uri()->original();
+  return site::instance()->uri()->original();
 }
 
 /**
@@ -151,7 +146,7 @@ function css($url, $media = false) {
   // auto-loading for template specific css files
   if($url == '@auto') {
   
-    $file = site()->pages()->active()->template() . '.css';
+    $file = site::instance()->children()->active()->template() . '.css';
     $root = c::get('css.auto.root') . DS . $file;
     $url  = c::get('css.auto.url') . '/' . $file;
     
@@ -175,7 +170,7 @@ function js($url, $async = false) {
   // auto-loading for template specific js files
   if($url == '@auto') {
   
-    $file = site()->pages()->active()->template() . '.js';
+    $file = site::instance()->children()->active()->template() . '.js';
     $root = c::get('js.auto.root') . DS . $file;
     $url  = c::get('js.auto.url') . '/' . $file;
 

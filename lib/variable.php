@@ -184,7 +184,7 @@ class Variable {
    * @return object
    */
   public function toPage() {
-    return site()->children()->find($this->value);
+    return site::instance()->children()->find($this->value);
   }
 
   /**

@@ -32,7 +32,7 @@ class Languages extends Collection {
     if(empty($codes)) $codes = c::get('lang.available', array());
 
     // get the uri including the language code
-    $uri    = new uri(null, array('subfolder' => site()->subfolder()));
+    $uri    = new uri(null, array('subfolder' => site::instance()->subfolder()));
     $active = (c::get('lang.current') && in_array(c::get('lang.current'), $codes)) ? c::get('lang.current') : $uri->path()->first();
 
     // if there's no code available in the url, use the default language

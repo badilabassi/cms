@@ -88,7 +88,7 @@ class Kirbytext {
     if(!is_null($page)) {
       return $this->page = $page;
     } else {
-      return ($this->page) ? $this->page : site()->activePage();
+      return ($this->page) ? $this->page : site::instance()->activePage();
     }
   }
   

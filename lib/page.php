@@ -241,14 +241,14 @@ class Page {
     // and language codes are prepended if needed
     if(site::$multilang && is_null($lang)) {
       // get the current language
-      $lang = site()->language()->code();
+      $lang = site::instance()->language()->code();
     } 
 
     // Kirby is trying to remove the home folder name from the url
     // unless you set the home.keepurl option to true. 
     if($this->isHomePage() && !c::get('home.keepurl')) {
       // return the base url
-      return site()->url($lang);                    
+      return site::instance()->url($lang);                    
     } else {
       // return the default URL if language support is disabled
       return $this->parent()->url($lang) . '/' . $this->slug($lang);
@@ -635,7 +635,7 @@ class Page {
     $parentURI = trim($parentURI, '.');
 
     // fetch the parent object by the parent uri
-    return $this->parent = ($parentURI) ? site()->pages()->findBy('uri', $parentURI) : site();
+    return $this->parent = ($parentURI) ? site::instance()->pages()->findBy('uri', $parentURI) : site::instance();
 
   }
 
@@ -696,7 +696,7 @@ class Page {
    * @return boolean
    */
   public function isDescendantOfActive() {
-    $active = site()->activePage();
+    $active = site::instance()->activePage();
     if(!$active) return false;
     return $this->isDescendantOf($active);
   }
@@ -1048,7 +1048,7 @@ class Page {
    */
   public function isActive() {
     if(!is_null($this->isActive)) return $this->isActive;
-    return $this->isActive = site()->activePage()->equals($this); 
+    return $this->isActive = site::instance()->activePage()->equals($this); 
   }
 
   /**
@@ -1065,7 +1065,7 @@ class Page {
     // the active page is of course automatically open as well
     if($this->isActive()) return true;
 
-    $u = array_values(site()->uri()->path()->toArray());
+    $u = array_values(site::instance()->uri()->path()->toArray());
     $p = str::split($this->uri(), '/');
 
     for($x = 0; $x < count($p); $x++) {
@@ -1150,7 +1150,7 @@ class Page {
       // $html is already set
     } else {
 
-      $site = site();
+      $site = site::instance();
 
       tpl::set(array(
         'site'  => $site,

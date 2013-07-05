@@ -17,7 +17,7 @@ if(!defined('KIRBY')) die('Direct access is not allowed');
 /**
  * Site
  *
- * ATTENTION: use the site() helper function to get access to the site singleton
+ * ATTENTION: use the site::instance() method or site() helper to get access to the site singleton
  * 
  * This is the main site object
  * Everything else is dependent on this
@@ -74,6 +74,21 @@ class Site extends Page {
   // returns true for multilanguage websites
   static public $multilang = false;
 
+  // cache for the singelton instance
+  static protected $instance = null;
+
+  /**
+   * Singleton accessor for the current site instance
+   * 
+   * @return object Site
+   */
+  static public function instance($params = array()) {
+    if(is_null(static::$instance) or !empty($params)) {
+      static::$instance = new Site($params);
+    }
+    return static::$instance;
+  }
+
   /**
    * Constructor
    * 
@@ -81,23 +96,14 @@ class Site extends Page {
    */
   public function __construct(array $params = array()) {
 
-    g::set('site', $this);
+    // store this for the singleton
+    static::$instance = $this;
 
     // load all needed config vars
     $this->configure($params);
 
     // initiate the page object with the given root    
     parent::__construct(KIRBY_CONTENT_ROOT);
-
-    if(c::get('debug')) {
-      // switch on all errors
-      error_reporting(E_ALL);
-      ini_set('display_errors', 1);
-    } else {
-      // switch off all errors
-      error_reporting(0);
-      ini_set('display_errors', 0);
-    }
 
     // apply all locale settings and timezone stuff
     $this->localize();

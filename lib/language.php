@@ -77,7 +77,7 @@ class Language {
    * @return string
    */
   public function url() {    
-    return $this->isDefault() && c::get('lang.default.longurl') == false ? site()->url() : site()->url() . '/' . $this->code();
+    return $this->isDefault() && c::get('lang.default.longurl') == false ? site::instance()->url() : site::instance()->url() . '/' . $this->code();
   }
 
   /**
@@ -90,7 +90,7 @@ class Language {
    * @return boolean
    */
   public function isPreferred() {
-    return site()->visitor()->language() == $this ? true : false;
+    return site::instance()->visitor()->language() == $this ? true : false;
   }
 
   /**
