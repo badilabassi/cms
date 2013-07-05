@@ -36,6 +36,7 @@ class Image extends File {
 
     // copy basic parameters from the File object
     $this->root      = $file->root();
+    $this->id        = $file->id();
     $this->parent    = $file->parent();
     $this->filename  = $file->filename();
     $this->extension = $file->extension();
@@ -96,6 +97,21 @@ class Image extends File {
    */
   public function hasThumb() {
     return ($this->thumb()) ? true : false;
+  }
+
+  /**
+   * Returns a more readable dump array for the dump() helper
+   * 
+   * @return array
+   */
+  public function __toDump() {
+
+    return array_merge(parent::__toDump(), array(
+      'thumb'  => $this->thumb() ? $this->thumb()->uri() : false,
+      'width'  => $this->width(),
+      'height' => $this->height(),
+    ));
+
   }
 
 }

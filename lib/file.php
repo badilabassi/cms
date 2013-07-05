@@ -28,6 +28,9 @@ class File extends Asset {
   // the parent Files object
   protected $parent = null;
   
+  // unique id string
+  protected $id = null;
+
   // the uri (url relative to the content directory)
   protected $uri = null;
     
@@ -54,6 +57,7 @@ class File extends Asset {
    */
   public function __construct($root, Files $parent = null) {
     $this->root   = realpath($root);
+    $this->id     = md5($root);
     $this->parent = $parent;
   } 
 
@@ -77,6 +81,15 @@ class File extends Asset {
    */
   public function page() {
     return $this->parent()->page();
+  }
+
+  /**
+   * Returns the unique id for this file
+   * 
+   * @return string
+   */
+  public function id() {
+    return $this->id;
   }
 
   /**
@@ -313,6 +326,26 @@ class File extends Asset {
    */
   public function __toString() {
     return '<a href="' . $this->url() . '">' . $this->url() . '</a>';  
+  }
+
+  /**
+   * Returns a more readable dump array for the dump() helper
+   * 
+   * @return array
+   */
+  public function __toDump() {
+
+    return array(
+      'id'     => $this->id(),
+      'url'    => $this->url(),
+      'uri'    => $this->uri(),
+      'type'   => $this->type(),
+      'mime'   => $this->mime(),
+      'size'   => $this->niceSize(),
+      'page'   => $this->page()->diruri(), 
+      'fields' => $this->meta() ? $this->meta()->fields() : array(),
+    );
+
   }
 
 }

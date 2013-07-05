@@ -396,6 +396,30 @@ class Pages extends Collection {
   }
 
   /**
+   * Returns a more readable dump array for the dump() helper
+   * 
+   * @return array
+   */
+  public function __toDump() {
+
+    $dump = array(
+      'count' => array(
+        'total'     => $this->count(),
+        'visible'   => $this->countVisible(),
+        'invisible' => $this->countInvisible(),
+      ),
+      'pages' => array(),
+    );
+
+    foreach($this->toArray() as $page) {
+      $dump['pages'][] = $page->diruri();
+    }
+
+    return $dump;
+
+  }
+
+  /**
    * Merges multiple collections of pages
    * 
    * <code>

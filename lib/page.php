@@ -1178,4 +1178,39 @@ class Page {
     return '<a href="' . $this->url() . '">' . $this->url() . '</a>';  
   }
 
+  /**
+   * Returns a more readable dump array for the dump() helper
+   * 
+   * @return array
+   */
+  public function __toDump() {
+
+    $dump = array(
+      'id'               => $this->id(),
+      'url'              => $this->url(),
+      'uri'              => $this->uri(),
+      'folder'           => $this->diruri(),
+      'num'              => $this->num(),
+      'active'           => $this->isActive(),
+      'open'             => $this->isOpen(),
+      'fields'           => ($this->content()) ? $this->content()->fields() : array(),
+      'template'         => $this->template(),
+      'intendedTemplate' => $this->intendedTemplate(),
+      'parent'           => $this->parent()->isSite() ? '' : $this->parent()->uri(),
+      'children'         => array(), 
+      'files'            => array(), 
+    );
+
+    foreach($this->children() as $child) {
+      $dump['children'][] = $child->diruri();
+    }
+
+    foreach($this->files() as $file) {
+      $dump['files'][] = $file->uri();
+    }
+
+    return $dump;
+
+  }
+
 }

@@ -2,6 +2,9 @@
 
 namespace Kirby\CMS;
 
+use Kirby\Toolkit\F;
+use Kirby\Toolkit\Object;
+
 // direct access protection
 if(!defined('KIRBY')) die('Direct access is not allowed');
 
@@ -152,6 +155,15 @@ class Plugin {
   }
 
   /**
+   * Returns the root location of the plugin
+   * 
+   * @return string
+   */
+  public function root() {
+    return $this->root;
+  }
+
+  /**
    * Returns the name name of the plugin
    * 
    * @return string
@@ -188,6 +200,25 @@ class Plugin {
     $html[] = 'URL: ' . $this->info()->url();
 
     return '<pre>' . implode('<br />', $html) . '</pre>';
+
+  }
+
+  /**
+   * Returns a more readable dump array for the dump() helper
+   * 
+   * @return array
+   */
+  public function __toDump() {
+
+    return array(
+      'id'          => $this->id(),
+      'name'        => $this->name(),
+      'root'        => str_replace(KIRBY_INDEX_ROOT, '', $this->root()),
+      'description' => $this->info()->description(),
+      'version'     => $this->version(), 
+      'author'      => $this->info()->author(),
+      'url'         => $this->info()->url(),
+    );
 
   }
 

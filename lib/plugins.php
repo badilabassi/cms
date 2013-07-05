@@ -96,4 +96,21 @@ class Plugins {
 
   }
 
+  /**
+   * Returns a more readable dump array for the dump() helper
+   * 
+   * @return array
+   */
+  public function __toDump() {
+
+    $plugins = array();
+
+    foreach($this->plugins as $plugin) {
+      $plugins[$plugin->id()] = $plugin->__toDump();
+    }
+
+    return $plugins;
+
+  }
+
 }

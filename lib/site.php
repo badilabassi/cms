@@ -631,4 +631,30 @@ class Site extends Page {
     
   }
 
+  /**
+   * Returns a more readable dump array for the dump() helper
+   * 
+   * @return array
+   */
+  public function __toDump() {
+
+    $dump = array_merge(parent::__toDump(), array(
+      'uri'       => $this->uri()->__toDump(),
+      'languages' => $this->languages()->__toDump(),
+      'plugins'   => $this->plugins()->__toDump(),
+    ));
+
+    unset($dump['id']);
+    unset($dump['folder']);
+    unset($dump['num']);
+    unset($dump['active']);
+    unset($dump['open']);
+    unset($dump['template']);
+    unset($dump['intendedTemplate']);
+    unset($dump['parent']);
+
+    return $dump;
+  
+  }
+
 }

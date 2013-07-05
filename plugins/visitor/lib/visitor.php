@@ -50,5 +50,5 @@ class SiteVisitor extends Visitor {
     return self::$language = $language;
   
   }
-
+  
 }

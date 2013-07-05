@@ -56,6 +56,7 @@ class Content extends File {
   public function __construct(File $file) {
 
     $this->root      = $file->root();
+    $this->id        = $file->id();
     $this->parent    = $file->parent();
     $this->type      = 'content';
     $this->filename  = $file->filename();
@@ -218,6 +219,20 @@ class Content extends File {
     } else {
       return $this->$key();
     }
+  }
+
+  /**
+   * Returns a more readable dump array for the dump() helper
+   * 
+   * @return array
+   */
+  public function __toDump() {
+
+    return array_merge(parent::__toDump(), array(
+      'fields'       => $this->fields(),
+      'languageCode' => $this->languageCode(),
+    ));
+
   }
 
 }

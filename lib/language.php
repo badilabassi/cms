@@ -132,4 +132,24 @@ class Language {
     return $this->code;
   }
 
+  /**
+   * Returns a more readable dump array for the dump() helper
+   * 
+   * @return array
+   */
+  public function __toDump() {
+
+    return array(
+      'code'      => $this->code(),
+      'name'      => $this->name(),
+      'url'       => $this->url(),
+      'available' => $this->isAvailable(), 
+      'active'    => $this->isActive(),
+      'default'   => $this->isDefault(),
+      'preferred' => $this->isPreferred(), 
+      'locale'    => $this->locale(),
+    );
+
+  }
+
 }

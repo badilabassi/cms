@@ -246,7 +246,7 @@ class Files extends Collection {
    * @see self::unknown()
    */
   public function others() {
-    return $this->unkown();
+    return $this->unknown();
   }
 
   /** 
@@ -264,7 +264,7 @@ class Files extends Collection {
    * @see self::hasUnknown()
    */
   public function hasOthers() {
-    return $this->hasUnkown();
+    return $this->hasUnknown();
   }
 
   /** 
@@ -451,6 +451,36 @@ class Files extends Collection {
       $output[] = $file . '<br />';          
     }    
     return implode("\n", $output);    
+  }
+
+  /**
+   * Returns a more readable dump array for the dump() helper
+   * 
+   * @return array
+   */
+  public function __toDump() {
+
+    $dump = array(
+      'count' => array(
+        'total'      => $this->count(),
+        'content'    => $this->contents()->count(),
+        'images'     => $this->images()->count(),
+        'thumbs'     => $this->thumbs()->count(),
+        'videos'     => $this->videos()->count(),
+        'documents'  => $this->documents()->count(),
+        'code'       => $this->code()->count(),
+        'audio'      => $this->audio()->count(),
+        'unknown'    => $this->others()->count(),
+      ),
+      'files' => array(),
+    );
+
+    foreach($this->toArray() as $file) {
+      $dump['files'][] = $file->uri();
+    }
+
+    return $dump;
+
   }
 
 }

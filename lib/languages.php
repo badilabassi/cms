@@ -96,4 +96,21 @@ class Languages extends Collection {
     return implode(PHP_EOL, $output);
   }
 
+  /**
+   * Returns a more readable dump array for the dump() helper
+   * 
+   * @return array
+   */
+  public function __toDump() {
+
+    $languages = array();
+
+    foreach($this->toArray() as $language) {
+      $languages[$language->code()] = $language->__toDump();
+    }
+
+    return $languages;
+
+  }
+
 }
