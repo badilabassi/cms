@@ -20,9 +20,9 @@ class MultilangTest extends PHPUnit_Framework_TestCase {
     $this->assertEquals('en', (string)site()->language());
     $this->assertEquals('en', site()->language()->code());
     $this->assertTrue(site()->language()->isDefault());
-    $this->assertTrue(site()->language()->isActive());
+    $this->assertTrue(site()->language()->isCurrent());
     $this->assertEquals('English', site()->language()->name());
-    $this->assertNull(site()->language()->locale());
+    $this->assertEquals('en_US', site()->language()->locale());
     
     $this->assertEquals($this->url . '/en', site()->language()->url());
     $this->assertEquals($this->url . '/de', site()->language('de')->url());
@@ -32,7 +32,7 @@ class MultilangTest extends PHPUnit_Framework_TestCase {
     $this->assertEquals($this->url . '/en', site()->url('en'));    
     
     $this->assertEquals('en', site()->languages()->findDefault()->code());
-    $this->assertEquals('en', site()->languages()->findActive()->code());
+    $this->assertEquals('en', site()->languages()->findCurrent()->code());
     $this->assertEquals('en', site()->languages()->findPreferred()->code());
 
     $p = site()->pages()->find('tests/multilang');
@@ -42,7 +42,6 @@ class MultilangTest extends PHPUnit_Framework_TestCase {
       'lang.support' => true,
       'lang.current' => 'de'
     ));
-
 
     $this->assertEquals('My german content file', (string)$p->content()->title());
     $this->assertEquals('This is a german text', (string)$p->content()->text());
@@ -109,7 +108,7 @@ class MultilangTest extends PHPUnit_Framework_TestCase {
 
     // test urls for default language without language code
     site(array(
-      'lang.default.longurl' => false,
+      'lang.urls' => 'short',
     ));
 
     $this->assertEquals($this->url . '/de/tests/mehrsprachig', $p->url());

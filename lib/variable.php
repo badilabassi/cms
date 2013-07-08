@@ -124,15 +124,6 @@ class Variable {
   }
 
   /**
-   * Converts the value to multiline HTML
-   * 
-   * @return string
-   */
-  public function toMultiline() {
-    return multiline($this->value);
-  }
-
-  /**
    * Converts the value to kirbytext
    * 
    * @return string
@@ -215,6 +206,38 @@ class Variable {
    */
   public function __toString() {
     return (string)$this->value;
+  }
+
+  /**
+   * Additional Shortcuts for all the methods above
+   * 
+   * @param string $name Name of the method will be passed by PHP
+   * @param array $arguments an optional list of passed arguments
+   * @return mixed
+   */
+  public function __call($name, $arguments) {
+
+    $aliases = array(
+      'h'          => 'toHTML',
+      'html'       => 'toHTML',
+      'kirbytext'  => 'toKirbytext',
+      'kt'         => 'toKirbytext',
+      'str'        => 'toString',
+      'a'          => 'toArray', 
+      'ts'         => 'toTimestamp',
+      'timestamp'  => 'toTimestamp',
+      'date'       => 'toDate',
+      'collection' => 'toCollection',
+      'json'       => 'toJson',
+      'url'        => 'toURL',
+    );
+
+    if(array_key_exists($name, $aliases)) {
+      return call_user_func_array(array($this, $aliases[$name]), $arguments);
+    } else {
+      raise('invalid method: ' . $name);
+    }
+
   }
 
 }

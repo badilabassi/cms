@@ -8,6 +8,7 @@ use Kirby\Toolkit\F;
 use Kirby\Toolkit\Str;
 use Kirby\CMS\Site;
 use Kirby\CMS\File;
+use Kirby\CMS\Language;
 use Kirby\CMS\Variable;
 
 // direct access protection
@@ -92,8 +93,13 @@ class Content extends File {
   
     if(!is_null($this->name)) return $this->name;
 
+    // get the name without the extension
     $name = f::name($this->filename());
-    $name = preg_replace('!.(' . implode('|',c::get('lang.available')) . ')$!i', '', $name);
+    
+    // on multi-language projects, the filenames need some extra treatment.
+    if(site::$multilang) {
+      $name = preg_replace('!.(' . implode('|', site::instance()->languages()->codes()) . ')$!i', '', $name);
+    }
 
     return $this->name = $name;
   
@@ -184,7 +190,7 @@ class Content extends File {
   public function languageCode() {
     if(!is_null($this->languageCode)) return $this->languageCode;    
     $code = str::match($this->filename(), '!\.([a-z]{2})\.' . $this->extension() . '$!i', 1);
-    return $this->languageCode = (empty($code) || !in_array($code, c::get('lang.available'))) ? c::get('lang.default') : $code;
+    return (language::valid($code)) ? $code : c::get('lang.default');
   }
 
   /**

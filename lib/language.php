@@ -21,44 +21,58 @@ if(!defined('KIRBY')) die('Direct access is not allowed');
  */
 class Language {
 
-  protected $code = null;
+  protected $code   = null;
+  protected $name   = null;
+  protected $locale = null;
+
+  protected $isDefault;
+  protected $isAvailable;
+
+  public $isCurrent;
 
   /**
    * Constructor
    * 
    * @param string $code The 2-char language code
    */
-  public function __construct($code, $isActive = false) {
-    $this->code     = $code;
-    $this->isActive = $isActive;
+  public function __construct($params = array()) {
+
+    $defaults = array(
+      'code'      => 'en',
+      'name'      => 'English', 
+      'locale'    => null,
+      'default'   => false,
+      'current'   => false, 
+      'available' => true, 
+    );
+
+    $options = array_merge($defaults, $params);
+
+    $this->code        = $options['code'];
+    $this->name        = $options['name'];
+    $this->locale      = $options['locale'];
+    $this->isDefault   = $options['default'];
+    $this->isAvailable = $options['available'];
+    $this->isCurrent   = $options['current'];
+  
   }
 
   /**
-   * Returns the name of the language if available
-   * To enable this feature, language names must be 
-   * set in your config in an associative array 
-   * 
-   * i.e. c::set('lang.names', array('en' => 'English'));
+   * Returns the name of the language
    * 
    * @return string 
    */
   public function name() {
-    $names = c::get('lang.names', array());
-    return a::get($names, $this->code);
+    return $this->name;
   }
 
   /**
    * Returns the locale of the language if available
-   * To enable this feature, locales must be 
-   * set in your config in an associative array 
-   * 
-   * i.e. c::set('lang.locales', array('en' => 'en_US'));
    * 
    * @return string 
    */
   public function locale() {
-    $locales = c::get('lang.locales', array());
-    return a::get($locales, $this->code);
+    return $this->locale;
   }
 
   /**
@@ -77,7 +91,7 @@ class Language {
    * @return string
    */
   public function url() {    
-    return $this->isDefault() && c::get('lang.default.longurl') == false ? site::instance()->url() : site::instance()->url() . '/' . $this->code();
+    return $this->isDefault() && c::get('lang.urls') == 'short' ? site::instance()->url() : site::instance()->url() . '/' . $this->code();
   }
 
   /**
@@ -100,7 +114,7 @@ class Language {
    * @return boolean
    */
   public function isAvailable() {
-    return (in_array($this->code, c::get('lang.available'))) ? true : false;
+    return $this->isAvailable;
   }
 
   /**
@@ -109,8 +123,8 @@ class Language {
    * 
    * @return boolean
    */
-  public function isActive() {
-    return $this->isActive;
+  public function isCurrent() {
+    return $this->isCurrent;
   }
 
   /**
@@ -119,7 +133,16 @@ class Language {
    * @return boolean
    */
   public function isDefault() {
-    return (c::get('lang.default') == $this->code) ? true : false;
+    return $this->isDefault;
+  }
+
+  /**
+   * Checks if the passed code is valid
+   * 
+   * @return boolean
+   */
+  static public function valid($code) {
+    return (in_array($code, site::instance()->languages()->codes())) ? true : false;
   }
 
   /**
@@ -144,7 +167,7 @@ class Language {
       'name'      => $this->name(),
       'url'       => $this->url(),
       'available' => $this->isAvailable(), 
-      'active'    => $this->isActive(),
+      'current'   => $this->isCurrent(),
       'default'   => $this->isDefault(),
       'preferred' => $this->isPreferred(), 
       'locale'    => $this->locale(),

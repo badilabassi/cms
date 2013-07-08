@@ -238,6 +238,12 @@ c::set(array(
   'timezone' => 'UTC',
 
   /**
+   * Set the default locale for all 
+   * language specific PHP functions
+   */
+  'locale' => 'en_US', 
+  
+  /**
    * The pagination class will produce
    * URLs with this parameter name: 
    * http://yourdomain.com/list-of-items/page:1
@@ -305,23 +311,6 @@ c::set(array(
   'lang.support' => false,
 
   /**
-   * Set the default language code
-   */
-  'lang.default' => 'en',
-
-  /**
-   * If set to true, all urls for default language pages
-   * will always contain the language code. If set to 
-   * false you get shorter and cleaner urls for the default language
-   */
-  'lang.default.longurl' => true,
-
-  /**
-   * Set the codes of all available languages
-   */
-  'lang.available' => array('en', 'de'),
-  
-  /**
    * If true, Kirby will try to detect the 
    * current language of the user and switch to 
    * that language if available.
@@ -329,22 +318,33 @@ c::set(array(
   'lang.detect' => true,
 
   /**
-   * Set an additional locale string to be used
-   * for PHP's locale setting
+   * URL mode for multi-language websites
+   * 
+   * default: The language code will be prepended to the URI (i.e. http://yourdomain.com/en/my-subpage)
+   * short: The language code will not be prepended for the default langugae, but for all others (i.e. http://yourdomain.com/my-subpage & http://yourdomain.com/de/my-subpage)
    */
-  'lang.locale' => false,
+  'lang.urls' => 'default',
 
   /**
-   * A set of human readable names for available languages
+   * An array with the configuration for all 
+   * available languages 
    */
-  'lang.names' => array('en' => 'English', 'de' => 'Deutsch'),
-
-  /**
-   * An optional set of locales for available languages
-   * This will overrule the lang.local setting if available.
-   */
-  'lang.locales' => array(),
-
+  'lang.config' => array(
+    'en' => array(
+      'code'      => 'en',
+      'name'      => 'English',
+      'default'   => true, 
+      'locale'    => 'en_US', 
+      'available' => true,
+    ),
+    'de' => array(
+      'code'      => 'de',
+      'name'      => 'Deutsch',
+      'locale'    => 'de_DE',
+      'available' => true,
+    )
+  ),
+  
   /**
    * Define the root for the folder
    * where auto-loadable css files should be located

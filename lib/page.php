@@ -210,7 +210,7 @@ class Page {
           // search for a translated url_key in that language
           if($slug = $content->url_key()) {
             // if available, use the translated url key as slug
-            return $slug;
+            return str::slug($slug);
           }
         } 
 
@@ -381,7 +381,7 @@ class Page {
     if(site::$multilang) {
       
       if($content = $this->defaultContent()) {
-        return $this->intendedTemplate = preg_replace('!\.(' . implode('|', c::get('lang.available')) . ')$!i', '', $content->name());
+        return $this->intendedTemplate = preg_replace('!\.(' . implode('|', site::instance()->languages()->codes()) . ')$!i', '', $content->name());
       } else {
         return $this->intendedTemplate = c::get('tpl.default');
       }
@@ -1188,6 +1188,7 @@ class Page {
     $dump = array(
       'id'               => $this->id(),
       'url'              => $this->url(),
+      'tinyurl'          => $this->tinyurl(),
       'uri'              => $this->uri(),
       'folder'           => $this->diruri(),
       'num'              => $this->num(),

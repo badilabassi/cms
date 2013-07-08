@@ -22,40 +22,81 @@ if(!defined('KIRBY')) die('Direct access is not allowed');
  */
 class Languages extends Collection {
 
+  protected $default   = null;
+  protected $preferred = null;
+  protected $current   = null;
+  protected $codes     = null;
+
   /**
    * Constructor
    * 
    * @param array $codes An optional array of available language codes
    */
-  public function __construct($codes = array()) {
+  public function __construct() {
 
-    if(empty($codes)) $codes = c::get('lang.available', array());
+    // get all available languages
+    $languages = c::get('lang.config', array());
 
-    // get the uri including the language code
-    $uri    = new uri(null, array('subfolder' => site::instance()->subfolder()));
-    $active = (c::get('lang.current') && in_array(c::get('lang.current'), $codes)) ? c::get('lang.current') : $uri->path()->first();
+    if(empty($languages)) raise('Invalid language setup. Please refer to the docs');
 
-    // if there's no code available in the url, use the default language
-    if(empty($active) || !in_array($active, c::get('lang.available'))) $active = c::get('lang.default');
-
-    // store the current language code in the config 
-    c::set('lang.current', $active);
-
-    // attach all languages
-    foreach($codes as $lang) {
-      $this->set($lang, new Language($lang, $lang == $active));
+    // setup all available languages
+    foreach($languages as $config) {
+      $this->set($config['code'], new Language($config));
     }
 
+    // check for a current language code in the config
+    // this will overwrite codes in the url
+    $currentCode = c::get('lang.current');
+
+    // if the current language is not set yet, get the code from the uri
+    if(empty($currentCode)) {
+
+      // get the uri including the language code
+      $uri = new uri(null, array('subfolder' => site::instance()->subfolder()));
+
+      // get the code of the current language if available
+      $currentCode = $uri->path()->first();
+
+    }
+
+    // get the default language 
+    $default = $this->findDefault();
+
+    // try to find the current language
+    if(in_array($currentCode, $this->codes()) and $current = $this->find($currentCode)) {
+      // current is already set
+    } else {
+      $current = $default;
+    }
+
+    // mark the current language as current
+    $current->isCurrent = true;
+
+    // store the current language code and the default code in the config
+    c::set('lang.current', $current->code());
+    c::set('lang.default', $default->code());
+
   }  
+
+  /**
+   * Return all available language codes
+   * 
+   * @return array
+   */
+  public function codes() {
+    if(!is_null($this->codes)) return $this->codes;
+    return $this->codes = $this->keys();
+  }
 
   /**
    * Returns the currently active language
    * 
    * @return object Language
    */
-  public function findActive() {
+  public function findCurrent() {
+    if(!is_null($this->current)) return $this->current;    
     foreach($this->data as $lang) {
-      if($lang->isActive()) return $lang;
+      if($lang->isCurrent()) return $this->current = $lang;
     }
   }
 
@@ -65,8 +106,9 @@ class Languages extends Collection {
    * @return object Language
    */
   public function findDefault() {
+    if(!is_null($this->default)) return $this->default;    
     foreach($this->data as $lang) {
-      if($lang->isDefault()) return $lang;
+      if($lang->isDefault()) return $this->default = $lang;
     }
   }
 
@@ -76,10 +118,11 @@ class Languages extends Collection {
    * @return object Language
    */
   public function findPreferred() {
+    if(!is_null($this->preferred)) return $this->preferred;    
     foreach($this->data as $lang) {
-      if($lang->isPreferred()) return $lang;
+      if($lang->isPreferred()) return $this->preferred = $lang;
     }
-    return $this->findDefault();
+    return $this->preferred = $this->findDefault();
   }
 
   /**

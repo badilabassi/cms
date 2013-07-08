@@ -156,7 +156,7 @@ class Site extends Page {
     // add the language code as subfolder 
     // for multi language websites
     if(static::$multilang) {
-      if(c::get('lang.default.longurl') == true or !$this->language()->isDefault()) {
+      if(c::get('lang.urls') != 'short' or !$this->language()->isDefault()) {
         $subfolder .= '/' . $this->language()->code();
       }
     }
@@ -354,6 +354,10 @@ class Site extends Page {
    * @return object Languages
    */
   public function languages() {
+
+    // don't return anything if language support is switched off
+    if(!site::$multilang) return null;
+
     if(!is_null($this->languages)) return $this->languages;
     return $this->languages = new Languages();
   }
@@ -367,16 +371,21 @@ class Site extends Page {
    */
   public function language($code = null) {
 
+    // don't return anything if language support is switched off
+    if(!site::$multilang) return null;
+
     if(is_null($code)) {
 
       if(isset($this->language['current'])) {
         return $this->language['current'];      
       } else {
-        return $this->language['current'] = $this->languages()->findActive();  
+        return $this->language['current'] = $this->languages()->findCurrent();  
       }
       
     } else if(isset($this->language[$code])) {
       return $this->language[$code];
+    } else if($code == 'default') {
+      return $this->language[$code] = $this->languages()->findDefault();
     } else {
       return $this->language[$code] = $this->languages()->find($code);
     }
@@ -585,11 +594,13 @@ class Site extends Page {
     // avoid errors in php 5.3
     @date_default_timezone_set(c::get('timezone'));
 
-    // set default locale settings for php functions
-    if(c::get('lang.locale')) setlocale(LC_ALL, c::get('lang.locale'));
-
-    // store the current language code in the config
-    if(static::$multilang) c::set('lang.current', $this->language()->code());
+    if(site::$multilang and $this->language()->locale()) {
+      // set the local for the specific language
+      setlocale(LC_ALL, $this->language()->locale());      
+    } else if(c::get('locale')) {
+      // set default locale settings for php functions
+      setlocale(LC_ALL, c::get('locale'));      
+    }
 
     // load all language vars
     f::load(KIRBY_PROJECT_ROOT_LANGUAGES . DS . c::get('lang.default') . '.php');

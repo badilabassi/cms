@@ -4,7 +4,7 @@ require_once('lib/bootstrap.php');
 
 class FilesTest extends PHPUnit_Framework_TestCase {
   public function __construct() {
-    $this->page  = new Page(TEST_CONTENT . '/01-tests/files');
+    $this->page  = site()->pages()->find('tests/files');   
     $this->files = $this->page->files(); 
   }
   
