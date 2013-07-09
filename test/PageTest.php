@@ -107,10 +107,10 @@ class PageTest extends PHPUnit_Framework_TestCase {
     
     $this->assertTrue($p->hasPrev());
     $this->assertTrue($p->hasNext());
-    
+
     $this->assertFalse($p->hasPrevVisible());
     $this->assertTrue($p->hasPrevInvisible());
-    $this->assertTrue($p->hasNextVisible());
+    $this->assertFalse($p->hasNextVisible());
     $this->assertTrue($p->hasNextInvisible());
   }
   
