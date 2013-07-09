@@ -132,7 +132,7 @@ c::set(array(
   /**
    * Default location for templates
    */
-  'tpl.root' => KIRBY_PROJECT_ROOT_TEMPLATES,
+  'tpl.root' => KIRBY_SITE_ROOT_TEMPLATES,
 
   /**
    * Show/hide PHP errors

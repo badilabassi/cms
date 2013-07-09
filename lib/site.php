@@ -53,8 +53,8 @@ class Site extends Page {
   // cache for the active page object
   protected $activePage = null;
 
-  // cache for the breadcrumb collection
-  protected $breadcrumb = null;
+  // cache for the visitor object
+  protected $visitor = null;
 
   // cache for the last modified date
   protected $modified = null;
@@ -421,17 +421,8 @@ class Site extends Page {
    * @return object Visitor
    */
   public function visitor() {
-    return $this->plugins()->visitor()->instance();
-  }
-
-  /**
-   * Returns a collection of pages, which are currently open
-   * This is perfect to create a breadcrumb navigation
-   * 
-   * @return object Pages
-   */
-  public function breadcrumb() {
-    return $this->plugins()->breadcrumb()->instance();
+    if(!is_null($this->visitor)) return $this->visitor;
+    return $this->visitor = new Visitor();
   }
 
   // rendering
@@ -552,21 +543,15 @@ class Site extends Page {
   protected function configure($params = array()) {
 
     // load custom config files
-    f::load(KIRBY_PROJECT_ROOT_CONFIG . DS . 'config.php');
-    f::load(KIRBY_PROJECT_ROOT_CONFIG . DS . 'config.' . server::get('server_addr') . '.php');
-    f::load(KIRBY_PROJECT_ROOT_CONFIG . DS . 'config.' . server::get('server_name') . '.php');
+    f::load(KIRBY_SITE_ROOT_CONFIG . DS . 'config.php');
+    f::load(KIRBY_SITE_ROOT_CONFIG . DS . 'config.' . server::get('server_addr') . '.php');
+    f::load(KIRBY_SITE_ROOT_CONFIG . DS . 'config.' . server::get('server_name') . '.php');
 
-    // get all config options that have been stored so far
-    $defaults = c::get();
-
-    // merge them with the passed late options again
-    $config = array_merge($defaults, $params);
-
-    // store them again
-    c::set($config);
+    // merge the late options
+    c::set($params);
 
     // connect the cache 
-    if(c::get('cache')) cache::connect('file', array('root' => KIRBY_PROJECT_ROOT_CACHE));
+    if(c::get('cache')) cache::connect('file', array('root' => KIRBY_SITE_ROOT_CACHE));
 
     // check for multilang support
     static::$multilang = c::get('lang.support');
@@ -576,11 +561,11 @@ class Site extends Page {
       'root'           => KIRBY_INDEX_ROOT,
       'root.content'   => KIRBY_CONTENT_ROOT,
       'root.kirby'     => KIRBY_CMS_ROOT,
-      'root.site'      => KIRBY_PROJECT_ROOT, 
-      'root.templates' => KIRBY_PROJECT_ROOT_TEMPLATES,
-      'root.snippets'  => KIRBY_PROJECT_ROOT_SNIPPETS,      
-      'root.plugins'   => KIRBY_PROJECT_ROOT_PLUGINS,      
-      'root.cache'     => KIRBY_PROJECT_ROOT_CACHE,      
+      'root.site'      => KIRBY_SITE_ROOT, 
+      'root.templates' => KIRBY_SITE_ROOT_TEMPLATES,
+      'root.snippets'  => KIRBY_SITE_ROOT_SNIPPETS,      
+      'root.plugins'   => KIRBY_SITE_ROOT_PLUGINS,      
+      'root.cache'     => KIRBY_SITE_ROOT_CACHE,      
     ));
 
   }
@@ -603,8 +588,8 @@ class Site extends Page {
     }
 
     // load all language vars
-    f::load(KIRBY_PROJECT_ROOT_LANGUAGES . DS . c::get('lang.default') . '.php');
-    f::load(KIRBY_PROJECT_ROOT_LANGUAGES . DS . c::get('lang.current') . '.php');
+    f::load(KIRBY_SITE_ROOT_LANGUAGES . DS . c::get('lang.default') . '.php');
+    f::load(KIRBY_SITE_ROOT_LANGUAGES . DS . c::get('lang.current') . '.php');
 
   } 
 
@@ -617,10 +602,10 @@ class Site extends Page {
     if(!is_dir($this->root)) raise('The content directory is not readable');
 
     // check for an existing site directory
-    if(!is_dir(KIRBY_PROJECT_ROOT)) raise('The site directory is not readable');
+    if(!is_dir(KIRBY_SITE_ROOT)) raise('The site directory is not readable');
 
     // check for a proper phpversion
-    if(floatval(phpversion()) < 5.2) raise('Please upgrade to PHP 5.2 or higher');
+    if(floatval(phpversion()) < 5.3) raise('Please upgrade to PHP 5.3 or higher');
 
     // check for existing mbstring functions
     if(!function_exists('mb_strtolower')) raise('mb_string functions are required in order to run Kirby properly');

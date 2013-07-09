@@ -71,7 +71,7 @@ class PageTest extends PHPUnit_Framework_TestCase {
 
     $this->assertEquals('default', $this->page->intendedTemplate());
     $this->assertEquals('default', $this->page->template());
-    $this->assertEquals(KIRBY_PROJECT_ROOT_TEMPLATES . DS . 'default.php', $this->page->templateFile());
+    $this->assertEquals(KIRBY_SITE_ROOT_TEMPLATES . DS . 'default.php', $this->page->templateFile());
 
   }
   

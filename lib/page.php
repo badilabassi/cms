@@ -75,6 +75,9 @@ class Page {
   // cache for the default content in multi-lang sites
   protected $defaultContent = null;
 
+  // page object extensions
+  static protected $extensions = array();
+
   /**
    * Constructor
    * 
@@ -350,7 +353,7 @@ class Page {
     if(!is_null($this->template)) return $this->template;
 
     $templateName = $this->intendedTemplate();
-    $templateFile = KIRBY_PROJECT_ROOT_TEMPLATES . DS . $templateName . '.php';
+    $templateFile = KIRBY_SITE_ROOT_TEMPLATES . DS . $templateName . '.php';
 
     return $this->template = (file_exists($templateFile)) ? $templateName : c::get('tpl.default');
   
@@ -362,7 +365,7 @@ class Page {
    * @return string
    */
   public function templateFile() {
-    return KIRBY_PROJECT_ROOT_TEMPLATES . DS . $this->template() . '.php';
+    return KIRBY_SITE_ROOT_TEMPLATES . DS . $this->template() . '.php';
   }
 
   /**
@@ -400,7 +403,7 @@ class Page {
    * @return string
    */
   public function intendedTemplateFile() {
-    return KIRBY_PROJECT_ROOT_TEMPLATES . DS . $this->intendedTemplate() . '.php';
+    return KIRBY_SITE_ROOT_TEMPLATES . DS . $this->intendedTemplate() . '.php';
   }
 
   /**
@@ -1087,9 +1090,22 @@ class Page {
    */
   public function __call($key, $arguments = null) {    
     
-    $content = ($this->content()) ? $this->content()->data($key) : null;
-  
-    if($content && $key == 'date') {
+    $content = ($this->content()) ? $this->content()->data($key, null) : null;
+
+    // try looking for an extension for that key
+    if(is_null($content) && isset(static::$extensions[$key])) {
+      if(is_callable(static::$extensions[$key])) {
+        
+        // add the page to the list of arguments
+        if(is_array($arguments)) {
+          $arguments = array_merge(array($this), $arguments);
+        }
+
+        return call_user_func_array(static::$extensions[$key], $arguments);  
+      } else {
+        return static::$extensions[$key];
+      }
+    } else if($content && $key == 'date') {
       $content = (!empty($arguments)) ? $content->toDate(a::first($arguments)) : $content->toTimestamp();
     }
 
@@ -1166,6 +1182,18 @@ class Page {
 
     return $html;
 
+  }
+
+  /**
+   * Makes it possible to extend the page object 
+   * For each extended key, there's a new magic getter available afterwards
+   * 
+   * @param string $key 
+   * @param mixed $value Can be an object, a simple string or a callable function 
+   */
+  static public function extend($key, $value) {
+    if(isset(static::$extensions[$key])) raise('The extension already exists: ' . $key);
+    static::$extensions[$key] = $value;
   }
 
   /**

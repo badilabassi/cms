@@ -131,7 +131,7 @@ function notFound() {
  * @return string
  */ 
 function snippet($snippet, $data = array(), $return = false) {
-  return tpl::loadFile(KIRBY_PROJECT_ROOT_SNIPPETS . DS . $snippet . '.php', $data, $return);
+  return tpl::loadFile(KIRBY_SITE_ROOT_SNIPPETS . DS . $snippet . '.php', $data, $return);
 }
 
 /**

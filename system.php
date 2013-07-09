@@ -23,7 +23,7 @@ if(!defined('KIRBY_INDEX_ROOT')) {
   define('KIRBY_CMS_ROOT', $rootKirby); 
   
   // location of the site folder
-  define('KIRBY_PROJECT_ROOT', $rootSite);
+  define('KIRBY_SITE_ROOT', $rootSite);
   
   // location of the content folder
   define('KIRBY_CONTENT_ROOT', $rootContent);  

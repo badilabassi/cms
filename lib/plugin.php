@@ -38,9 +38,6 @@ class Plugin {
   // the plugin description, coming from the package.json file
   protected $description;
   
-  // An attached object instance if needed
-  protected $instance = null;
-
   /**
    * Installs a plugin and also initializes a child class of 
    * Plugin if available. 
@@ -73,47 +70,6 @@ class Plugin {
   public function __construct($id, $root) {
     $this->id   = $id;
     $this->root = $root;
-    $this->onInstall();
-  }
-
-  // Events
-
-  /**
-   * Is being triggered within the constructor
-   * and can be used in child classes to do something
-   * as soon as the plugin is being loaded/installed
-   * 
-   * @return false
-   */
-  public function onInstall() {    
-    return false;
-  }
-
-  /**
-   * Is being triggered when the instance method
-   * is called for the first time. Afterwards the
-   * instance is cached and this won't be called again.
-   *
-   * Use this in child classes to create an instance of
-   * any object you want to attach to the plugin
-   * 
-   * @param array $arguments Optional arguments to pass to the instance
-   * @return false
-   */
-  public function onInit($arguments = array()) {
-    return false;
-  }
-
-  /**
-   * Returns the attached object instance. 
-   * Makes sure to cache it and init it only once. 
-   * 
-   * @param array $arguments Optional arguments to pass to the instance
-   * @return object
-   */
-  public function instance($arguments = array()) {
-    if(!is_null($this->instance)) return $this->instance;
-    return $this->instance = $this->onInit($arguments);
   }
 
   /**
@@ -125,24 +81,6 @@ class Plugin {
   public function info() {
     if(!is_null($this->info)) return $this->info;
     return $this->info = new Object(f::read($this->root . DS . 'package.json', 'json'));
-  }
-
-  /**
-   * Loads an additional sub file of the plugin
-   * Use it like this $this->load('lib' . DS . 'somefile.php')
-   * to load somefile.php within the lib subfolder of the plugin folder
-   * 
-   * @param string $file The relative path to the loadable file. This can also be an array of files.
-   */
-  public function load($file) {
-
-    if(is_array($file)) {
-      foreach($file as $f) $this->load($f);
-      return true;
-    }
-
-    require_once($this->root . DS . $file);
-  
   }
 
   /**

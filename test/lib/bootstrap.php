@@ -7,7 +7,7 @@ if(!defined('TEST_KIRBY_LIB')) define('TEST_KIRBY_LIB', TEST_KIRBY_CORE . '/lib'
 
 define('KIRBY_INDEX_ROOT',   realpath(dirname(__FILE__) . '/../../..'));
 define('KIRBY_CMS_ROOT',     realpath(dirname(__FILE__) . '/../..'));
-define('KIRBY_PROJECT_ROOT', TEST_SITE);
+define('KIRBY_SITE_ROOT', TEST_SITE);
 define('KIRBY_CONTENT_ROOT', TEST_CONTENT);
 
 // include the kirby bootstrapper file

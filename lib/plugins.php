@@ -35,14 +35,14 @@ class Plugins {
     // load a specific plugin
     if(is_null($id)) {
 
-      $dirs = array_merge(dir::read(KIRBY_CMS_ROOT_PLUGINS), dir::read(KIRBY_PROJECT_ROOT_PLUGINS));
+      $dirs = array_merge(dir::read(KIRBY_CMS_ROOT_PLUGINS), dir::read(KIRBY_SITE_ROOT_PLUGINS));
 
       foreach($dirs as $id) $this->load($id);
       return true;
 
     }
 
-    $root = KIRBY_PROJECT_ROOT_PLUGINS . DS . $id;
+    $root = KIRBY_SITE_ROOT_PLUGINS . DS . $id;
 
     // fall back to core plugins
     if(!file_exists($root)) $root = KIRBY_CMS_ROOT_PLUGINS . DS . $id;

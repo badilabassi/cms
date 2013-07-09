@@ -39,8 +39,8 @@ if(!defined('KIRBY_INDEX_ROOT')) define('KIRBY_INDEX_ROOT', dirname(KIRBY_CMS_RO
 // location of the content directory
 if(!defined('KIRBY_CONTENT_ROOT')) define('KIRBY_CONTENT_ROOT', KIRBY_INDEX_ROOT . DS . 'content');
 
-// location of the site directory with all project specific files and configs
-if(!defined('KIRBY_PROJECT_ROOT')) define('KIRBY_PROJECT_ROOT', KIRBY_INDEX_ROOT . DS . 'site');
+// location of the site directory with all site specific files and configs
+if(!defined('KIRBY_SITE_ROOT')) define('KIRBY_SITE_ROOT', KIRBY_INDEX_ROOT . DS . 'site');
 
 /**
  * Fixed constants
@@ -55,13 +55,13 @@ define('KIRBY_CMS_ROOT_PLUGINS', KIRBY_CMS_ROOT . DS . 'plugins');
 define('KIRBY_CMS_ROOT_MODALS',  KIRBY_CMS_ROOT . DS . 'modals');
 
 // project folder internals
-define('KIRBY_PROJECT_ROOT_CACHE',     KIRBY_PROJECT_ROOT . DS . 'cache');
-define('KIRBY_PROJECT_ROOT_TEMPLATES', KIRBY_PROJECT_ROOT . DS . 'templates');
-define('KIRBY_PROJECT_ROOT_SNIPPETS',  KIRBY_PROJECT_ROOT . DS . 'snippets');
-define('KIRBY_PROJECT_ROOT_CONFIG',    KIRBY_PROJECT_ROOT . DS . 'config');
-define('KIRBY_PROJECT_ROOT_LANGUAGES', KIRBY_PROJECT_ROOT . DS . 'languages');
-define('KIRBY_PROJECT_ROOT_PLUGINS',   KIRBY_PROJECT_ROOT . DS . 'plugins');
-define('KIRBY_PROJECT_ROOT_TAGS',      KIRBY_PROJECT_ROOT . DS . 'tags');
+define('KIRBY_SITE_ROOT_CACHE',     KIRBY_SITE_ROOT . DS . 'cache');
+define('KIRBY_SITE_ROOT_TEMPLATES', KIRBY_SITE_ROOT . DS . 'templates');
+define('KIRBY_SITE_ROOT_SNIPPETS',  KIRBY_SITE_ROOT . DS . 'snippets');
+define('KIRBY_SITE_ROOT_CONFIG',    KIRBY_SITE_ROOT . DS . 'config');
+define('KIRBY_SITE_ROOT_LANGUAGES', KIRBY_SITE_ROOT . DS . 'languages');
+define('KIRBY_SITE_ROOT_PLUGINS',   KIRBY_SITE_ROOT . DS . 'plugins');
+define('KIRBY_SITE_ROOT_TAGS',      KIRBY_SITE_ROOT . DS . 'tags');
 
 // load the toolkit
 require_once(KIRBY_CMS_ROOT_TOOLKIT . DS . 'bootstrap.php');

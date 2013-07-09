@@ -3,38 +3,13 @@
 // direct access protection
 if(!defined('KIRBY')) die('Direct access is not allowed');
 
-/**
- * Breadcrumb Plugin
- * 
- * Initiates the breadcrumb object
- * and attaches it to site() 
- * 
- * @package   Kirby CMS
- * @author    Bastian Allgeier <bastian@getkirby.com>
- * @link      http://getkirby.com
- * @copyright Bastian Allgeier
- * @license   http://getkirby.com/license
- */
-class BreadcrumbPlugin extends Plugin {
+// add the breadcrumb collection to the site object
+site::extend('breadcrumb', function($site) {
 
-  /**
-   * Calls the crumb method as soon as the
-   * plugin is initiated so it can be accessed with
-   * site()->breadcrumb()
-   */
-  public function onInit($arguments = array()) {
-    return $this->crumb();
-  }
+  static $breadcrumb;
 
-  /**
-   * The crumb method creates the current 
-   * breadcrumb and returns a new Pages collection
-   * 
-   * @return object Pages
-   */
-  protected function crumb() {
+  if(is_null($breadcrumb)) {
 
-    $site  = site();
     $path  = $site->uri()->path()->toArray(); 
     $crumb = array();
   
@@ -63,8 +38,10 @@ class BreadcrumbPlugin extends Plugin {
     
     // make it a pages object so we can handle it
     // like we handle all pages on the site  
-    return new Pages($crumb);
+    $breadcrumb = new Pages($crumb);
 
   }
 
-}
+  return $breadcrumb;
+
+});

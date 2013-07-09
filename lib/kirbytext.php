@@ -185,7 +185,7 @@ class Kirbytext {
    */
   public function tagclass($name) {
 
-    $file  = KIRBY_PROJECT_ROOT_TAGS . DS . $name . '.php';
+    $file  = KIRBY_SITE_ROOT_TAGS . DS . $name . '.php';
     $class = 'Kirby\\CMS\\Kirbytext\\Tag\\' . $name;
 
     if(!file_exists($file)) {

@@ -1,5 +1,9 @@
 <?php
 
+namespace Kirby\CMS;
+
+use Kirby\Toolkit\C;
+
 // direct access protection
 if(!defined('KIRBY')) die('Direct access is not allowed');
 
@@ -12,7 +16,7 @@ if(!defined('KIRBY')) die('Direct access is not allowed');
  * @copyright Bastian Allgeier
  * @license   http://getkirby.com/license
  */
-class SiteVisitor extends Visitor {
+class Visitor extends \Kirby\Toolkit\Visitor {
 
   // cache for the detected language
   static protected $language = null;
@@ -23,10 +27,10 @@ class SiteVisitor extends Visitor {
    * @return string
    */
   static public function acceptedLanguageCode() {
-    if(!is_null(self::$acceptedLanguageCode)) return self::$acceptedLanguageCode;
+    if(!is_null(static::$acceptedLanguageCode)) return static::$acceptedLanguageCode;
     $detected = parent::acceptedLanguageCode();
-    $detected = (empty($detected) || !in_array($detected, c::get('lang.available'))) ? c::get('lang.default') : $detected;    
-    return self::$acceptedLanguageCode = $detected;
+    $detected = language::valid($detected) ? $detected : c::get('lang.default');    
+    return static::$acceptedLanguageCode = $detected;
   }
 
   /**
@@ -38,16 +42,18 @@ class SiteVisitor extends Visitor {
    */
   static public function language() {
   
-    if(!is_null(self::$language)) return self::$language;   
+    if(!site::$multilang) return false;
+
+    if(!is_null(static::$language)) return static::$language;   
  
     // try to find the language in the available languages collection
-    $language = site()->languages()->find(self::acceptedLanguageCode());
+    $language = site::instance()->languages()->find(static::acceptedLanguageCode());
 
     // otherwise replace it with the default language
     if(!$language) $language = site()->languages()->findDefault();
 
     // store and return
-    return self::$language = $language;
+    return static::$language = $language;
   
   }
   

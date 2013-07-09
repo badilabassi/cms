@@ -130,7 +130,7 @@ class Cache {
     if($this->isEnabled() && !$this->isIgnored()) {
 
       // make sure the directory is there
-      dir::make(KIRBY_PROJECT_ROOT_CACHE . DS . 'html', $recursive = true);
+      dir::make(KIRBY_SITE_ROOT_CACHE . DS . 'html', $recursive = true);
 
       // store the cache file 
       cache::set($this->id, $this->data);
