@@ -432,7 +432,7 @@ class Site extends Page {
    * 
    * @return string
    */
-  public function toHtml($echo = false) {
+  public function toHTML($echo = false) {
 
     $this->html = $this->activePage()->toHtml();
 

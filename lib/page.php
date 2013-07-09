@@ -1158,11 +1158,11 @@ class Page {
    * 
    * @return string
    */
-  public function toHtml() {
+  public function toHTML() {
 
     $cache = new Cache($this);
 
-    if($html = $cache->get()) {
+    if($html = $cache->get()) {      
       // $html is already set
     } else {
 

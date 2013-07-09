@@ -4,6 +4,7 @@ namespace Kirby\CMS\Page;
 
 use Kirby\Toolkit\C;
 use Kirby\CMS\Page;
+use Kirby\CMS\Site;
 
 // direct access protection
 if(!defined('KIRBY')) die('Direct access is not allowed');
@@ -95,7 +96,7 @@ class Cache {
    * @return boolean
    */
   public function isAvailable() {
-    return $this->isEnabled() && cache::created($this->id) >= site::instance()->modified() ? true : false;
+    return $this->isEnabled() && \Kirby\Toolkit\Cache::created($this->id) >= site::instance()->modified() ? true : false;
   }
 
   /**
@@ -107,7 +108,7 @@ class Cache {
 
     if(!$this->isAvailable() || $this->isIgnored()) return false;
 
-    return $this->data = cache::get($this->id);    
+    return $this->data = \Kirby\Toolkit\Cache::get($this->id);    
   
   }
 
@@ -130,10 +131,10 @@ class Cache {
     if($this->isEnabled() && !$this->isIgnored()) {
 
       // make sure the directory is there
-      dir::make(KIRBY_SITE_ROOT_CACHE . DS . 'html', $recursive = true);
+      \Kirby\Toolkit\Dir::make(KIRBY_SITE_ROOT_CACHE . DS . 'html', $recursive = true);
 
       // store the cache file 
-      cache::set($this->id, $this->data);
+      \Kirby\Toolkit\Cache::set($this->id, $this->data);
 
     }
 
