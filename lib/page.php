@@ -81,11 +81,17 @@ class Page {
   /**
    * Constructor
    * 
-   * @param string $root The full root to this page's directory
+   * @param mixed $root The full root to this page's directory or a page object which this should be converted from
    */
   public function __construct($root) {
-    $this->root = realpath($root);
-    $this->id   = md5($this->root);  
+    if(is_a($root, 'Kirby\\CMS\\Page')) {
+      $this->root   = $root->root();
+      $this->id     = $root->id();
+      $this->parent = $root->parent();
+    } else {
+      $this->root = realpath($root);
+      $this->id   = md5($this->root);  
+    } 
   } 
   
   // directory related methods
@@ -345,11 +351,16 @@ class Page {
    * 
    * This method returns the name of the default template
    * if there's no template with such a name
-   * 
+   *
+   * @param string $template Optional template name to overwrite the auto-detected template 
    * @return string
    */
-  public function template() {
-    
+  public function template($template = null) {
+  
+    // use this method as setter to overwrite the used template
+    if(!is_null($template)) return $this->template = $template;
+
+    // check for a cached template name
     if(!is_null($this->template)) return $this->template;
 
     $templateName = $this->intendedTemplate();

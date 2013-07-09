@@ -2,6 +2,8 @@
 
 namespace Kirby\CMS;
 
+use Kirby\Toolkit\Collection;
+use Kirby\Toolkit\Str;
 use Kirby\CMS\File\Content;
 
 // direct access protection

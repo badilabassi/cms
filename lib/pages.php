@@ -420,6 +420,16 @@ class Pages extends Collection {
   }
 
   /**
+   * Tries to find the index number for the given element
+   * 
+   * @param  mixed $needle the element to search for
+   * @return mixed the name of the key or false
+   */      
+  public function indexOf($needle) {
+    return array_search('_' . $needle->id(), array_keys($this->data));
+  }
+  
+  /**
    * Merges multiple collections of pages
    * 
    * <code>

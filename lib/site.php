@@ -468,10 +468,11 @@ class Site extends Page {
 
   /**
    * Returns the usable template
-   * 
+   *
+   * @param string $template This argument has no effect and is just here to align to strict standards. 
    * @return string
    */
-  public function template() {
+  public function template($template = null) {
     return 'site';    
   }
 
