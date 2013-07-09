@@ -8,9 +8,9 @@ if(!defined('KIRBY')) die('Direct access is not allowed');
 $modules   = (function_exists('apache_get_modules')) ? apache_get_modules() : array(); 
 $rewrite   = in_array('mod_rewrite', $modules);
 $subfolder = ltrim(dirname(server::get('script_name')), '/');
-$root      = ROOT;
-$templates = ROOT_SITE_TEMPLATES;
-$cache     = ROOT_SITE_CACHE;
+$root      = KIRBY_INDEX_ROOT;
+$templates = KIRBY_SITE_ROOT_TEMPLATES;
+$cache     = KIRBY_SITE_ROOT_CACHE;
 
 // auto-detect the url if it is not set
 $url = (c::get('url') === false) ? c::get('scheme') . server::get('http_host') : rtrim(c::get('url'), '/');
@@ -25,7 +25,7 @@ if(!empty($subfolder)) {
 }
 
 $compatible = true;
-if(floatval(phpversion()) < 5.2) {
+if(floatval(phpversion()) < 5.3) {
   $compatible = false;
 }
 
@@ -88,10 +88,10 @@ strong {
 
 <dl>
   <dt>Kirby CMS Version</dt>
-  <dd><?php echo c::get('version.number') . ' (' . c::get('version.string') . ')' ?></dd>
+  <dd><?php echo c::get('cms.version.number') . ' (' . c::get('cms.version.string') . ')' ?></dd>
 
   <dt>Kirby Toolkit Version</dt>
-  <dd><?php echo c::get('version') ?></dd>
+  <dd><?php echo c::get('toolkit.version.number') . ' (' . c::get('toolkit.version.string') . ')' ?></dd>
 
   <dt>URL</dt>
   <?php if(c::get('url') && $url != c::get('url')): ?>
@@ -118,16 +118,16 @@ strong {
   <?php endif ?>
 
   <dt>Root</dt>
-  <dd><?php echo ROOT ?></dd>
+  <dd><?php echo KIRBY_INDEX_ROOT ?></dd>
 
   <dt>System Folder</dt>
-  <dd><?php echo ROOT_KIRBY ?></dd>
+  <dd><?php echo KIRBY_CMS_ROOT ?></dd>
 
   <dt>Content Folder</dt>
-  <dd><?php echo ROOT_CONTENT ?></dd>
+  <dd><?php echo KIRBY_CONTENT_ROOT ?></dd>
 
   <dt>Site Folder</dt>
-  <dd><?php echo ROOT_SITE ?></dd>
+  <dd><?php echo KIRBY_SITE_ROOT ?></dd>
 
   <dt>Templates Folder</dt>
   <?php if(is_dir($templates)): ?>
@@ -154,11 +154,8 @@ strong {
   <dd><?php echo $cache ?></dd>
   <?php endif; ?>
 
-  <dt>Cache Data Structure</dt>
-  <dd><?php echo (c::get('cache.data')) ? 'yes' : 'no' ?></dd>
-
-  <dt>Cache HTML</dt>
-  <dd><?php echo (c::get('cache.html')) ? 'yes' : 'no' ?></dd>
+  <dt>Cache enabled</dt>
+  <dd><?php echo (c::get('cache')) ? 'yes' : 'no' ?></dd>
 
   <dt>URL-Rewriting</dt>
   <?php if(empty($modules)): ?>
@@ -181,20 +178,20 @@ strong {
   <dt>Your Server Software</dt>
   <dd><?php echo $_SERVER['SERVER_SOFTWARE'] ?></dd>
 
+  <dt>PHP Error Reporting</dt>
+  <dd><?php echo (ini_get('display_errors')) ? 'yes' : 'no' ?></dd>
+
   <dt>Installed Plugins</dt>
-  <dd><?php a::show(dir::read(ROOT_SITE_PLUGINS)) ?></dd>
+  <dd><?php a::show(dir::read(KIRBY_SITE_ROOT_PLUGINS)) ?></dd>
     
   <dt>Installed Snippets</dt>
-  <dd><?php a::show(dir::read(ROOT_SITE_SNIPPETS)) ?></dd>
+  <dd><?php a::show(dir::read(KIRBY_SITE_ROOT_SNIPPETS)) ?></dd>
 
   <dt>Your config files</dt>
-  <dd><?php a::show(dir::read(ROOT_SITE_CONFIG)) ?></dd>
+  <dd><?php a::show(dir::read(KIRBY_SITE_ROOT_CONFIG)) ?></dd>
     
   <dt>Your entire config</dt>
   <dd><?php a::show(c::get()) ?></dd>
-
-  <dt>PHP Error Reporting</dt>
-  <dd><?php echo (ini_get('display_errors')) ? 'yes' : 'no' ?></dd>
 
 </ul>
 
