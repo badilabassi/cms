@@ -5,6 +5,7 @@ namespace Kirby\CMS;
 use Kirby\Toolkit\C;
 use Kirby\Toolkit\Cache;
 use Kirby\Toolkit\Dir;
+use Kirby\Toolkit\Event;
 use Kirby\Toolkit\F;
 use Kirby\Toolkit\G;
 use Kirby\Toolkit\Router;
@@ -58,9 +59,6 @@ class Site extends Page {
 
   // cache for the last modified date
   protected $modified = null;
-
-  // cache for the generated html
-  protected $html = null;
 
   // cache for the current language 
   protected $language = array();
@@ -325,13 +323,13 @@ class Site extends Page {
     $uri = (string)$this->uri()->path();
 
     // if the path is empty, use the homepage uid
-    if(empty($uri) || $uri == $this->subfolder()) $uri = c::get('home', 'home');
+    if(empty($uri) or $uri == $this->subfolder()) $uri = c::get('home', 'home');
 
     // try to find an active page by the given uri
     $activePage = $this->children()->findByURI($uri, static::$multilang ? 'slug' : 'uid');
 
     // check if the active page is valid    
-    if($activePage && $activePage->uri() == $uri) {      
+    if($activePage and $activePage->uri() == $uri) {      
       return $this->activePage = $activePage;    
     } else if($route = router::match($this->uri()->path())) {
 
@@ -342,6 +340,7 @@ class Site extends Page {
       if($p = $this->pages->find($uri)) return $this->activePage = $p;
 
     } 
+
 
     // fallback to the error page
     return $this->activePage = $this->errorPage();
@@ -434,10 +433,13 @@ class Site extends Page {
    */
   public function toHTML($echo = false) {
 
-    $this->html = $this->activePage()->toHtml();
+    $page = $this->activePage();
+    $html = $page->toHtml();
 
-    if($echo) echo($this->html);
-    return $this->html;
+    event::trigger('site.toHTML', array($this, $page, &$html));
+
+    if($echo) echo($html);
+    return $html;
 
   }
 
@@ -445,6 +447,7 @@ class Site extends Page {
    * Renders the page as HTML and echos the result
    */
   public function show() {
+    event::trigger('site.show', array($this));
     echo $this->toHtml();
   }
 
