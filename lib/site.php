@@ -436,6 +436,9 @@ class Site extends Page {
     $page = $this->activePage();
     $html = $page->toHtml();
 
+    // send an 404 header for error pages
+    if($page->isErrorPage() && c::get('error.header')) header("HTTP/1.0 404 Not Found");
+
     event::trigger('site.toHTML', array($this, $page, &$html));
 
     if($echo) echo($html);
