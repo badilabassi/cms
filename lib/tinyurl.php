@@ -9,8 +9,10 @@ use Kirby\Toolkit\URI;
 if(!defined('KIRBY')) die('Direct access is not allowed');
 
 /**
- * Tinyurl handler class
+ * Tinyurl
  *
+ * Handles building and resolving Kirby's internal Tinyurls.
+ * 
  * @package   Kirby CMS
  * @author    Bastian Allgeier <bastian@getkirby.com>
  * @link      http://getkirby.com
