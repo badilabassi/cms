@@ -2,6 +2,7 @@
 
 namespace Kirby\CMS;
 
+use Exception;
 use Kirby\Toolkit\C;
 use Kirby\Toolkit\Cache;
 use Kirby\Toolkit\Dir;
@@ -558,7 +559,11 @@ class Site extends Page {
     c::set($params);
 
     // connect the cache 
-    if(c::get('cache')) cache::connect('file', array('root' => KIRBY_SITE_ROOT_CACHE));
+    try {
+      cache::connect('file', array('root' => KIRBY_SITE_ROOT_CACHE));
+    } catch(Exception $e) {
+      // do nothing. Caching will just fail silently
+    }
 
     // check for multilang support
     static::$multilang = c::get('lang.support');
