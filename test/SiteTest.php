@@ -114,4 +114,5 @@ class SiteTest extends PHPUnit_Framework_TestCase {
     
     $this->assertFalse(site()->ssl());
   }
+
 }
