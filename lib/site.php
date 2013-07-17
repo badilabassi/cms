@@ -2,6 +2,7 @@
 
 namespace Kirby\CMS;
 
+use Exception;
 use Kirby\Toolkit\C;
 use Kirby\Toolkit\Cache;
 use Kirby\Toolkit\Dir;
@@ -333,14 +334,26 @@ class Site extends Page {
       return $this->activePage = $activePage;    
     } else if($route = router::match($this->uri()->path())) {
 
-      // path to an existing page
-      $uri = $route->action();      
+      // get the route action
+      $action = $route->action();
+
+      // if the router action is a callable function…
+      if(is_callable($action)) {
+        // … call that function and pass all options from the url
+        $result = call_user_func_array($action, $route->options());
+      
+        // if the router action returns a page, use that page
+        // as the currently active page
+        if(is_a($result, 'Kirby\\CMS\\Page')) {
+          return $this->activePage = $result;
+        }
 
       // try to find a page for that uri
-      if($p = $this->pages->find($uri)) return $this->activePage = $p;
+      } else if($p = $this->pages->find($action)) {
+        return $this->activePage = $p;
+      }
 
     } 
-
 
     // fallback to the error page
     return $this->activePage = $this->errorPage();
@@ -558,7 +571,11 @@ class Site extends Page {
     c::set($params);
 
     // connect the cache 
-    if(c::get('cache')) cache::connect('file', array('root' => KIRBY_SITE_ROOT_CACHE));
+    try {
+      cache::connect('file', array('root' => KIRBY_SITE_ROOT_CACHE));
+    } catch(Exception $e) {
+      // do nothing. Caching will just fail silently
+    }
 
     // check for multilang support
     static::$multilang = c::get('lang.support');
