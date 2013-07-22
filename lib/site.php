@@ -332,20 +332,23 @@ class Site extends Page {
     // check if the active page is valid    
     if($activePage and $activePage->uri() == $uri) {      
       return $this->activePage = $activePage;    
-    } else if($route = router::match($this->uri()->path())) {
+    } else if($route = router::run($this->uri()->path())) {
 
       // get the route action
       $action = $route->action();
 
       // if the router action is a callable function…
-      if(is_callable($action)) {
+      if($route->isCallable()) {
         // … call that function and pass all options from the url
-        $result = call_user_func_array($action, $route->options());
+        $result = $route->call();
       
         // if the router action returns a page, use that page
         // as the currently active page
         if(is_a($result, 'Kirby\\CMS\\Page')) {
           return $this->activePage = $result;
+        } else {
+          echo $result;
+          exit();
         }
 
       // try to find a page for that uri
