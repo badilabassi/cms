@@ -119,7 +119,15 @@ function notFound() {
  * @return string
  */ 
 function snippet($snippet, $data = array(), $return = false) {
-  return tpl::loadFile(KIRBY_SITE_ROOT_SNIPPETS . DS . $snippet . '.php', $data, $return);
+ 
+  $snippet = new Template(KIRBY_SITE_ROOT_SNIPPETS . DS . $snippet . '.php', $data);
+
+  if($return) {
+    return $snippet->render();
+  } else {
+    echo $snippet->render();
+  }
+
 }
 
 /**
