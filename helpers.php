@@ -37,7 +37,8 @@ function pages() {
 }
 
 /**
- * Main URL builder
+ * Setup for the main URL builder
+ * url::to(), url() or u()
  * 
  * Use this in all your templates to make
  * sure you get proper URls. 
@@ -48,14 +49,10 @@ function pages() {
  * @param array An option associative array to build a query string
  * @return string 
  */
-function url($uri = false, $lang = false, $params = array(), $query = array()) {
+url::$to = function($uri = false, $lang = false, $params = array(), $query = array()) {
   
-  // make sure to not convert absolute urls  
-  if(preg_match('!^(http|https)!i', $uri)) {
-    return $uri;
-
   // return the url for the home page
-  } else if(!$uri or $uri == '/') {
+  if(!$uri or $uri == '/') {
     $url = site::instance()->url($lang);
 
     // make sure to strip the index.php for the base url
@@ -88,16 +85,7 @@ function url($uri = false, $lang = false, $params = array(), $query = array()) {
 
   return $url;
 
-}
-
-/**
- * Shortcut for the url() function
- * 
- * @see url()
- */
-function u($uri=false, $lang=false) {
-  return url($uri, $lang);
-}
+};
 
 /**
  * Returns the current url with all bells and whistles
@@ -105,21 +93,21 @@ function u($uri=false, $lang=false) {
  * @return string
  */ 
 function thisURL() {
-  return site::instance()->uri()->original();
+  return url::current();
 }
 
 /**
  * Redirects the user to the home page
  */
 function home() {
-  go(url());
+  go();
 }
 
 /**
  * Redirects the user to the error page
  */
 function notFound() {
-  go(url(c::get('error')));
+  go(site()->errorPage()->url());
 }
 
 /**
