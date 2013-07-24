@@ -5,7 +5,7 @@ namespace Kirby\CMS;
 use Kirby\Toolkit\A;
 use Kirby\Toolkit\C;
 use Kirby\Toolkit\Str;
-use Kirby\Toolkit\Tpl;
+use Kirby\Toolkit\Template;
 use Kirby\CMS\Page\Dir;
 use Kirby\CMS\Page\Cache;
 
@@ -1179,15 +1179,18 @@ class Page {
 
       $site = site::instance();
 
-      tpl::set(array(
+      // share the site, pages, and page between all templates
+      template::globals(array(
         'site'  => $site,
         'pages' => $site->children(),
-        'page'  => $this 
+        'page'  => $this
       ));
 
-      $html = tpl::load($this->template(), false, true);
+      // setup a new template for this page
+      $template = new Template(KIRBY_SITE_ROOT_TEMPLATES . DS . $this->template());
 
-      $cache->set($html);
+      // render and cache the html
+      $cache->set($html = $template->render());
 
     }
 
