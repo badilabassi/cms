@@ -213,6 +213,8 @@ class Pages extends Collection {
       $obj  = $next->children();
 
     }
+
+    
     
     return $page;    
 
