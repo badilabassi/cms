@@ -19,9 +19,9 @@ event::on('kirby.toolkit.url.home', function(&$url, $arguments = array()) {
 event::on('kirby.toolkit.url.to', function(&$url, $arguments = array()) {
 
   // match arguments
-  $lang   = @$arguments[1];
-  $params = @$arguments[2];
-  $query  = @$arguments[3];
+  $lang   = a::get($arguments, 1);
+  $params = a::get($arguments, 2, array());
+  $query  = a::get($arguments, 3, array());
 
   // return the url for the home page
   if(!$url or $url == '/') {
