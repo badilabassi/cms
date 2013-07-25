@@ -9,6 +9,7 @@ use Kirby\Toolkit\Dir;
 use Kirby\Toolkit\Event;
 use Kirby\Toolkit\F;
 use Kirby\Toolkit\G;
+use Kirby\Toolkit\Header;
 use Kirby\Toolkit\Router;
 use Kirby\Toolkit\Server;
 use Kirby\Toolkit\URI;
@@ -453,7 +454,7 @@ class Site extends Page {
     $html = $page->toHtml();
 
     // send an 404 header for error pages
-    if($page->isErrorPage() && c::get('error.header')) header("HTTP/1.0 404 Not Found");
+    if($page->isErrorPage() && c::get('error.header')) header::notfound();
 
     event::trigger('kirby.cms.site.toHTML', array($this, $page, &$html));
 
