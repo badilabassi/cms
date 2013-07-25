@@ -207,17 +207,15 @@ class Pages extends Collection {
 
       $next = $obj->findBy($use, $p, false);
 
-      if(!$next) return $page;
+      if(!$next) break;
 
       $page = $next;
       $obj  = $next->children();
 
     }
 
+    return ($page and $page->$use() != a::last($array)) ? false : $page;
     
-    
-    return $page;    
-
   }
 
   /**
