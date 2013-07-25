@@ -455,7 +455,7 @@ class Site extends Page {
     // send an 404 header for error pages
     if($page->isErrorPage() && c::get('error.header')) header("HTTP/1.0 404 Not Found");
 
-    event::trigger('site.toHTML', array($this, $page, &$html));
+    event::trigger('kirby.cms.site.toHTML', array($this, $page, &$html));
 
     if($echo) echo($html);
     return $html;
@@ -466,7 +466,7 @@ class Site extends Page {
    * Renders the page as HTML and echos the result
    */
   public function show() {
-    event::trigger('site.show', array($this));
+    event::trigger('kirby.cms.site.show', array($this));
     echo $this->toHtml();
   }
 

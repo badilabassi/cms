@@ -48,6 +48,7 @@ if(!defined('KIRBY_SITE_ROOT')) define('KIRBY_SITE_ROOT', KIRBY_INDEX_ROOT . DS 
  */
 
 // cms internals
+define('KIRBY_CMS_ROOT_CONFIG',  KIRBY_CMS_ROOT . DS . 'config');
 define('KIRBY_CMS_ROOT_LIB',     KIRBY_CMS_ROOT . DS . 'lib');
 define('KIRBY_CMS_ROOT_TAGS',    KIRBY_CMS_ROOT . DS . 'tags');
 define('KIRBY_CMS_ROOT_PARSERS', KIRBY_CMS_ROOT . DS . 'parsers');
@@ -91,7 +92,10 @@ $autoloader->aliases = array(
 $autoloader->start();
 
 // load all default config values
-include(KIRBY_CMS_ROOT . DS . 'defaults.php');
+include(KIRBY_CMS_ROOT_CONFIG . DS . 'defaults.php');
+
+// load all default events
+include(KIRBY_CMS_ROOT_CONFIG . DS . 'events.php');
 
 // load all helper functions
 include(KIRBY_CMS_ROOT . DS . 'helpers.php');

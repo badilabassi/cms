@@ -37,57 +37,6 @@ function pages() {
 }
 
 /**
- * Setup for the main URL builder
- * url::to(), url() or u()
- * 
- * Use this in all your templates to make
- * sure you get proper URls. 
- * 
- * @param string $uri relative url: will be resolved to an absolute url, absolute url: will be kept, false: will return the base url for this site
- * @param string $lang Add a language key to get a specific url for this language
- * @param array An optional associative array to build a set of params
- * @param array An option associative array to build a query string
- * @return string 
- */
-url::$to = function($uri = false, $lang = false, $params = array(), $query = array()) {
-  
-  // return the url for the home page
-  if(!$uri or $uri == '/') {
-    $url = site::instance()->url($lang);
-
-    // make sure to strip the index.php for the base url
-    // we don't want http://yourdomain.com/index.php
-    if(!c::get('rewrite')) $url = rtrim($url, '/index.php');
-
-  // search for a page this url could be for
-  } else if($page = site::instance()->children()->find($uri)) {
-    $url = $page->url($lang);
-
-  // simply attach the uri to the base url, so links to assets and other stuff will work
-  } else {
-    $url = site::instance()->url() . '/' . trim($uri, '/');            
-  }
-
-  // make sure to remove the trailing slash
-  $url = trim($url, '/');
-
-  // add an additional set of parameters to the url  
-  if(!empty($params)) {
-    foreach($params as $key => $value) {
-      $url .= '/' . $key . ':' . $value;
-    }
-  }
-
-  // add a query string to the url
-  if(!empty($query)) {
-    $url .= '?' . http_build_query($query);
-  }
-
-  return $url;
-
-};
-
-/**
  * Returns the current url with all bells and whistles
  * 
  * @return string
@@ -100,14 +49,14 @@ function thisURL() {
  * Redirects the user to the home page
  */
 function home() {
-  go();
+  redirect::home();
 }
 
 /**
  * Redirects the user to the error page
  */
 function notFound() {
-  go(site()->errorPage()->url());
+  redirect::to(site::instance()->errorPage()->url());
 }
 
 /**
@@ -129,59 +78,6 @@ function snippet($snippet, $data = array(), $return = false) {
   }
 
 }
-
-/**
- * Returns a stylesheet tag
- * 
- * @param string $url The url to the stylesheet file. Can be relative or absolute.
- * @param string $media An additional media type (i.e. screen, print, etc.)
- * @return string
- */ 
-
-/*
-function css($url, $media = false) {
-
-  // auto-loading for template specific css files
-  if($url == '@auto') {
-  
-    $file = site::instance()->children()->active()->template() . '.css';
-    $root = c::get('css.auto.root') . DS . $file;
-    $url  = c::get('css.auto.url') . '/' . $file;
-    
-    if(!file_exists($root)) return false;
-
-  }
-
-  return '<link rel="stylesheet"' . r(!empty($media), ' media="' . $media . '"') . ' href="' . url($url, false) . '" />' . "\n";
-
-}
-*/
-
-/**
- * Returns a javascript tag
- * 
- * @param string $url The url to the javascript file. Can be relative or absolute.
- * @param string $async adds an optional HTML5 async attribute to the script tag
- * @return string
- */ 
-
-/*
-function js($url, $async = false) {
-
-  // auto-loading for template specific js files
-  if($url == '@auto') {
-  
-    $file = site::instance()->children()->active()->template() . '.js';
-    $root = c::get('js.auto.root') . DS . $file;
-    $url  = c::get('js.auto.url') . '/' . $file;
-
-    if(!file_exists($root)) return false;
-
-  }
-
-  return '<script' . r($async, ' async') . ' src="' . url($url, false) . '"></script>' . "\n";
-}
-*/
 
 /**
  * Shortcut for parsing a text with the Kirbytext parser

@@ -59,17 +59,17 @@ class HelpersTest extends PHPUnit_Framework_TestCase {
       'rewrite'   => true
     ));
     
-    $expected = '<link rel="stylesheet" href="' . $this->url . '/assets/css/screen.css" />' . "\n";
+    $expected = '<link rel="stylesheet" href="' . $this->url . '/assets/css/screen.css" />';
     $this->assertEquals(css('assets/css/screen.css'), $expected);
     
-    $expected = '<link rel="stylesheet" media="screen" href="' . $this->url . '/assets/css/screen.css" />' . "\n";
+    $expected = '<link rel="stylesheet" href="' . $this->url . '/assets/css/screen.css" media="screen" />';
     $this->assertEquals(css('assets/css/screen.css', 'screen'), $expected);
     
-    $expected = '<script src="' . $this->url . '/assets/js/jquery.js"></script>' . "\n";
+    $expected = '<script src="' . $this->url . '/assets/js/jquery.js"></script>';
     $this->assertEquals(js('assets/js/jquery.js'), $expected);
     
-    $expected = '<script async src="' . $this->url . '/assets/js/jquery.js"></script>' . "\n";
-    $this->assertEquals(js('assets/js/jquery.js', true), $expected);
+    $expected = '<script src="' . $this->url . '/assets/js/jquery.js" async="async"></script>';
+    $this->assertEquals(js('assets/js/jquery.js', array('async' => 'async')), $expected);
   }
   
   public function testKirbytags() {
