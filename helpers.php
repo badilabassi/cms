@@ -137,6 +137,8 @@ function snippet($snippet, $data = array(), $return = false) {
  * @param string $media An additional media type (i.e. screen, print, etc.)
  * @return string
  */ 
+
+/*
 function css($url, $media = false) {
 
   // auto-loading for template specific css files
@@ -153,6 +155,7 @@ function css($url, $media = false) {
   return '<link rel="stylesheet"' . r(!empty($media), ' media="' . $media . '"') . ' href="' . url($url, false) . '" />' . "\n";
 
 }
+*/
 
 /**
  * Returns a javascript tag
@@ -161,6 +164,8 @@ function css($url, $media = false) {
  * @param string $async adds an optional HTML5 async attribute to the script tag
  * @return string
  */ 
+
+/*
 function js($url, $async = false) {
 
   // auto-loading for template specific js files
@@ -176,6 +181,7 @@ function js($url, $async = false) {
 
   return '<script' . r($async, ' async') . ' src="' . url($url, false) . '"></script>' . "\n";
 }
+*/
 
 /**
  * Shortcut for parsing a text with the Kirbytext parser
