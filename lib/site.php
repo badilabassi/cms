@@ -566,6 +566,9 @@ class Site extends Page {
    */
   protected function configure($params = array()) {
 
+    // default thumbnail base url
+    c::set('thumb.location.url', $this->url() . '/thumbs');
+
     // load custom config files
     f::load(KIRBY_SITE_ROOT_CONFIG . DS . 'config.php');
     f::load(KIRBY_SITE_ROOT_CONFIG . DS . 'config.' . server::get('server_addr') . '.php');

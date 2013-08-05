@@ -63,7 +63,7 @@ class Pages extends Collection {
         if(!is_a($page, 'Kirby\\CMS\\Page')) raise('All pages in a set of Pages have to be Page objects');
         
         // add the page to the collection
-        $this->data['_' . $page->uri()] = $page;
+        $this->data[$page->id()] = $page;
       
       }
 
@@ -145,10 +145,10 @@ class Pages extends Collection {
     $args = func_get_args();
     $self = clone $this;
     foreach($args as $kill) {
-      if(is_a($kill, 'Page')) {
-        unset($self->data['_' . $kill->uri()]);
+      if(is_a($kill, 'Kirby\\CMS\\Page')) {
+        $self = $self->filterBy('uri', '!=', $kill->uri());
       } else {
-        unset($self->data['_' . $kill]);
+        $self = $self->filterBy('uri', '!=', $kill);
       }
     }
     return $self;
