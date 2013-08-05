@@ -63,7 +63,7 @@ class Pages extends Collection {
         if(!is_a($page, 'Kirby\\CMS\\Page')) raise('All pages in a set of Pages have to be Page objects');
         
         // add the page to the collection
-        $this->data[$page->id()] = $page;
+        $this->set($page->id(), $page);
       
       }
 

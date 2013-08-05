@@ -83,7 +83,7 @@ class Site extends Page {
    * @return object Site
    */
   static public function instance($params = array()) {
-    if(is_null(static::$instance) or !empty($params)) {
+    if(is_null(static::$instance) or !empty($params)) {      
       static::$instance = new Site($params);
     }
     return static::$instance;
@@ -95,9 +95,6 @@ class Site extends Page {
    * @param array $params Additional options for the site. Can be used to overwrite config vars
    */
   public function __construct(array $params = array()) {
-
-    // store this for the singleton
-    static::$instance = $this;
 
     // load all needed config vars
     $this->configure($params);
@@ -566,9 +563,6 @@ class Site extends Page {
    */
   protected function configure($params = array()) {
 
-    // default thumbnail base url
-    c::set('thumb.location.url', $this->url() . '/thumbs');
-
     // load custom config files
     f::load(KIRBY_SITE_ROOT_CONFIG . DS . 'config.php');
     f::load(KIRBY_SITE_ROOT_CONFIG . DS . 'config.' . server::get('server_addr') . '.php');
@@ -576,6 +570,9 @@ class Site extends Page {
 
     // merge the late options
     c::set($params);
+
+    // default thumbnail base url
+    if(!c::get('thumb.location.url')) c::set('thumb.location.url', rtrim($this->url(), '/index.php') . '/thumbs');
 
     // connect the cache 
     try {

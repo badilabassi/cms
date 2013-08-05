@@ -25,7 +25,7 @@ class PagesTest extends PHPUnit_Framework_TestCase {
     $this->assertEquals('visible-subpage-3', $this->pages->last()->uid());
     
     // test the without method
-    $pages = $this->pages->without('tests/page/subpage-3');
+    $pages = $this->pages->not('tests/page/subpage-3');
     
     $this->assertEquals(5, $pages->count());
     $this->assertEquals('subpage-1', $pages->first()->uid());
