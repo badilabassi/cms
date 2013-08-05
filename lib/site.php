@@ -649,7 +649,7 @@ class Site extends Page {
 
     $dump = array_merge(parent::__toDump(), array(
       'uri'       => $this->uri()->__toDump(),
-      'languages' => $this->languages()->__toDump(),
+      'languages' => $this->languages() ? $this->languages()->__toDump() : false,
       'plugins'   => $this->plugins()->__toDump(),
     ));
 
