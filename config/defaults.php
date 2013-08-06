@@ -374,6 +374,16 @@ c::set(array(
   'js.auto.url'  => 'assets' . DS . 'js' . DS . 'templates',
 
   /**
+   * Thumbnail directory
+   */
+  'thumb.location.root' => KIRBY_INDEX_ROOT . DS . 'thumbs',
+
+  /**
+   * Pattern for thumbnail files
+   */
+  'thumb.location.path' => '{safeName}-{hash}-{settings}.{extension}',
+
+  /**
    * This array will define how files are 
    * organized. You can extend this to improve Kirby's 
    * file type and mime type detection
