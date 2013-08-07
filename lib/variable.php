@@ -98,6 +98,28 @@ class Variable {
   }
 
   /**
+   * Converts the value to an int and increments it
+   * with the given number
+   * 
+   * @param int $n
+   * @return int
+   */
+  public function increment($n = 1) {
+    return $this->value = (int)$this->value + $n;
+  }
+
+  /**
+   * Converts the value to an int and decrements it
+   * with the given number
+   * 
+   * @param int $n
+   * @return int
+   */
+  public function decrement($n = 1) {
+    return $this->value = (int)$this->value - $n;
+  }
+
+  /**
    * Splits the value by the given delimiter
    * 
    * @param string $separator The delimiter to split by

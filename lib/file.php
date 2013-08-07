@@ -5,6 +5,7 @@ namespace Kirby\CMS;
 use Kirby\Toolkit\Asset;
 use Kirby\Toolkit\C;
 use Kirby\Toolkit\F;
+use Kirby\CMS\File\Content;
 
 // direct access protection
 if(!defined('KIRBY')) die('Direct access is not allowed');
@@ -60,6 +61,15 @@ class File extends Asset {
     $this->id     = md5($root);
     $this->parent = $parent;
   } 
+
+  /**
+   * Resets all cached attributes which could make trouble
+   */
+  public function reset() {
+    $this->metas = null;
+    $this->meta  = null;
+    $this->parent->reset();
+  }
 
   /**
    * Setter and getter for the parent Files object
@@ -316,6 +326,111 @@ class File extends Asset {
    */
   public function __get($key) {
     return ($this->meta()) ? $this->meta()->$key() : null;
+  }
+
+  /**
+   * Setter for overwriting data
+   * 
+   * @param mixed $key
+   * @param mixed $value
+   */
+  public function set($key, $value = '') {
+
+    // check for meta data for this file
+    $meta = $this->meta();
+  
+    // create the meta content file if it doesn't exist yet
+    if(!$meta) $meta = content::create($this);
+
+    if(is_array($key)) {
+      foreach($key as $k => $v) $meta->set($k, $v);
+      return true;
+    } else {
+      $meta->set($key, $value);
+    }
+
+  }
+
+  /**
+   * Magic setter
+   * 
+   * @param mixed $key
+   * @param mixed $value
+   */  
+  public function __set($key, $value) {
+    $this->set($key, $value);
+  }
+
+  /**
+   * Saves the file's metadata
+   * 
+   * @return boolean
+   */
+  public function save() {
+    return $this->meta()->save();
+  }
+
+  /**
+   * Renames the filename and takes care of 
+   * renaming all meta files as well.
+   * 
+   * @param string $name The filename without extension
+   * @return object
+   */
+  public function rename($name) {
+
+    $root = $this->dir() . DS . $name . '.' . $this->extension();
+
+    // check if the new file already exists
+    if(file_exists($root)) raise('The file already exists', 'file-exists');
+
+    // try to move all meta files
+    foreach($this->metas() as $meta) {
+      $meta->rename($name . '.' . $this->extension());
+    }
+
+    // try to move the thumbnail
+    if($this->type() == 'image' and $this->hasThumb()) {
+      $this->thumb()->rename($name . '.thumb');      
+    }
+
+    // try to move the file itself
+    if(!f::move($this->root(), $root)) raise('The file could not be renamed', 'move-failed');
+
+    // reset the essentials 
+    $this->root = $root;
+    $this->reset();
+
+    return $this;
+
+  }
+
+  /** 
+   * Deletes the file
+   * 
+   * @return boolean
+   */
+  public function delete() {
+    
+    // don't delete text files
+    if($this->type() == 'content') {
+      raise('Content files cannot be deleted', 'unauthorized');    
+    }
+
+    // delete all meta files if they exist
+    foreach($this->metas() as $meta) {
+      if(!\Kirby\Toolkit\f::remove($meta->root())) {
+        raise('Not all meta files could be deleted', 'meta-delete-failed');
+      }
+    }
+
+    // try to delete the file
+    if(!\Kirby\Toolkit\f::remove($this->root())) {
+      raise('The file could not be deleted', 'delete-failed');
+    }
+
+    return true;
+
   }
 
   /**

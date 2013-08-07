@@ -188,6 +188,7 @@ class Content extends File {
    * @return string
    */
   public function languageCode() {
+    if(!site::$multilang) return false;
     if(!is_null($this->languageCode)) return $this->languageCode;    
     $code = str::match($this->filename(), '!\.([a-z]{2})\.' . $this->extension() . '$!i', 1);
     return (language::valid($code)) ? $code : c::get('lang.default');
@@ -217,6 +218,38 @@ class Content extends File {
   }
 
   /**
+   * Setter for overwriting data
+   * 
+   * @param mixed $key
+   * @param mixed $value
+   */
+  public function set($key, $value = '') {
+
+    // make sure the data has been fetched at least once
+    $this->data();
+
+    if(is_array($key)) {
+      foreach($key as $k => $v) $this->set($k, $v);
+      return true;
+    } else if(is_null($value)) {
+      unset($this->data[$key]);
+    } else {
+      $this->data[$key] = new Variable($key, $value, $this);      
+    }
+
+  }
+
+  /**
+   * Magic setter
+   * 
+   * @param mixed $key
+   * @param mixed $value
+   */  
+  public function __set($key, $value) {
+    $this->set($key, $value);
+  }
+
+  /**
    * Legacy code to implement content->variables;
    */
   public function __get($key) {
@@ -228,14 +261,94 @@ class Content extends File {
   }
 
   /**
+   * Saves the data to the content txt file
+   * Use this after setting/overwriting data to store it
+   * 
+   * @return boolean
+   */
+  public function save() {
+
+    if(!\Kirby\Toolkit\Txtstore::write($this->root(), $this->toArray())) return false;
+
+    // reset all data
+    $this->raw  = null;
+    $this->data = null;
+
+    // fetch data again from scratch
+    $this->raw();
+    $this->data();
+
+    return true;
+
+  }
+
+  /**
+   * Creates a new content file for a site, page or file object
+   * 
+   * @param object $parent The parent site, page or file object
+   * @param array $data An optional array of data, which should be written to the content file
+   * @return object The final content object
+   */
+  static public function create($parent, $data = array()) {
+
+    // start defininig the root for the content file
+    $root = $parent->root();
+
+    // pages get the uid added by default
+    // since we don't know the desired template
+    if(is_a($parent, 'Kirby\\CMS\\Page')) {
+      $root .= DS . $parent->uid();
+    } 
+
+    // add the language if applicable
+    if(site::$multilang) $root .= '.' . c::get('lang.current');
+
+    // add the extension
+    $root .= '.' . c::get('content.file.extension', 'txt');
+
+    // try to create the content file
+    if(!\Kirby\Toolkit\Txtstore::write($root, $data)) {
+      raise('The content file could not be created', 'write-failed'); 
+    }
+
+    // reset the parent to make sure everything is up to date
+    $parent->reset();
+
+    if(is_a($parent, 'Kirby\\CMS\\Page')) {
+      return $parent->content();
+    } else {
+      return $parent->meta();      
+    }
+
+  }
+
+  /**
+   * Converts the data array with all variable objects
+   * into a clean array with strings for each value
+   * 
+   * @return array
+   */
+  public function toArray() {
+    $data = array();
+    foreach($this->data() as $key => $value) {
+      $data[$key] = (string)$value;
+    }
+    return $data;
+  }
+
+  /**
    * Returns a more readable dump array for the dump() helper
    * 
    * @return array
    */
   public function __toDump() {
 
+    $data = array();
+    foreach($this->data() as $key => $value) $data[$key] = (string)$value;
+
     return array_merge(parent::__toDump(), array(
       'fields'       => $this->fields(),
+      'data'         => $data,
       'languageCode' => $this->languageCode(),
     ));
 

@@ -94,6 +94,28 @@ class Page {
     } 
   } 
   
+  /**
+   * Rests all cached variables
+   */
+  public function reset() {  
+
+    // keep the parent object and the root dir
+    $keep = array('parent', 'root');
+
+    // reset all cached attributes so they will get fetched again
+    foreach(get_object_vars($this) as $key => $val) {
+      if(in_array($key, $keep)) continue;
+      $this->$key = null;
+    }
+
+    // reset the id
+    $this->id = md5($this->root);
+
+    // reset all parent pages
+    if(!$this->isSite()) $this->parent()->reset();
+
+  }
+
   // directory related methods
 
   /**
@@ -130,10 +152,34 @@ class Page {
    * Returns the optional prepended
    * sorting number from the folder name 
    * 
+   * If you pass a number this can also be used
+   * to change the page's number on the file system
+   * Be careful with that!!
+   * 
+   * @param int $num Optional way to use this as a setter
    * @return string i.e. 01-projects returns 01
    */
-  public function num() {
+  public function num($num = null) {
+
+    // change the current num
+    if(!is_null($num)) {
+
+      // creat the new directory root
+      $dir = dirname($this->dir()) . DS . $num . '-' . $this->uid();
+      
+      // try to move the directory
+      if(!\Kirby\Toolkit\dir::move($this->root(), $dir)) raise('The directory could not be moved', 'move-failed');
+
+      // change the root and reset the page object
+      $this->root = $dir;
+      $this->reset();
+
+      return $this;
+
+    }
+
     return $this->dir()->num();
+
   }
 
   /** 
@@ -1010,7 +1056,7 @@ class Page {
    * @return boolean
    */
   public function isInvisible() {
-    return !$this->visible();
+    return !$this->isVisible();
   }
 
   /**
@@ -1125,6 +1171,39 @@ class Page {
   }
 
   /**
+   * Setter for overwriting data
+   * 
+   * @param mixed $key
+   * @param mixed $value
+   */
+  public function set($key, $value = '') {
+
+    // check for content data for this page
+    $content = $this->content();
+
+    // create the content file if it doesn't exist yet
+    if(!$content) $content = content::create($this);
+    
+    if(is_array($key)) {
+      foreach($key as $k => $v) $content->set($k, $v);
+      return true;
+    } else {
+      $content->set($key, $value);
+    }
+
+  }
+
+  /**
+   * Magic setter
+   * 
+   * @param mixed $key
+   * @param mixed $value
+   */  
+  public function __set($key, $value) {
+    $this->set($key, $value);
+  }
+
+  /**
    * Enables pseudo attributes for custom fields
    * i.e. $page->title
    * 
@@ -1208,6 +1287,258 @@ class Page {
   static public function extend($key, $value) {
     if(isset(static::$extensions[$key])) raise('The extension already exists: ' . $key);
     static::$extensions[$key] = $value;
+  }
+
+  /**
+   * Creates a new page
+   * 
+   * @param string $uri The intended uri for the new page. The parent page must exist
+   * @param array $data An array with all content fields, which should be stored for the new page
+   * @param array $params An array with template name and num for the new page (optional)
+   * @return mixed Returns false if the creation failed, otherwise returns the new page object
+   */
+  static public function create($uri, $data = array(), $params = array()) {
+
+    $uri    = str::split($uri, '/');
+    $slug   = str::slug(array_pop($uri));
+    $uri    = implode('/', $uri);
+    $parent = empty($uri) ? site::instance() : site::instance()->children()->find($uri);
+
+    // check if the parent exists
+    if(!$parent or empty($slug)) raise('The parent page could not be found', 'missing-parent');
+
+    // check if the page already exists
+    if($page = $parent->children()->find($slug)) return $page;
+
+    $defaults = array(
+      'template' => $slug,
+      'num'      => null
+    );
+
+    $options = array_merge($defaults, $params);
+    $root    = $parent->root() . DS . $slug;
+    $file    = str::template('{root}' . DS . '{template}{lang}.{extension}', array(
+      'root'      => $root,
+      'template'  => $options['template'],
+      'lang'      => r(site::$multilang, '.' . c::get('lang.default')),
+      'extension' => c::get('content.file.extension', 'txt')
+    ));
+
+    // try to create the directory
+    if(!\Kirby\Toolkit\dir::make($root)) raise('The directory could not be created', 'no-directory');
+
+    // try to write the text file
+    if(!\Kirby\Toolkit\Txtstore::write($file, $data)) raise('The data could not be saved', 'not-saved');
+
+    // make sure the parent is up to date
+    $parent->reset();
+
+    // get the page object
+    $page = $parent->children()->find($slug);
+
+    // check if the new page object exists
+    if(!$page) raise('The page object could not be found', 'missing-page');
+
+    // finally sort the new page
+    if($options['num']) $page->sort($options['num']);
+
+    // get the final page object
+    $page = $parent->children()->find($slug);
+    
+    if(!$page) raise('The page object could not be found', 'missing-page');
+
+    // fetch the page's content so it's accessible right away
+    $page->content();
+
+    return $page;
+
+  }
+
+  /**
+   * Moves a page to a different location
+   */
+  public function move($uri) {
+
+    if($this->isSite() or $this->isHomePage() or $this->isErrorPage()) raise('You cannot move this page', 'unauthorized');
+
+    $uri    = str::split($uri, '/');
+    $slug   = str::slug(array_pop($uri));
+    $uri    = implode('/', $uri);
+    $parent = empty($uri) ? site::instance() : site::instance()->children()->find($uri);
+
+    // check if the parent exists
+    if(!$parent or empty($slug)) raise('The parent page does not exist', 'missing-parent');    
+
+    // check if the page already exists
+    if($page = $parent->children()->find($slug)) raise('The page already exists', 'page-exists');
+
+    // create the new directory root
+    $newRoot = $parent->root() . DS . r($this->num(), $this->num() . '-') . $slug;
+
+    // try to move the entire directory
+    if(!\Kirby\Toolkit\dir::move($this->root(), $newRoot)) raise('The page directory could not be moved', 'move-failed');
+
+    // reset the parent to make sure the children are fetched correctly
+    $parent->reset();
+
+    // return the changed page object
+    return $parent->children()->find($slug);
+
+  }
+
+  /**
+   * Sorts the page with different modi: 
+   * 
+   * 1. any number
+   * 2. first
+   * 3. last
+   * 4. up
+   * 5. down
+   * 
+   * @param mixed $num
+   * @return boolean
+   */
+  public function sort($num = null) {
+
+    // don't sort the site object
+    if($this->isSite()) raise('The site cannot be moved', 'is-site');
+
+    // sanitize num
+    if($num === 0) $num = '0';
+
+    // get the current num if nothing is passed at all
+    if(is_null($num)) $num = $this->num();
+
+    // get all visible siblings without the current page
+    $siblings = $this->siblings()->visible()->not($this);
+
+    switch($num) {
+      case 'up':
+        if($this->isInvisible()) raise('The page is invisible', 'is-invisible');
+        // sanitize the number and increase it
+        return $this->sort((int)$this->num() + 1);
+        break;
+      case 'down':
+        if($this->isInvisible()) raise('The page is invisible', 'is-invisible');
+        // sanitize the number and decrease it
+        return $this->sort((int)$this->num() - 1);
+        break;
+      case 'first':        
+        return $this->sort(1);
+        break;
+      case 'last':
+        return $this->sort($siblings->count() + 1);
+        break;
+      default:
+        
+        // sanitize the number
+        $num = (int)$num;
+        
+        // don't allow higher numbers then the number of sortable items
+        if($num > $siblings->count() + 1) $num = $siblings->count() + 1;
+
+        // 0 will be replaced with one
+        if($num <= 0) $num = 1;
+
+        // change the numbers of all pages before the current page
+        $n = 1;
+        foreach($siblings->slice(0, $num - 1) as $p) {
+          $p->num($n);
+          $n++;
+        }
+        
+        // change the number of the current page
+        $this->num($num);
+        
+        // change the numbers of all pages after the current page
+        $n = $num + 1;
+        foreach($siblings->slice($num - 1) as $p) {
+          $p->num($n);
+          $n++;
+        }
+
+        return true;
+        break;
+    }
+
+  }
+
+  /**
+   * Makes the page visible or invisible
+   * 
+   * @param string $status 'visible' or 'invisible'
+   * @param mixed $num Optional sorting number
+   * @return boolean
+   */
+  public function make($status, $num = 'last') {
+
+    if($this->isSite()) raise('The site cannot be changed', 'is-site');
+
+    switch($status) {
+      case 'visible':
+        $this->sort($num);
+        break;
+      case 'invisible':
+        if($this->isInvisible()) return true;
+        $dir = dirname($this->dir()) . DS . $this->uid();
+        if(!\Kirby\Toolkit\dir::move($this->root(), $dir)) raise('The directory cannot be moved', 'move-failed');
+        $this->root = $dir;
+        $this->reset();
+        break;
+      default:
+        raise('This method is not supported', 'unsupported-method');
+    }
+
+    return $this;
+
+  }
+
+  /**
+   * Toggle the page's visibility
+   *
+   * @param mixed $num Optional num for $this->make('visible', $num) 
+   * @return boolean
+   */
+  public function toggle($num = 'last') {
+    return ($this->isVisible()) ? $this->make('invisible') : $this->make('visible', $num);
+  }
+
+  /**
+   * Saves the page's content
+   * 
+   * @return boolean
+   */
+  public function save() {
+    return $this->content()->save();
+  }
+
+  /** 
+   * Deletes the page. 
+   * Failes if the page has children, 
+   * is the error or home page
+   * 
+   * @return boolean
+   */
+  public function delete() {
+    
+    // check if this is a deletable page
+    if($this->isSite() or $this->isErrorPage() or $this->isHomePage()) {
+      raise('You cannot delete this page', 'unauthorized');    
+    }
+    
+    // check if this page has children 
+    if($this->hasChildren()) {
+      raise('This page has subpages. Please delete them first', 'has-children');
+    }
+
+    // try to remove the directory
+    if(!\Kirby\Toolkit\dir::remove($this->root())) {
+      raise('The directory could not be deleted', 'delete-failed');
+    }
+
+    $this->reset();
+    return true;
+
   }
 
   /**
