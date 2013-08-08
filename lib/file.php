@@ -379,7 +379,16 @@ class File extends Asset {
    */
   public function rename($name) {
 
-    $root = $this->dir() . DS . $name . '.' . $this->extension();
+    // base root
+    $root = $this->dir() . DS . $name;
+
+    // add the language code if applicable
+    if(site::$multilang and is_a($this, 'Kirby\\CMS\\File\\Content')) {
+      $root .= '.' . $this->languageCode();      
+    }
+
+    // add the extension
+    $root .= '.' . $this->extension();
 
     // check if the new file already exists
     if(file_exists($root)) raise('The file already exists', 'file-exists');

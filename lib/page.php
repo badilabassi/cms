@@ -473,6 +473,35 @@ class Page {
     return ($this->intendedTemplate() == $this->template()) ? true : false;
   }
 
+  /**
+   * Renames all content files for this page, 
+   * so a different template will be chosen for it.
+   * 
+   * @param string $template The name of the new template
+   * @return this
+   */
+  public function changeTemplate($template) {
+
+    // make sure the template name is a safe name
+    $template = str::slug($template);
+
+    // don't change anything, if this is already the current template
+    if($template == $this->intendedTemplate()) return true;
+
+    // Check for existing content files
+    if(!$this->contents()->count()) raise('This page does not have any content files', 'missing-content');
+
+    // Rename all content files
+    foreach($this->contents() as $content) {    
+      $content->rename($template);
+    }
+
+    $this->reset();
+
+    return $this;
+
+  }
+
   // attachments 
 
   /**
@@ -484,6 +513,16 @@ class Page {
   public function files() {
     //if(!is_null($this->files)) return $this->files;    
     return $this->files = new Files($this);
+  }
+
+  /**
+   * Finds a single file by its filename
+   * 
+   * @param string $filename
+   * @return object
+   */
+  public function file($filename) {
+    return $this->files()->find($filename);
   }
 
   /**

@@ -264,4 +264,13 @@ class Variable {
 
   }
 
+  /**
+   * Returns a more readable dump array for the dump() helper
+   * 
+   * @return array
+   */
+  public function __toDump() {
+    return $this->value();
+  }
+
 }
