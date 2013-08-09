@@ -29,7 +29,7 @@ event::on('kirby.toolkit.url.to', function(&$url, $arguments = array()) {
 
     // make sure to strip the index.php for the base url
     // we don't want http://yourdomain.com/index.php
-    if(!$lang) $url = rtrim($url, '/index.php');
+    if(!$lang) $url = preg_replace('!\/index.php$!i', '', $url);
 
   // search for a page this url could be for
   } else if($page = site::instance()->children()->find($url)) {
