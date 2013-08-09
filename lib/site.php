@@ -572,7 +572,7 @@ class Site extends Page {
     c::set($params);
 
     // default thumbnail base url
-    if(!c::get('thumb.location.url')) c::set('thumb.location.url', rtrim($this->url(), '/index.php') . '/thumbs');
+    if(!c::get('thumb.location.url')) c::set('thumb.location.url', preg_replace('!\/index.php$!i', '', $this->url()) . '/thumbs');
 
     // connect the cache 
     try {
