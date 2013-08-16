@@ -30,28 +30,22 @@ if(!defined('KIRBY_INDEX_ROOT')) {
 
 }
 
-// load the bootstrapper
-require(KIRBY_CMS_ROOT . DIRECTORY_SEPARATOR . 'bootstrap.php');
-
 // handle thrown exceptions and display a nice error page
-set_exception_handler(function($exception) {
+set_exception_handler(function($exception) {  
   require(KIRBY_CMS_ROOT_MODALS . DS . 'exception.php'); 
   exit();
 });
 
+// catch all errors and throw an exception so it can get caught by kirby's error screen
+set_error_handler(function($errno, $errstr, $errfile, $errline) {  
+  throw new ErrorException($errstr, 0, $errno, $errfile, $errline);  
+});
+
+// load the bootstrapper
+require(KIRBY_CMS_ROOT . DIRECTORY_SEPARATOR . 'bootstrap.php');
+
 // initialize the site for the first time
 $site = site::instance();
-
-// handle debugging
-if(c::get('debug')) {
-  // switch on all errors
-  error_reporting(E_ALL);
-  ini_set('display_errors', 1);
-} else {
-  // switch off all errors
-  error_reporting(0);
-  ini_set('display_errors', 0);
-}
 
 // enable rewriting of unwanted URLs
 $site->rewrite();

@@ -91,6 +91,9 @@ $autoloader->aliases = array(
 // start autoloading
 $autoloader->start();
 
+// start a session
+s::start();
+
 // load all default config values
 include(KIRBY_CMS_ROOT_CONFIG . DS . 'defaults.php');
 

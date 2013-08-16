@@ -71,6 +71,12 @@ class Site extends Page {
   // cache for added plugins
   protected $plugins = null;
 
+  // cache for the current user
+  protected $user = null;
+
+  // cache for the users collection
+  protected $users = null;
+
   // returns true for multilanguage websites
   static public $multilang = false;
 
@@ -248,6 +254,15 @@ class Site extends Page {
 
     }
 
+  }
+
+  /**
+   * Returns the baseurl for the site without index.php even if rewrite is deactivated
+   * 
+   * @return string
+   */
+  public function baseurl() {
+    return $this->uri()->baseurl();
   }
 
   /**
@@ -438,6 +453,29 @@ class Site extends Page {
     return $this->visitor = new Visitor();
   }
 
+  /**
+   * Returns a collection with all users
+   * 
+   * @return object
+   */
+  public function users() {
+    if(!is_null($this->users)) return $this->users;
+    return $this->users = new Users();
+  }
+
+  /**
+   * Returns the currently logged in user
+   * 
+   * @return object 
+   */
+  public function user($username = null) {
+    if(!is_null($username)) {
+      return $this->users()->find($username);
+    }
+    if(!is_null($this->user)) return $this->user;
+    return $this->user = User::current();
+  }
+
   // rendering
 
   /**
@@ -572,7 +610,7 @@ class Site extends Page {
     c::set($params);
 
     // default thumbnail base url
-    if(!c::get('thumb.location.url')) c::set('thumb.location.url', rtrim($this->url(), '/index.php') . '/thumbs');
+    if(!c::get('thumb.location.url')) c::set('thumb.location.url', $this->baseurl() . '/thumbs');
 
     // connect the cache 
     try {

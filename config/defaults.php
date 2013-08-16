@@ -382,74 +382,44 @@ c::set(array(
    * Pattern for thumbnail files
    */
   'thumb.location.path' => '{safeName}-{hash}-{settings}.{extension}',
+  
+  /**
+   * Base root for all user avatars
+   */
+  'user.avatar.root' => KIRBY_INDEX_ROOT . DS . 'assets' . DS . 'avatars',
 
   /**
-   * This array will define how files are 
-   * organized. You can extend this to improve Kirby's 
-   * file type and mime type detection
-   * 
-   * all files, which don't match the criteria below 
-   * will be categorized as "other"
+   * Base url for all user avatars
+   * If set to false, the default will be used (http://yourdomain.com/assets/avatars)
    */
-  'fileinfo' => array(
+  'user.avatar.url'  => false,
 
-    // images
-    'jpg'      => array('type' => 'image', 'mime' => 'image/jpeg'),
-    'jpeg'     => array('type' => 'image', 'mime' => 'image/jpeg'),
-    'gif'      => array('type' => 'image', 'mime' => 'image/gif'),
-    'png'      => array('type' => 'image', 'mime' => 'image/png'),
-    'svg'      => array('type' => 'image', 'mime' => 'image/svg+xml'),
-    'ico'      => array('type' => 'image', 'mime' => 'image/x-icon'),
-    'tif'      => array('type' => 'image', 'mime' => 'image/tiff'),
-    'tiff'     => array('type' => 'image', 'mime' => 'image/tiff'),
-    'bmp'      => array('type' => 'image', 'mime' => 'image/bmp'),
-
-    // documents
-    'txt'      => array('type' => 'document', 'mime' => 'text/plain'),
-    'mdown'    => array('type' => 'document', 'mime' => 'text/plain'),
-    'md'       => array('type' => 'document', 'mime' => 'text/plain'),
-    'markdown' => array('type' => 'document', 'mime' => 'text/plain'),
-    'pdf'      => array('type' => 'document', 'mime' => 'application/pdf'),
-    'doc'      => array('type' => 'document', 'mime' => 'application/msword'),
-    'docx'     => array('type' => 'document', 'mime' => 'application/msword'),
-    'xls'      => array('type' => 'document', 'mime' => 'application/msexcel'),
-    'xlsx'     => array('type' => 'document', 'mime' => 'application/msexcel'),
-    'ppt'      => array('type' => 'document', 'mime' => 'application/mspowerpoint'),
-
-    // archives
-    'zip'      => array('type' => 'archive', 'mime' => 'application/zip'),
-    'tar'      => array('type' => 'archive', 'mime' => 'application/x-tar'),
-    'gz'       => array('type' => 'archive', 'mime' => 'application/x-gzip'),
-    'gzip'     => array('type' => 'archive', 'mime' => 'application/x-gzip'),
-    'tgz'      => array('type' => 'archive', 'mime' => 'application/gnutar'),
-
-    // code
-    'js'       => array('type' => 'code', 'mime' => 'application/javascript'),
-    'css'      => array('type' => 'code', 'mime' => 'text/css'),
-    'scss'     => array('type' => 'code', 'mime' => 'text/css'),
-    'htm'      => array('type' => 'code', 'mime' => 'text/html'),
-    'html'     => array('type' => 'code', 'mime' => 'text/html'),
-    'php'      => array('type' => 'code', 'mime' => 'text/php'),
-    'xml'      => array('type' => 'code', 'mime' => 'application/xml'),
-    'json'     => array('type' => 'code', 'mime' => 'application/json'),
-
-    // videos
-    'mov'      => array('type' => 'video', 'mime' => 'video/quicktime'),
-    'avi'      => array('type' => 'video', 'mime' => 'video/avi'),
-    'ogg'      => array('type' => 'video', 'mime' => 'video/ogg'),
-    'ogv'      => array('type' => 'video', 'mime' => 'video/ogg'),
-    'webm'     => array('type' => 'video', 'mime' => 'video/webm'),
-    'flv'      => array('type' => 'video', 'mime' => 'video/x-flv'),
-    'swf'      => array('type' => 'video', 'mime' => 'application/x-shockwave-flash'),
-    'mp4'      => array('type' => 'video', 'mime' => 'video/mp4'),
-    'mv4'      => array('type' => 'video', 'mime' => 'video/mv4'),
-
-    // audio
-    'mp3'      => array('type' => 'audio', 'mime' => 'audio/mp3'),
-    'wav'      => array('type' => 'audio', 'mime' => 'audio/wav'),
-    'aif'      => array('type' => 'audio', 'mime' => 'audio/aiff'),
-    'aiff'     => array('type' => 'audio', 'mime' => 'audio/aiff'),
-
-  ),
+  /**
+   * Availabel user groups
+   */
+  'groups' => array(
+    'root' => array(
+      'name' => 'Root',
+      'access' => array(
+        'panel' => true,
+        'site'  => true,
+      ),
+      'permissions' => 'all',
+    ), 
+    'admin' => array(
+      'name' => 'Admin',
+      'access' => array(
+        'panel' => true,
+        'site'  => true,
+      ),
+    ), 
+    'client' => array(
+      'name' => 'Client',
+      'access' => array(
+        'panel' => false,
+        'site'  => true,
+      ),
+    )
+  )
 
 ));
