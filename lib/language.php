@@ -85,13 +85,23 @@ class Language {
   }
 
   /**
+   * Checks if the language has a shorter url (without the language code)
+   * Only the default language is allowed to have that and only if the lang.urls == short option is set
+   * 
+   * @return boolean
+   */
+  public function hasShorterURL() {
+    return $this->isDefault() and c::get('lang.urls') == 'short';
+  }
+
+  /**
    * Returns the main URL for this language
    * i.e. http://yourdomain.com/en
    * 
    * @return string
    */
   public function url() {    
-    return $this->isDefault() && c::get('lang.urls') == 'short' ? site::instance()->url() : site::instance()->url() . '/' . $this->code();
+    return $this->hasShorterURL() ? site::instance()->indexurl() : site::instance()->indexurl() . '/' . $this->code();
   }
 
   /**

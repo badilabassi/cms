@@ -8,6 +8,7 @@ class HelpersTest extends PHPUnit_Framework_TestCase {
   }
   
   public function testURL() {
+
     // switch back to activated rewriting
     site(array(
       'url'       => $this->url, 
@@ -28,20 +29,23 @@ class HelpersTest extends PHPUnit_Framework_TestCase {
       'rewrite'   => false, 
       'subfolder' => ''
     ));
-    
-    $this->assertEquals($this->url . '/index.php/super/nice', url('super/nice'));
-    $this->assertEquals($this->url . '/index.php/super/nice', url('/super/nice'));
-    $this->assertEquals($this->url . '/index.php/super/nice', url('/super/nice/'));
-    $this->assertEquals($this->url . '/index.php/super/nice', url('//super/nice///'));
+
+    $this->assertEquals($this->url . '/index.php/tests/files', url('tests/files'));
+    $this->assertEquals($this->url . '/index.php/tests/files', url('/tests/files'));
+    $this->assertEquals($this->url . '/index.php/tests/files', url('/tests/files/'));
+    $this->assertEquals($this->url . '/index.php/tests/files', url('//tests/files///'));
     $this->assertEquals($this->url, url());
-    
-    $this->assertTrue(url('super/nice', 'de', array(
-      'param1' => 'value1',
-      'param2' => 'value2'
-    ), array(
-      'var1' => 'value1',
-      'var2' => 'value2'
-    )) == 'http://superurl.com/index.php/super/nice/param1:value1/param2:value2?var1=value1&var2=value2');
+
+    $this->assertEquals(
+      'http://superurl.com/index.php/tests/files/param1:value1/param2:value2?var1=value1&var2=value2', 
+       url('tests/files', false, array(
+          'param1' => 'value1',
+          'param2' => 'value2'
+       ), array(
+          'var1' => 'value1',
+          'var2' => 'value2'
+       )
+    ));
     
     // TODO: check url with language parameter
     

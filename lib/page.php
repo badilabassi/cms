@@ -305,8 +305,14 @@ class Page {
       // return the base url
       return site::instance()->url($lang);                    
     } else {
-      // return the default URL if language support is disabled
-      return $this->parent()->url($lang) . '/' . $this->slug($lang);
+      // get the parent page object to inherit the url
+      $parent = $this->parent();
+
+      if($parent->isSite() and !$lang) {
+        return $parent->indexurl() . '/' . $this->slug();  
+      } else {
+        return $this->parent()->url($lang) . '/' . $this->slug($lang);        
+      }
     }
 
   }
@@ -826,6 +832,16 @@ class Page {
   }
 
   /**
+   * Shortcut to find subpages of this page
+   * 
+   * @param string $uri
+   * @return object
+   */
+  public function find($uri) {
+    return $this->children()->find($uri);
+  }
+
+  /**
    * Counts all children of this page
    * 
    * @return int
@@ -1287,7 +1303,7 @@ class Page {
    * 
    * @return string
    */
-  public function toHTML() {
+  public function render() {
 
     $cache = new Cache($this);
 
@@ -1609,7 +1625,7 @@ class Page {
       'fields'           => ($this->content()) ? $this->content()->fields() : array(),
       'template'         => $this->template(),
       'intendedTemplate' => $this->intendedTemplate(),
-      'parent'           => $this->parent()->isSite() ? '' : $this->parent()->uri(),
+      'parent'           => !$this->parent() or $this->parent()->isSite() ? '' : $this->parent()->uri(),
       'children'         => array(), 
       'files'            => array(), 
     );

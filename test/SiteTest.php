@@ -6,10 +6,12 @@ class SiteTest extends PHPUnit_Framework_TestCase {
   public function setUp() {
     $this->site = site(array(
       'url' => 'http://superurl.com',
-      'currentURL' => 'http://superurl.com/tests',
       'root.content' => TEST_CONTENT, 
       'subfolder' => 'mysubfolder'
     ));
+
+    $this->site->visit('tests');
+
   }
   
   public function tearDown() {
@@ -87,9 +89,10 @@ class SiteTest extends PHPUnit_Framework_TestCase {
     site(array(
       'url'        => 'http://google.com', 
       'subfolder'  => '', 
-      'currentURL' => 'tests/pagination', 
       'rewrite'    => true
     ));
+
+    site()->visit('tests/pagination');
     
     $this->assertEquals('http://google.com/tests/pagination', site()->activePage()->url());
     
@@ -97,9 +100,10 @@ class SiteTest extends PHPUnit_Framework_TestCase {
     site(array(
       'url'        => 'https://google.com', 
       'subfolder'  => '', 
-      'currentURL' => 'https://google.com', 
       'rewrite'    => true
     ));
+
+    site()->visit();
     
     $this->assertEquals('https', site()->scheme());
     $this->assertTrue(site()->ssl());

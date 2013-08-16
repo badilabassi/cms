@@ -82,27 +82,21 @@ h2 {
   <?php foreach($exception->getTrace() as $t): ?>
   <li class="trace">
     <table>
+      <?php if(isset($t['file'])): ?>
       <tr>
         <th>File:</th>
         <td><?php echo htmlspecialchars($t['file']) ?></td>
       </tr>
+      <?php endif ?>
+      <?php if(isset($t['line'])): ?>
       <tr>
         <th>Line:</th>
         <td><?php echo htmlspecialchars($t['line']) ?></td>
       </tr>
+      <?php endif ?>
       <tr>
         <th>Function:</th>
         <td><?php echo htmlspecialchars($t['function']) ?></td>
-      </tr>
-      <tr>
-        <th>Arguments:</th>
-        <td>
-          <ul>
-            <?php foreach($t['args'] as $arg): ?>
-            <li><?php echo htmlspecialchars($arg) ?></li>
-            <?php endforeach ?>
-          </ul>
-        </td>
       </tr>
     </table>
   </li>

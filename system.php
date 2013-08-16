@@ -32,13 +32,19 @@ if(!defined('KIRBY_INDEX_ROOT')) {
 
 // handle thrown exceptions and display a nice error page
 set_exception_handler(function($exception) {  
-  require(KIRBY_CMS_ROOT_MODALS . DS . 'exception.php'); 
+    require(KIRBY_CMS_ROOT_MODALS . DS . 'exception.php'); 
   exit();
 });
 
 // catch all errors and throw an exception so it can get caught by kirby's error screen
-set_error_handler(function($errno, $errstr, $errfile, $errline) {  
-  throw new ErrorException($errstr, 0, $errno, $errfile, $errline);  
+set_error_handler(function($code, $message, $file, $line) {  
+  switch($code) {
+    case E_NOTICE:
+    case E_USER_NOTICE:
+      return;
+    default:
+      throw new ErrorException($message, 0, $code, $file, $line);  
+  }
 });
 
 // load the bootstrapper
@@ -46,6 +52,9 @@ require(KIRBY_CMS_ROOT . DIRECTORY_SEPARATOR . 'bootstrap.php');
 
 // initialize the site for the first time
 $site = site::instance();
+
+// show the troubleshoot modal if required
+$site->troubleshoot();
 
 // enable rewriting of unwanted URLs
 $site->rewrite();

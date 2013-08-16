@@ -13,6 +13,7 @@ use Kirby\Toolkit\Header;
 use Kirby\Toolkit\Router;
 use Kirby\Toolkit\Server;
 use Kirby\Toolkit\URI;
+use Kirby\Toolkit\URL;
 
 // direct access protection
 if(!defined('KIRBY')) die('Direct access is not allowed');
@@ -43,6 +44,9 @@ class Site extends Page {
 
   // the main url of this site
   protected $url = null;
+
+  // index.php or wherever the site is running in
+  protected $indexfile = 'index.php';
 
   // the detected/set subfolder
   protected $subfolder = null;
@@ -91,6 +95,7 @@ class Site extends Page {
   static public function instance($params = array()) {
     if(is_null(static::$instance) or !empty($params)) {      
       static::$instance = new Site($params);
+      static::$instance->init();
     }
     return static::$instance;
   }
@@ -105,6 +110,9 @@ class Site extends Page {
     // load all needed config vars
     $this->configure($params);
 
+    // get the main url for the site
+    $this->urlsetup();
+
     // initiate the page object with the given root    
     parent::__construct(KIRBY_CONTENT_ROOT);
 
@@ -114,18 +122,17 @@ class Site extends Page {
     // load all available parsers
     $this->parsers();
 
+  }
+
+  /**
+   * This is called in the singleton handler after the object has 
+   * been constructed to avoid constructing the site object twice if 
+   * something uses site methods already before the constructor is ready.
+   * I'm sure I could explain this better, but my brain is a banana right now.
+   */
+  public function init() {
     // initialize plugins
-    $this->plugins();
-
-    // get the main url for the site
-    $this->url();
-
-    // check for system health
-    $this->health();
-
-    // show the troubleshoot modal if required
-    $this->troubleshoot();
-
+    $this->plugins();    
   }
 
   /**
@@ -149,29 +156,7 @@ class Site extends Page {
    * @return object uri
    */
   public function uri($uri = null) {
-
-    // check for a cached uri object
-    if(!is_null($this->uri)) return $this->uri;
-
-    // subfolder setup
-    $subfolder = $this->subfolder();
-
-    // add the language code as subfolder 
-    // for multi language websites
-    if(static::$multilang) {
-      if(c::get('lang.urls') != 'short' or !$this->language()->isDefault()) {
-        $subfolder .= '/' . $this->language()->code();
-      }
-    }
-
-    // init the uri object with the correct setup
-    return $this->uri = new uri(array(
-      // define the subfolder so we only get the relevant part of the path
-      'subfolder' => $subfolder,
-      // set a current URL if available in options
-      'url' => c::get('currentURL', null)
-    ));
-
+    return $this->uri;
   }
 
   /**
@@ -182,15 +167,43 @@ class Site extends Page {
    * @return string
    */
   public function subfolder() {
+    return $this->subfolder;
+  }
 
-    if(!is_null($this->subfolder)) return $this->subfolder;
+  /**
+   * Returns the filename of the index file
+   * i.e. index.php or site.php or wherever the site is running
+   * 
+   * @return string
+   */
+  public function indexfile() {
+    return $this->indexfile;
+  }
 
-    // try to detect the subfolder      
-    $subfolder = (c::get('subfolder') !== false) ? trim(c::get('subfolder'), '/') : trim(dirname(server::get('script_name')), '/\\');
-    
-    c::set('subfolder', $subfolder);
-    return $this->subfolder = $subfolder;
+  /**
+   * Returns the base url of the site
+   * The url is auto-detected by default and can 
+   * also be set in the config like the subfolder
+   * 
+   * @return string
+   */
+  public function url($lang = false) {
+    if(static::$multilang and $lang) {
+      // return the specific language url
+      return $this->language($lang)->url();
+    } else {
+      return $this->url;
+    }
+  }
 
+  /**
+   * Returns the base url of the site 
+   * including the index.php if necessary (if rewriting is deactivated)
+   * 
+   * @return string
+   */
+  public function indexurl() {      
+    return c::get('rewrite') ? $this->url() : $this->url() . '/' . $this->indexfile();
   }
 
   /**
@@ -213,56 +226,49 @@ class Site extends Page {
   }
 
   /**
-   * Returns the base url of the site
-   * The url is auto-detected by default and can 
-   * also be set in the config like the subfolder
-   * 
-   * @return string
+   * Changes the current url of the URI object
+   * to simulate browsing a different sub page than the 
+   * current selected.
    */
-  public function url($lang = false) {
-
-    if(static::$multilang && $lang) {
-
-      // return the specific language url
-      return $this->language($lang)->url();
-
-    } else {
-
-      // look for a cached url
-      if(!is_null($this->url)) return $this->url;
-
-      // auto-detect the url if it is not set
-      $url = (c::get('url') === false) ? $this->scheme() . '://' . $this->uri()->host() : rtrim(c::get('url'), '/');
-
-      // handle subfolders
-      if($subfolder = $this->subfolder()) {
-        // check if the url already contains the subfolder      
-        // so it's not included twice
-        if(!preg_match('!' . preg_quote($subfolder) . '$!i', $url)) $url .= '/' . $subfolder;      
-      }
-
-      // if rewrite is deactivated
-      // index.php needs to be prepended
-      // so urls will still work
-      if(!c::get('rewrite')) $url .= '/index.php';
-      
-      // store the final url in the config               
-      c::set('url', $url);  
-      
-      // cache and return the final url
-      return $this->url = $url;
-
-    }
-
+  public function visit($uri = '/') {
+    $this->uri = new uri(array(
+      'url'       => url($uri),
+      'subfolder' => $this->subfolder()
+    ));
+    return $this;
   }
 
   /**
-   * Returns the baseurl for the site without index.php even if rewrite is deactivated
+   * Custom setter, which hooks into page::set
+   * to make it possible to set stuff like the url or subfolder
    * 
-   * @return string
+   * @param mixed $key
+   * @param mixed $value
+   * @return object this
    */
-  public function baseurl() {
-    return $this->uri()->baseurl();
+  public function set($key, $value = null) {
+
+    if(is_array($key)) {
+      foreach($key as $k => $v) $this->set($k, $v);
+      return $this;
+    }
+
+    switch($key) {
+      case 'url':
+        c::set('url', $value);
+        c::set('subfolder', false);
+        $this->urlsetup();
+        return $this;
+        break;
+      case 'subfolder':
+        c::set('subfolder', $value);
+        $this->urlsetup();
+        return $this;
+        break;
+    }
+
+    return parent::set($key, $value);
+
   }
 
   /**
@@ -325,6 +331,7 @@ class Site extends Page {
 
   /**
    * Returns the currently active page of the site
+   * Deprecated: I want to try to replace this with page()
    * 
    * @return object Page
    */
@@ -376,6 +383,16 @@ class Site extends Page {
 
   }
   
+  /**
+   * Returns the currently active page or any other page by uri
+   * 
+   * @param string $uri Optional uri to get any page on the site
+   * @return object
+   */
+  public function page($uri = null) {
+    return is_null($uri) ? $this->activePage() : $this->children()->find($uri);
+  }
+
   /**
    * Returns all available languages for this site
    * 
@@ -483,15 +500,15 @@ class Site extends Page {
    * 
    * @return string
    */
-  public function toHTML($echo = false) {
+  public function render($echo = false) {
 
     $page = $this->activePage();
-    $html = $page->toHtml();
+    $html = $page->render();
 
     // send an 404 header for error pages
     if($page->isErrorPage() && c::get('error.header')) header::notfound();
 
-    event::trigger('kirby.cms.site.toHTML', array($this, $page, &$html));
+    event::trigger('kirby.cms.site.render', array($this, $page, &$html));
 
     if($echo) echo($html);
     return $html;
@@ -503,7 +520,7 @@ class Site extends Page {
    */
   public function show() {
     event::trigger('kirby.cms.site.show', array($this));
-    echo $this->toHtml();
+    echo $this->render();
   }
 
   /**
@@ -609,9 +626,6 @@ class Site extends Page {
     // merge the late options
     c::set($params);
 
-    // default thumbnail base url
-    if(!c::get('thumb.location.url')) c::set('thumb.location.url', $this->baseurl() . '/thumbs');
-
     // connect the cache 
     try {
       cache::connect('file', array('root' => KIRBY_SITE_ROOT_CACHE));
@@ -633,6 +647,68 @@ class Site extends Page {
       'root.plugins'   => KIRBY_SITE_ROOT_PLUGINS,      
       'root.cache'     => KIRBY_SITE_ROOT_CACHE,      
     ));
+
+  }
+
+  /**
+   * Smart detection and setup of the url, subfolder and uri object
+   * This is a real killer to get right, because in the best case
+   * it should be able to work without additional configuration, which 
+   * is quite challenging to get right. I think I did it :)
+   */
+  protected function urlsetup() {
+
+    // auto-detect the url if it is not set
+    if(c::get('url') === false) {
+      $this->url = url::base(url::current()) . server::get('script_name');
+    } else {
+      $this->url = rtrim(c::get('url'), '/');
+    }
+
+    if(c::get('indexfile')) {
+      $this->indexfile = c::get('indexfile');
+    } else if(preg_match('!([a-z0-9-_\.]*\.php)+$!i', $this->url, $matches)) {    
+      // store the index filename
+      $this->indexfile = $matches[1];
+    }
+
+    // cut off the index filename 
+    $this->url = rtrim(preg_replace('!' . preg_quote($this->indexfile) . '$!i', '', $this->url), '/');
+
+    // try to detect the subfolder      
+    $this->subfolder = (c::get('subfolder') !== false) ? trim(c::get('subfolder'), '/') : url::path($this->url);
+    
+    // handle subfolders
+    if($this->subfolder) {
+      // check if the base url already contains the subfolder      
+      // so it's not included twice
+      if(!preg_match('!' . preg_quote($this->subfolder) . '$!i', $this->url)) $this->url .= '/' . $this->subfolder;      
+    }
+    
+    // store the final url in the config               
+    c::set('url', $this->url);  
+
+    // store the subfolder in the config array    
+    c::set('subfolder', $this->subfolder);
+
+    // add the language code as subfolder 
+    // for multi language websites
+    if(static::$multilang and (c::get('lang.urls') != 'short' or !$this->language()->isDefault())) {
+      $this->subfolder .= '/' . $this->language()->code();
+    } 
+
+    // append the indexfile to the subfolder to ignore it
+    if(!c::get('rewrite')) {
+      $this->subfolder .= '/' . $this->indexfile();
+    }
+
+    // init the uri object with the correct setup
+    $this->uri = new uri(array(
+      'subfolder' => $this->subfolder
+    ));
+
+    // default thumbnail base url
+    if(!c::get('thumb.location.url')) c::set('thumb.location.url', $this->url . '/thumbs');
 
   }
 
@@ -662,19 +738,13 @@ class Site extends Page {
   /**
    * Internal system health checks
    */
-  protected function health() {
+  static public function health() {
 
     // check for a readable content directory
     if(!is_dir($this->root)) raise('The content directory is not readable');
 
     // check for an existing site directory
     if(!is_dir(KIRBY_SITE_ROOT)) raise('The site directory is not readable');
-
-    // check for a proper phpversion
-    if(floatval(phpversion()) < 5.3) raise('Please upgrade to PHP 5.3 or higher');
-
-    // check for existing mbstring functions
-    if(!function_exists('mb_strtolower')) raise('mb_string functions are required in order to run Kirby properly');
     
   }
 
@@ -685,20 +755,14 @@ class Site extends Page {
    */
   public function __toDump() {
 
-    $dump = array_merge(parent::__toDump(), array(
+    return array(
+      'url'       => $this->url(),
       'uri'       => $this->uri()->__toDump(),
+      'children'  => $this->children()->__toDump(),      
+      'fields'    => ($this->content()) ? $this->content()->fields() : array(),
       'languages' => $this->languages() ? $this->languages()->__toDump() : false,
       'plugins'   => $this->plugins()->__toDump(),
-    ));
-
-    unset($dump['id']);
-    unset($dump['folder']);
-    unset($dump['num']);
-    unset($dump['active']);
-    unset($dump['open']);
-    unset($dump['template']);
-    unset($dump['intendedTemplate']);
-    unset($dump['parent']);
+    );
 
     return $dump;
   

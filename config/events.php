@@ -25,11 +25,14 @@ event::on('kirby.toolkit.url.to', function(&$url, $arguments = array()) {
 
   // return the url for the home page
   if(!$url or $url == '/') {
-    $url = site::instance()->url($lang);
-
-    // make sure to strip the index.php for the base url
-    // we don't want http://yourdomain.com/index.php
-    if(!$lang) $url = site::instance()->baseurl();
+    
+    if(!$lang) {
+      // make sure to strip the index.php for the base url
+      // we don't want http://yourdomain.com/index.php
+      $url = site::instance()->url();
+    } else {
+      $url = site::instance()->url($lang);
+    }
 
   // search for a page this url could be for
   } else if($page = site::instance()->children()->find($url)) {
