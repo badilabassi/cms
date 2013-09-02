@@ -85,7 +85,7 @@ event::on('kirby.toolkit.html.script', function(&$src, &$attr = array()) {
 
   $file = site::instance()->activePage()->template() . '.js';
   $root = c::get('js.auto.root') . DS . $file;
-  $url  = c::get('js.auto.url') . '/' . $file;
+  $src  = c::get('js.auto.url') . '/' . $file;
 
   if(!file_exists($root)) raise('The js file does not exist');
 

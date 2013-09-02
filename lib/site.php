@@ -684,7 +684,7 @@ class Site extends Page {
       // so it's not included twice
       if(!preg_match('!' . preg_quote($this->subfolder) . '$!i', $this->url)) $this->url .= '/' . $this->subfolder;      
     }
-    
+
     // store the final url in the config               
     c::set('url', $this->url);  
 
