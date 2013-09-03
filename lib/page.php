@@ -310,6 +310,8 @@ class Page {
 
       if($parent->isSite() and !$lang) {
         return $parent->indexurl() . '/' . $this->slug();  
+      } else if($parent->isHomePage()) {
+        return site::instance()->url($lang) . '/' . $parent->uid() . '/' . $this->slug($lang); 
       } else {
         return $this->parent()->url($lang) . '/' . $this->slug($lang);        
       }
